@@ -1,0 +1,4 @@
+*.sdf
+*.user
+/TgRendererDX11/simple_pixel.h
+/TgRendererDX11/simple_vertex.h
