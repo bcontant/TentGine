@@ -21,9 +21,9 @@
   <PropertyGroup Label="Globals">
     <ProjectGuid>{BC2BBD11-E88A-4F24-9ABE-74BB89B7AF11}</ProjectGuid>
     <Keyword>Win32Proj</Keyword>
-    <RootNamespace>TgOSWin32</RootNamespace>
+    <RootNamespace>OS_Win32</RootNamespace>
     <WindowsTargetPlatformVersion>8.1</WindowsTargetPlatformVersion>
-    <ProjectName>TgOSWin32</ProjectName>
+    <ProjectName>OS_Win32</ProjectName>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">

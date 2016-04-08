@@ -14,7 +14,9 @@ public:
 	virtual ~Quad_DX11();
 
 	virtual void Draw();
+	virtual void SetPosition(float x, float y);
 
+protected:
 	DirectX::XMFLOAT2 m_Position;
 
 	ID3D11Buffer* pVertexBuffer;

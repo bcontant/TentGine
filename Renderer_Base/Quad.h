@@ -11,6 +11,9 @@ public:
 	virtual ~Quad() {}
 
 	virtual void Draw() = 0;
+	void SetTexture(Texture* in_pTexture) { pTexture = in_pTexture; }
+	virtual void SetPosition(float x, float y) = 0;
 
+protected:
 	Texture* pTexture;
 };

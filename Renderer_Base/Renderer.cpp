@@ -7,14 +7,14 @@
 #include "../TgOSBase/Window.h"
 
 
-Renderer::Renderer()
+Renderer::Renderer(Window* in_pWindow)
+	:m_pWindow(in_pWindow)
 {
 
 }
 
 Renderer::~Renderer()
 {
-	delete m_pBackBuffer;
 }
 
 

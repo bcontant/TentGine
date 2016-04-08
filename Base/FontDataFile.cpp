@@ -31,7 +31,8 @@ void FontDataFile::Save(std::wstring in_filename) const
 	int glyphCount = (int)m_mGlyphs.size();
 	fwrite(&glyphCount, sizeof(unsigned int), 1, fp);
 
-	std::map<wchar_t, GlyphInfo>::const_iterator it = m_mGlyphs.cbegin();
+	//std::map<wchar_t, GlyphInfo>::const_iterator it = m_mGlyphs.cbegin();
+	auto it = m_mGlyphs.cbegin();
 	for (it; it != m_mGlyphs.cend(); ++it)
 	{
 		fwrite(&it->first, sizeof(wchar_t), 1, fp);

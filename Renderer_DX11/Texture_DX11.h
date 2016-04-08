@@ -12,10 +12,12 @@ public:
 	virtual void Initialize(std::wstring filename);
 	virtual void Initialize(unsigned int width, unsigned int height, const unsigned char* pBits);
 
+	virtual void Bind(unsigned int startSlot);
+
 	virtual unsigned int GetWidth();
 	virtual unsigned int GetHeight();
 
-	//private:
+private:
 	ID3D11Texture2D* pTexture;
 	ID3D11ShaderResourceView* pShaderResourceView;
 };

@@ -1,4 +1,4 @@
-#include "BackBuffer_DX11.h"
+/*#include "BackBuffer_DX11.h"
 
 BackBuffer_DX11::~BackBuffer_DX11()
 {
@@ -18,4 +18,4 @@ unsigned int BackBuffer_DX11::GetHeight()
 	D3D11_TEXTURE2D_DESC desc;
 	pBackBuffer->GetDesc(&desc);
 	return desc.Height;
-}
+}*/

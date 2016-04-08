@@ -30,23 +30,24 @@ int CALLBACK WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLi
 	Quad* pQuad2 = pRenderer->CreateQuad(0.5f, 0.5f, pTexture1);
 
 	//Quad* pQuad2 = pRenderer->CreateQuad(0.5f, 0.5f, pFont->m_pFontTexture);
-	
-	MSG msg;
-	do
-	{
-		//pWindow->ProcessMessages();
-		if (PeekMessage(&msg, NULL, 0, 0, TRUE))
-		{
-			TranslateMessage(&msg);
-			DispatchMessage(&msg);
-		}
 
+
+	while(1)
+	{
+		if (pWindow->ProcessMessages() == false)
+			break;
+		
 		pRenderer->StartFrame();
 		pQuad->Draw();
 		pQuad2->Draw();
 		pRenderer->EndFrame();
 	} 
-	while (msg.message != WM_QUIT);
+
+	FILE *fp = NULL;
+	const char *s = u8"\u0444";
+	_wfopen_s(&fp, L"test.txt", L"w");
+	fprintf(fp, s);
+	fclose(fp);
 
 	delete pQuad;
 	delete pQuad2;

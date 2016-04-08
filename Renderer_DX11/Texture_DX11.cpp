@@ -11,7 +11,7 @@ Texture_DX11::~Texture_DX11()
 void Texture_DX11::Initialize(std::wstring filename)
 {
 	Renderer_DX11* pOwner = (Renderer_DX11*)GetOwner();
-	HRESULT hr = CreateWICTextureFromFile(pOwner->pD3D11Device, pOwner->pD3D11DeviceContext, filename.c_str(), &pTexture, &pShaderResourceView, 0);
+	HRESULT hr = CreateWICTextureFromFile(pOwner->GetDevice(), pOwner->GetContext(), filename.c_str(), &pTexture, &pShaderResourceView, 0);
 }
 
 void Texture_DX11::Initialize(unsigned int width, unsigned int height, const unsigned char* pBits)
@@ -37,7 +37,7 @@ void Texture_DX11::Initialize(unsigned int width, unsigned int height, const uns
 	initData.SysMemPitch = width;
 	initData.SysMemSlicePitch = width * height;
 
-	HRESULT hr = pOwner->pD3D11Device->CreateTexture2D(&desc, &initData, &pTexture);
+	HRESULT hr = pOwner->GetDevice()->CreateTexture2D(&desc, &initData, &pTexture);
 
 	D3D11_SHADER_RESOURCE_VIEW_DESC SRVDesc;
 	memset(&SRVDesc, 0, sizeof(SRVDesc));
@@ -45,7 +45,13 @@ void Texture_DX11::Initialize(unsigned int width, unsigned int height, const uns
 	SRVDesc.ViewDimension = D3D11_SRV_DIMENSION_TEXTURE2D;
 	SRVDesc.Texture2D.MipLevels = 1;
 
-	hr = pOwner->pD3D11Device->CreateShaderResourceView(pTexture, &SRVDesc, &pShaderResourceView);
+	hr = pOwner->GetDevice()->CreateShaderResourceView(pTexture, &SRVDesc, &pShaderResourceView);
+}
+
+void Texture_DX11::Bind(unsigned int startSlot)
+{
+	Renderer_DX11* pDX11Renderer = (Renderer_DX11*) GetOwner();
+	pDX11Renderer->GetContext()->PSSetShaderResources(0, 1, &pShaderResourceView);
 }
 
 unsigned int Texture_DX11::GetWidth()
