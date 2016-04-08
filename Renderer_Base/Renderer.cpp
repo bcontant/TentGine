@@ -1,10 +1,9 @@
 #include "Renderer.h"
-#include "BackBuffer.h"
 #include "Texture.h"
 #include "Quad.h"
 #include "Font.h"
 
-#include "../TgOSBase/Window.h"
+#include "../OS_Base/Window.h"
 
 
 Renderer::Renderer(Window* in_pWindow)

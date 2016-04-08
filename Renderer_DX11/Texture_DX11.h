@@ -1,7 +1,7 @@
 #pragma once
 
 #include "d3d11.h"
-#include "../TgRendererBase/Texture.h"
+#include "../Renderer_Base/Texture.h"
 
 class Texture_DX11 : public Texture
 {

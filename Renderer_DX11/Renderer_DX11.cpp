@@ -2,9 +2,8 @@
 
 #include <DirectXMath.h>
 
-#include "../TgOSBase/Window.h"
+#include "../OS_Base/Window.h"
 
-#include "BackBuffer_DX11.h"
 #include "Texture_DX11.h"
 #include "Quad_DX11.h"
 

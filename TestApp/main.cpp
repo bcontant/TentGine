@@ -2,13 +2,13 @@
 
 #include <stdio.h>
 
-#include "../TgOSBase/FontBuilder.h"
-#include "../TgOSBase/Window.h"
+#include "../OS_Base/FontBuilder.h"
+#include "../OS_Base/Window.h"
 
-#include "../TgRendererBase/Renderer.h"
-#include "../TgRendererBase/Font.h"
-#include "../TgRendererBase/Quad.h"
-#include "../TgRendererBase/Texture.h"
+#include "../Renderer_Base/Renderer.h"
+#include "../Renderer_Base/Font.h"
+#include "../Renderer_Base/Quad.h"
+#include "../Renderer_Base/Texture.h"
 
 int CALLBACK WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nCmdShow)
 {

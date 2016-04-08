@@ -25,7 +25,6 @@
     <ClInclude Include="WICTextureLoader.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="BackBuffer_DX11.cpp" />
     <ClCompile Include="Quad_DX11.cpp" />
     <ClCompile Include="Renderer_DX11.cpp" />
     <ClCompile Include="Texture_DX11.cpp" />

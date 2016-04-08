@@ -1,7 +1,7 @@
 #pragma once
 
 #include "d3d11.h"
-#include "../TgRendererBase/Renderer.h"
+#include "../Renderer_Base/Renderer.h"
 
 class Renderer_DX11 : public Renderer
 {

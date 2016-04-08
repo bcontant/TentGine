@@ -3,7 +3,7 @@
 #include "d3d11.h"
 #include <DirectXMath.h>
 
-#include "../TgRendererBase/Quad.h"
+#include "../Renderer_Base/Quad.h"
 
 class Texture;
 

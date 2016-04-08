@@ -38,9 +38,6 @@
     <ClCompile Include="Texture_DX11.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="BackBuffer_DX11.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="WICTextureLoader.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>

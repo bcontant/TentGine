@@ -2,8 +2,8 @@
 #include <dwrite.h>
 #include <wincodec.h>
 
-#include "../TgBase/FontDataFile.h"
-#include "../TgBase/StringUtils.h"
+#include "../Base/FontDataFile.h"
+#include "../Base/StringUtils.h"
 
 //This is the code responsible for creating FontFiles.  It uses Direct2D and DirectWrite to generate an 8bit alpha texture of the font.
 //It also stores information about individual glyph LSB and RSB to try and preserve decent spacing for overlapping characters in fonts.

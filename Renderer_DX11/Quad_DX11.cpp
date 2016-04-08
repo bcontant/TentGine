@@ -3,7 +3,6 @@
 #include "simple_vertex.h"
 
 #include "Renderer_DX11.h"
-#include "../TgRendererBase/BackBuffer.h"
 #include "Texture_DX11.h"
 
 struct CBStruct
