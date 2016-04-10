@@ -1,6 +1,7 @@
 #pragma once
 
 #include <string>
+#include "../Base/Path.h"
 
 class DisplayAdapter;
 class Texture;
@@ -14,11 +15,11 @@ public:
 	Renderer(Window* in_pWindow);
 	virtual ~Renderer();
 
-	virtual Texture* CreateTexture(std::wstring filename) = 0;
+	virtual Texture* CreateTexture(const Path& filename) = 0;
 	virtual Texture* CreateTexture(unsigned int width, unsigned int height, const unsigned char* pBits) = 0;
 	virtual Quad* CreateQuad(float posX, float posY, Texture* texture) = 0;
 	
-	Font* LoadFont(std::wstring filename);
+	Font* LoadFont(const Path& filename);
 
 	virtual unsigned int GetBackBufferWidth() const = 0;
 	virtual unsigned int GetBackBufferHeight() const = 0;

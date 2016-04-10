@@ -5,3 +5,5 @@
 *.suo
 *.log
 *.tlog
+*.opendb
+*.ipch

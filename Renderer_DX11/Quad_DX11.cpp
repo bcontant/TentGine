@@ -1,9 +1,6 @@
-#include "Quad_DX11.h"
+#include "precompiled.h"
 
 #include "simple_vertex.h"
-
-#include "Renderer_DX11.h"
-#include "Texture_DX11.h"
 
 struct CBStruct
 {

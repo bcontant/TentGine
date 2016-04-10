@@ -1,4 +1,4 @@
-#include "Window.h"
+#include "precompiled.h"
 
 IWindowMessageCallback::IWindowMessageCallback(Window* pWindow)
 	: m_pWindow(pWindow)

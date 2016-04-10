@@ -1,7 +1,8 @@
 #pragma once
 
 #include "RendererObject.h"
-#include <string>
+#include "../Base/StringUtils.h"
+#include "../Base/Path.h"
 
 class Texture;
 class FontDataFile;
@@ -12,7 +13,7 @@ public:
 	Font(Renderer* pOwner);
 	virtual ~Font();
 
-	void Load(std::wstring in_filename);
+	void Load(const Path& in_filename);
 
 private:
 	FontDataFile* m_FontDataFile;

@@ -1,27 +1,25 @@
-#include <stdarg.h>
-#include "StringUtils.h"
+#include "precompiled.h"
 
-std::string Format(const char* format, ...)
+std::string WStringToString(std::wstring in_wstring)
 {
-	char strMessage[1024];
-
-	va_list ArgPtr;
-
-	va_start(ArgPtr, format);
-	vsnprintf(strMessage, 1024, format, ArgPtr);
-	va_end(ArgPtr);
-
-	return strMessage;
+	std::wstring_convert<std::codecvt_utf8_utf16<wchar_t>> converter;
+	return converter.to_bytes(in_wstring);
 }
 
-std::wstring Format(const wchar_t* format, ...)
+std::wstring StringToWString(std::string in_string)
 {
-	wchar_t strMessage[1024];
+	std::wstring_convert<std::codecvt_utf8_utf16<wchar_t>> converter;
+	return converter.from_bytes(in_string);
+}
+
+StdString Format(const StringChar* format, ...)
+{
+	StringChar strMessage[1024];
 
 	va_list ArgPtr;
 
 	va_start(ArgPtr, format);
-	vswprintf(strMessage, 1024, format, ArgPtr);
+	VSPRINTF(strMessage, 1024, format, ArgPtr);
 	va_end(ArgPtr);
 
 	return strMessage;

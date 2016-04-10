@@ -1,5 +1,4 @@
-#include <windows.h>
-#include "Window_Win32.h"
+#include "precompiled.h"
 
 Window* Window::Create(int width, int height, bool fullscreen, void* hInstance)
 {
@@ -23,14 +22,14 @@ void Window_Win32::InitWindow(int width, int height, bool fullscreen, void* hIns
 	wcex.hbrBackground = NULL;
 	wcex.lpszMenuName = NULL;
 	wcex.hCursor = LoadCursor(NULL, IDI_APPLICATION);
-	wcex.lpszClassName = L"DX11App";
+	wcex.lpszClassName = L("DX11App");
 
 	RegisterClassEx(&wcex);
 
 	RECT rc = { 0, 0, width, height };
 	AdjustWindowRect(&rc, WS_OVERLAPPEDWINDOW, FALSE);
 
-	m_windowHandle = (void*)CreateWindow(L"DX11App", L"DX11 App", WS_OVERLAPPEDWINDOW, CW_USEDEFAULT, CW_USEDEFAULT, rc.right - rc.left, rc.bottom - rc.top, NULL, NULL, (HINSTANCE)hInstance, this);
+	m_windowHandle = (void*)CreateWindow(L("DX11App"), L("DX11 App"), WS_OVERLAPPEDWINDOW, CW_USEDEFAULT, CW_USEDEFAULT, rc.right - rc.left, rc.bottom - rc.top, NULL, NULL, (HINSTANCE)hInstance, this);
 
 	ShowWindow((HWND)m_windowHandle, SW_SHOWNORMAL);
 	UpdateWindow((HWND)m_windowHandle);

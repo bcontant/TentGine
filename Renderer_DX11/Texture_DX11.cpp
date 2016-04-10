@@ -1,6 +1,4 @@
-#include "Texture_DX11.h"
-#include "Renderer_DX11.h"
-#include "WICTextureLoader.h"
+#include "precompiled.h"
 
 Texture_DX11::~Texture_DX11()
 {
@@ -8,10 +6,10 @@ Texture_DX11::~Texture_DX11()
 	pTexture->Release();
 }
 
-void Texture_DX11::Initialize(std::wstring filename)
+void Texture_DX11::Initialize(const Path& filename)
 {
 	Renderer_DX11* pOwner = (Renderer_DX11*)GetOwner();
-	HRESULT hr = CreateWICTextureFromFile(pOwner->GetDevice(), pOwner->GetContext(), filename.c_str(), &pTexture, &pShaderResourceView, 0);
+	HRESULT hr = CreateWICTextureFromFile(pOwner->GetDevice(), pOwner->GetContext(), filename.GetData(), &pTexture, &pShaderResourceView, 0);
 }
 
 void Texture_DX11::Initialize(unsigned int width, unsigned int height, const unsigned char* pBits)
@@ -54,14 +52,14 @@ void Texture_DX11::Bind(unsigned int startSlot)
 	pDX11Renderer->GetContext()->PSSetShaderResources(0, 1, &pShaderResourceView);
 }
 
-unsigned int Texture_DX11::GetWidth()
+unsigned int Texture_DX11::GetWidth() const
 {
 	D3D11_TEXTURE2D_DESC textureDesc;
 	pTexture->GetDesc(&textureDesc);
 	return textureDesc.Width;
 }
 
-unsigned int Texture_DX11::GetHeight()
+unsigned int Texture_DX11::GetHeight() const
 {
 	D3D11_TEXTURE2D_DESC textureDesc;
 	pTexture->GetDesc(&textureDesc);

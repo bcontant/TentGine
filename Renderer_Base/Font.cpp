@@ -1,8 +1,4 @@
-#include "Font.h"
-#include "Renderer.h"
-#include "Texture.h"
-
-#include "../Base/FontDataFile.h"
+#include "precompiled.h"
 
 Font::Font(Renderer* pOwner) 
 :RendererObject(pOwner)
@@ -14,10 +10,13 @@ Font::Font(Renderer* pOwner)
 Font::~Font()
 {
 	delete m_FontDataFile;
+	m_FontDataFile = NULL;
+
 	delete m_pFontTexture;
+	m_pFontTexture = NULL;
 }
 
-void Font::Load(std::wstring in_filename)
+void Font::Load(const Path& in_filename)
 {
 	m_FontDataFile = new FontDataFile();
 	m_FontDataFile->Load(in_filename);

@@ -9,13 +9,13 @@ public:
 	Texture_DX11(Renderer* pOwner) : Texture(pOwner) {}
 	virtual ~Texture_DX11();
 
-	virtual void Initialize(std::wstring filename);
+	virtual void Initialize(const Path& filename);
 	virtual void Initialize(unsigned int width, unsigned int height, const unsigned char* pBits);
 
 	virtual void Bind(unsigned int startSlot);
 
-	virtual unsigned int GetWidth();
-	virtual unsigned int GetHeight();
+	virtual unsigned int GetWidth() const;
+	virtual unsigned int GetHeight() const;
 
 private:
 	ID3D11Texture2D* pTexture;

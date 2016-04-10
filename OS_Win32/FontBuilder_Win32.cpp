@@ -1,9 +1,4 @@
-#include <d2d1.h>
-#include <dwrite.h>
-#include <wincodec.h>
-
-#include "../Base/FontDataFile.h"
-#include "../Base/StringUtils.h"
+#include "precompiled.h"
 
 //This is the code responsible for creating FontFiles.  It uses Direct2D and DirectWrite to generate an 8bit alpha texture of the font.
 //It also stores information about individual glyph LSB and RSB to try and preserve decent spacing for overlapping characters in fonts.
@@ -43,7 +38,7 @@ public:
 		pWICFactory->Release();
 	}
 
-	void Build(std::wstring& in_FontName, float in_FontSize, int in_TextureSize)
+	void Build(const StdString& in_FontName, float in_FontSize, int in_TextureSize)
 	{
 		m_TextureSize = in_TextureSize;
 
@@ -57,7 +52,7 @@ public:
 		HRESULT hr = pWICFactory->CreateBitmap(in_TextureSize, in_TextureSize, GUID_WICPixelFormat8bppAlpha, WICBitmapCacheOnLoad, &pWICBitmap);
 
 		//Create the requested FontFormat
-		hr = pDWriteFactory->CreateTextFormat(in_FontName.c_str(), NULL, DWRITE_FONT_WEIGHT_REGULAR, DWRITE_FONT_STYLE_NORMAL, DWRITE_FONT_STRETCH_NORMAL, in_FontSize * (96.f / 72.f), L"en-us", &pTextFormat);
+		hr = pDWriteFactory->CreateTextFormat(TO_WSTRING(in_FontName).c_str(), NULL, DWRITE_FONT_WEIGHT_REGULAR, DWRITE_FONT_STYLE_NORMAL, DWRITE_FONT_STRETCH_NORMAL, in_FontSize * (96.f / 72.f), L"en-us", &pTextFormat);
 		hr = pTextFormat->SetTextAlignment(DWRITE_TEXT_ALIGNMENT_LEADING);
 		hr = pTextFormat->SetParagraphAlignment(DWRITE_PARAGRAPH_ALIGNMENT_NEAR);
 		
@@ -65,7 +60,7 @@ public:
 		pTextFormat->GetFontCollection(&pFontCollection);
 		UINT32 index;
 		BOOL exists;
-		hr = pFontCollection->FindFamilyName(in_FontName.c_str(), &index, &exists);
+		hr = pFontCollection->FindFamilyName(TO_WSTRING(in_FontName).c_str(), &index, &exists);
 		
 		hr = pFontCollection->GetFontFamily(index, &pFontFamily);
 		hr = pFontFamily->GetFirstMatchingFont(DWRITE_FONT_WEIGHT_REGULAR, DWRITE_FONT_STRETCH_NORMAL, DWRITE_FONT_STYLE_NORMAL, &pFont);
@@ -105,7 +100,7 @@ public:
 		UINT size;
 		pBitmapLock->GetDataPointer(&size, &pointer);
 		
-		Save(Format(L"%s_%dpt.dat", in_FontName.c_str(), (int)in_FontSize), in_FontName, in_FontSize, in_TextureSize, pointer);
+		Save(Format(L("%s_%dpt.dat"), in_FontName.c_str(), (int)in_FontSize), in_FontName, in_FontSize, in_TextureSize, pointer);
 		pBitmapLock->Release();
 	}
 
@@ -137,7 +132,7 @@ private:
 	ULONG STDMETHODCALLTYPE AddRef(void) { return 1; };
 	ULONG STDMETHODCALLTYPE Release(void) { return 1; };
 
-	void Save(std::wstring& in_Filename, const std::wstring& in_FontName, float in_FontSize, unsigned int in_TextureSize, unsigned char* pFontData)
+	void Save(const Path& in_Filename, const StdString& in_FontName, float in_FontSize, unsigned int in_TextureSize, unsigned char* pFontData)
 	{
 		FontDataFile* pFontDataFile = new FontDataFile(in_FontName, in_FontSize, in_TextureSize, m_mGlyphs, pFontData);
 		pFontDataFile->Save(in_Filename);
@@ -198,7 +193,7 @@ private:
 		if (info.lsb < 0)
 			rc.left -= info.lsb;
 
-		pRT->DrawTextW(glyphRunDescription->string, 1, pTextFormat, rc, pBrush);
+		pRT->DrawText(glyphRunDescription->string, 1, pTextFormat, rc, pBrush);
 
 		m_fCurrentX += boxWidth;
 
@@ -239,10 +234,13 @@ private:
 	}
 };
 
-//Create Font from a system installed Font
-void BuildFont(std::wstring in_FontName, float in_fontSize, unsigned int textureSize)
+namespace OS
 {
-	FontBuilder* fontBuilder = new FontBuilder;
-	fontBuilder->Build(in_FontName, in_fontSize, textureSize);
-	delete fontBuilder;
+	//Create Font from a system installed Font
+	void BuildFont(const StdString& in_FontName, float in_fontSize, unsigned int textureSize)
+	{
+		FontBuilder* fontBuilder = new FontBuilder;
+		fontBuilder->Build(in_FontName, in_fontSize, textureSize);
+		delete fontBuilder;
+	}
 }

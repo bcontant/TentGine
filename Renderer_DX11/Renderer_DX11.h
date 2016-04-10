@@ -11,7 +11,7 @@ public:
 
 	virtual void Initialize(DisplayAdapter* in_pAdapter, Window* in_pWindow);
 
-	virtual Texture* CreateTexture(std::wstring filename);
+	virtual Texture* CreateTexture(const Path& filename);
 	virtual Texture* CreateTexture(unsigned int width, unsigned int height, const unsigned char* pBits);
 	virtual Quad* CreateQuad(float posX, float posY, Texture* texture);
 

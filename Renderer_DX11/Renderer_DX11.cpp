@@ -1,11 +1,4 @@
-#include "Renderer_DX11.h"
-
-#include <DirectXMath.h>
-
-#include "../OS_Base/Window.h"
-
-#include "Texture_DX11.h"
-#include "Quad_DX11.h"
+#include "precompiled.h"
 
 #include "simple_pixel.h"
 #include "simple_vertex.h"
@@ -27,7 +20,7 @@ Renderer_DX11::~Renderer_DX11()
 	pD3D11Device->Release();
 }
 
-Texture* Renderer_DX11::CreateTexture(std::wstring filename)
+Texture* Renderer_DX11::CreateTexture(const Path& filename)
 {
 	Texture* pTexture = new Texture_DX11(this);
 	pTexture->Initialize(filename);
@@ -54,9 +47,7 @@ void Renderer_DX11::StartFrame()
 {
 	if (GetBackBufferWidth() != m_pWindow->GetWidth() || GetBackBufferHeight() != m_pWindow->GetHeight())
 	{
-		wchar_t debug[512];
-		swprintf_s(debug, 512, L"Resizing. [Backbuffer : %d x %d] [ClientRect : %d x %d]\n", GetBackBufferWidth(), GetBackBufferHeight(), m_pWindow->GetWidth(), m_pWindow->GetHeight());
-		OutputDebugString(debug);
+		Logger::GetInstance()->Log(eLC_Rendering, eLS_Message, eLT_FileAndDebug, L("Resizing. [Backbuffer : %d x %d] [ClientRect : %d x %d]"), GetBackBufferWidth(), GetBackBufferHeight(), m_pWindow->GetWidth(), m_pWindow->GetHeight());
 
 		pBackBufferView->Release();
 		pBackBuffer->Release();

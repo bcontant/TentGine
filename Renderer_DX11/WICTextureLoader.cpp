@@ -28,17 +28,8 @@
 // We could load multi-frame images (TIFF/GIF) into a texture array.
 // For now, we just load the first frame (note: DirectXTex supports multi-frame images)
 
-#include <dxgiformat.h>
+#include "precompiled.h"
 #include <assert.h>
-
-#pragma warning(push)
-#pragma warning(disable : 4005)
-#include <wincodec.h>
-#pragma warning(pop)
-
-#include <memory>
-
-#include "WICTextureLoader.h"
 
 #if (_WIN32_WINNT >= 0x0602 /*_WIN32_WINNT_WIN8*/) && !defined(DXGI_1_2_FORMATS)
 #define DXGI_1_2_FORMATS
@@ -617,7 +608,7 @@ HRESULT CreateWICTextureFromMemory(_In_ ID3D11Device* d3dDevice,
 //--------------------------------------------------------------------------------------
 HRESULT CreateWICTextureFromFile(_In_ ID3D11Device* d3dDevice,
 	_In_opt_ ID3D11DeviceContext* d3dContext,
-	_In_z_ const wchar_t* fileName,
+	_In_z_ const StringChar* fileName,
 	_Out_opt_ ID3D11Texture2D** texture,
 	_Out_opt_ ID3D11ShaderResourceView** textureView,
 	_In_ size_t maxsize)
@@ -633,7 +624,7 @@ HRESULT CreateWICTextureFromFile(_In_ ID3D11Device* d3dDevice,
 
 	// Initialize WIC
 	ScopedObject<IWICBitmapDecoder> decoder;
-	HRESULT hr = pWIC->CreateDecoderFromFilename(fileName, 0, GENERIC_READ, WICDecodeMetadataCacheOnDemand, &decoder);
+	HRESULT hr = pWIC->CreateDecoderFromFilename(TO_WSTRING(fileName).c_str(), 0, GENERIC_READ, WICDecodeMetadataCacheOnDemand, &decoder);
 	if (FAILED(hr))
 		return hr;
 

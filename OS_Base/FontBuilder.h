@@ -2,5 +2,8 @@
 
 #include <string>
 
-//Create Font from a system installed Font
-void BuildFont(std::wstring in_FontName, float in_fontSize, unsigned int textureSize);
+namespace OS
+{
+	//Create Font from a system installed Font
+	void BuildFont(const StdString& in_FontName, float in_fontSize, unsigned int textureSize);
+}
