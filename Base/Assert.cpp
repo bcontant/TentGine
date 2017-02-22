@@ -33,17 +33,13 @@ int CustomAssertFunction(const StringChar* in_expstr, const StringChar* in_desc,
 	strMessage += Format(L("%s\n"), strFormattedMessage);
 	strMessage += Format(L("(%s)\n"), strLocation.c_str());
 
-	/*strcat_s(strMessage, ASSERT_MESSAGE_BUFFER_SIZE, "Stack Trace:\n");
+	strMessage += L("Stack Trace:\n");
 
-	if (StackTrace::GetInstance())
+	std::vector<StdString> stackTrace = OS::GetCallStack(NULL);
+	for (unsigned int i = 0; i < stackTrace.size(); i++)
 	{
-		stackTrace = StackTrace::GetInstance()->GetStrackTrace();
-		for (unsigned int i = 0; i < stackTrace.size(); i++)
-		{
-			strcat_s(strMessage, ASSERT_MESSAGE_BUFFER_SIZE, stackTrace[i].c_str());
-			strcat_s(strMessage, ASSERT_MESSAGE_BUFFER_SIZE, "\n");
-		}
-	}*/
+		strMessage += stackTrace[i] + L("\n");
+	}
 
 	strMessage += L("***************");
 

@@ -1,4 +1,5 @@
 #include "Window.h"
+#include <vector>
 
 #include "../Base/StringUtils.h"
 #include "../Base/Singleton.h"

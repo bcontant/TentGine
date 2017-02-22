@@ -22,6 +22,8 @@ typedef wchar_t StringChar;
 
 #define TO_WSTRING StdString
 #define TO_STRING WStringToString
+#define FROM_STRING StringToWString
+#define FROM_WSTRING StdString
 
 #else
 #define L(x) x
@@ -39,6 +41,8 @@ typedef char StringChar;
 
 #define TO_WSTRING StringToWString
 #define TO_STRING StdString
+#define FROM_STRING StdString
+#define FROM_WSTRING WStringToString
 
 #endif
 

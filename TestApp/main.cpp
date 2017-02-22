@@ -1,11 +1,11 @@
 #include <windows.h>
-
 #include <stdio.h>
 
 #include "../Base/Assert.h"
 #include "../Base/Logger.h"
 #include "../Base/Path.h"
 
+#include "../OS_Base/System.h"
 #include "../OS_Base/FontBuilder.h"
 #include "../OS_Base/Window.h"
 
@@ -17,9 +17,6 @@
 int CALLBACK WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nCmdShow)
 {
 	Logger::CreateInstance();
-
-	for (int i = 0; i < 4; i++)
-		AssertMsg(false, L("WTF"));
 
 	CoInitialize(NULL);
 		

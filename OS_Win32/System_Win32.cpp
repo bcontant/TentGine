@@ -1,5 +1,10 @@
 #include "precompiled.h"
 
+#pragma warning(push)
+#pragma warning(disable: 4091)
+#include "DbgHelp.h"
+#pragma warning(pop)
+
 namespace OS
 {
 	void DebugOut(StringChar* in_pMessage)
@@ -48,4 +53,35 @@ namespace OS
 	{
 		return (GetAsyncKeyState(VK_LSHIFT) & 0x8000) > 0;
 	}
+
+	std::vector<StdString> GetCallStack(void* sample_address)
+	{
+		std::vector<StdString> stackTrace;
+		
+		HANDLE process = GetCurrentProcess();
+		SymInitialize(process, NULL, TRUE);
+
+		// ## The sum of the FramesToSkip and FramesToCapture parameters must be less than 63.
+		const int kMaxCallers = 62;
+		void* callers_stack[kMaxCallers];
+		unsigned short frames = RtlCaptureStackBackTrace(0, kMaxCallers, callers_stack, NULL);
+
+		SYMBOL_INFO* symbol = (SYMBOL_INFO *)calloc(sizeof(SYMBOL_INFO) + 256 * sizeof(char), 1);
+		symbol->MaxNameLen = 255;
+		symbol->SizeOfStruct = sizeof(SYMBOL_INFO);
+
+		for (unsigned int i = 1; i < frames; i++)
+		{
+			SymFromAddr(process, (DWORD64)(callers_stack[i]), 0, symbol);
+			StdString function = FROM_STRING(symbol->Name);
+			stackTrace.push_back(Format(L(" %s (0x%0X)"), function.c_str(), symbol->Address));
+
+			if (function == L("main") || function == L("WinMain"))
+				break;
+		}
+
+		free(symbol);
+		return stackTrace;
+	}
 }
+

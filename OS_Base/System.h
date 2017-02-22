@@ -1,5 +1,6 @@
 #pragma once
 
+#include <vector>
 #include "../Base/StringUtils.h"
 
 namespace OS
@@ -20,4 +21,6 @@ namespace OS
 	int ShowMessageBox(const StringChar* title, const StringChar* message, unsigned int buttons);
 
 	bool LShiftDown();
+
+	std::vector<StdString> GetCallStack(void* sample_address);
 }
