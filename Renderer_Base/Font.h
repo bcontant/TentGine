@@ -15,7 +15,7 @@ public:
 
 	void Load(const Path& in_filename);
 
-private:
+//private:
 	FontDataFile* m_FontDataFile;
 	Texture* m_pFontTexture;
 };

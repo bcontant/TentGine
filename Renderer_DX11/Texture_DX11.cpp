@@ -24,6 +24,7 @@ void Texture_DX11::Initialize(unsigned int width, unsigned int height, const uns
 	desc.ArraySize = 1;
 	//desc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
 	desc.Format = DXGI_FORMAT_R8_UNORM;
+	//desc.Format = DXGI_FORMAT_A8_UNORM;
 	desc.SampleDesc.Count = 1;
 	desc.SampleDesc.Quality = 0;
 	desc.Usage = D3D11_USAGE_DEFAULT;
