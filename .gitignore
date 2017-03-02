@@ -1,9 +1,15 @@
 *.sdf
 *.user
-/TgRendererDX11/simple_pixel.h
-/TgRendererDX11/simple_vertex.h
+/Renderer_DX11/simple_pixel.h
+/Renderer_DX11/simple_vertex.h
+/Temp/*
+/bin/*
+/lib/*
 *.suo
 *.log
 *.tlog
 *.opendb
 *.ipch
+*.obj
+*.idb
+
