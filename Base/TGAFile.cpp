@@ -27,26 +27,34 @@ struct TGA_Header
 
 void SaveTGA(const Path& in_file, BitmapData* in_pData)
 {
-	BitmapData* pTmp = in_pData->ConvertTo(BitmapData::eBF_ARGB_U32);
-
+	//in_pData = in_pData->ConvertTo(BitmapData::eBF_A_U8);
+	//in_pData = in_pData->ConvertTo(BitmapData::eBF_ARGB_U32);
+	//BitmapData* pTmp = in_pData->ConvertTo(BitmapData::eBF_RGB_U24);
+	
 	TGA_Header hdr;
 	hdr.width = in_pData->GetWidth();
 	hdr.height = in_pData->GetHeight();
-	hdr.bitsperpixel = pTmp->GetPixelSize() * 8;
+
+	if(in_pData->GetFormat() == BitmapData::eBF_A_U8)
+		hdr.datatypecode = 3; //B&W Uncompressed
+	else 
+		hdr.datatypecode = 2; //RGB Uncompressed
+	
+	hdr.bitsperpixel = in_pData->GetPixelSize() * 8;
 	
 	File TGAFile;
 	TGAFile.Open(in_file, File::fmWriteOnly);
 	TGAFile.Write(&hdr, sizeof(TGA_Header));
 
-	unsigned int uiLineSize = pTmp->GetPixelSize() * pTmp->GetWidth();
-	char* pCurrentLine = (char*)pTmp->GetBuffer() + (uiLineSize * (pTmp->GetHeight() - 1));
-	for (int i = 0; i < pTmp->GetHeight(); i++)
+	//Bottom -> Top Flip
+	unsigned int uiLineSize = in_pData->GetPixelSize() * in_pData->GetWidth();
+	char* pCurrentLine = (char*)in_pData->GetBuffer() + (uiLineSize * (in_pData->GetHeight() - 1));
+	for (int i = 0; i < in_pData->GetHeight(); i++)
 	{
 		TGAFile.Write(pCurrentLine, uiLineSize);
 		pCurrentLine -= uiLineSize;
 	}
 
-	TGAFile.Write(pTmp->GetBuffer(), pTmp->GetBufferSize());
 	TGAFile.Close();
 }
 

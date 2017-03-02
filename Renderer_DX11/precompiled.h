@@ -13,6 +13,7 @@
 
 #include "../Base/StringUtils.h"
 #include "../Base/Logger.h"
+#include "../Base/Profiler.h"
 #include "../Base/Assert.h"
 
 #include "../OS_Base/Window.h"

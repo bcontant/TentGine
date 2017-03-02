@@ -272,9 +272,11 @@
     <ClInclude Include="BitmapData.h" />
     <ClInclude Include="File.h" />
     <ClInclude Include="FontDataFile.h" />
+    <ClInclude Include="GraphicUtils.h" />
     <ClInclude Include="Logger.h" />
     <ClInclude Include="Path.h" />
     <ClInclude Include="precompiled.h" />
+    <ClInclude Include="Profiler.h" />
     <ClInclude Include="Singleton.h" />
     <ClInclude Include="StringUtils.h" />
     <ClInclude Include="TGAFile.h" />
@@ -284,6 +286,7 @@
     <ClCompile Include="BitmapData.cpp" />
     <ClCompile Include="File.cpp" />
     <ClCompile Include="FontDataFile.cpp" />
+    <ClCompile Include="GraphicUtils.cpp" />
     <ClCompile Include="Logger.cpp" />
     <ClCompile Include="Path.cpp" />
     <ClCompile Include="precompiled.cpp">
@@ -304,6 +307,7 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release - Unicode|x64'">Create</PrecompiledHeader>
       <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Release - Unicode|x64'">precompiled.h</PrecompiledHeaderFile>
     </ClCompile>
+    <ClCompile Include="Profiler.cpp" />
     <ClCompile Include="StringUtils.cpp" />
     <ClCompile Include="TGAFile.cpp" />
   </ItemGroup>

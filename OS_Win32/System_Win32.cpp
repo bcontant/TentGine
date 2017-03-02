@@ -83,5 +83,24 @@ namespace OS
 		free(symbol);
 		return stackTrace;
 	}
+
+	__int64 GetTickCount()
+	{
+		__int64 t;
+		QueryPerformanceCounter((LARGE_INTEGER*)&t);
+		return t;
+	}
+
+	__int64 GetTickFrequency()
+	{
+		static __int64 freq = 0;
+
+		if(freq == 0)
+			QueryPerformanceFrequency((LARGE_INTEGER*)&freq);
+
+		return freq;
+	}
+
+
 }
 

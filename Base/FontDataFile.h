@@ -11,7 +11,7 @@ public:
 	{
 		float lsb;
 		float advance;
-		float rsb;
+		float top;
 
 		float boxX;
 		float boxY;

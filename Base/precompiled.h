@@ -7,6 +7,7 @@
 
 #include <string>
 #include <map>
+#include <unordered_map>
 #include <vector>
 
 #include "Assert.h"
@@ -15,3 +16,4 @@
 #include "File.h"
 #include "Singleton.h"
 #include "Logger.h"
+#include "Profiler.h"

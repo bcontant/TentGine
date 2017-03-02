@@ -36,7 +36,7 @@ int CustomAssertFunction(const StringChar* in_expstr, const StringChar* in_desc,
 	strMessage += L("Stack Trace:\n");
 
 	std::vector<StdString> stackTrace = OS::GetCallStack(NULL);
-	for (unsigned int i = 0; i < stackTrace.size(); i++)
+	for (unsigned int i = 1; i < stackTrace.size(); i++)
 	{
 		strMessage += stackTrace[i] + L("\n");
 	}

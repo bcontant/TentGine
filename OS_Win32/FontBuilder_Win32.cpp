@@ -2,10 +2,10 @@
 
 //This is the code responsible for creating FontFiles.  It uses Direct2D and DirectWrite to generate an 8bit alpha texture of the font.
 //It also stores information about individual glyph LSB and RSB to try and preserve decent spacing for overlapping characters in fonts.
-class FontBuilder : public IDWriteTextRenderer
+class DWriteFontBuilder : public IDWriteTextRenderer
 {
 public:
-	FontBuilder::FontBuilder()
+	DWriteFontBuilder::DWriteFontBuilder()
 	{
 		m_fCurrentX = 0.f;
 		m_fCurrentY = 0.f;
@@ -21,7 +21,7 @@ public:
 		hr = D2D1CreateFactory(D2D1_FACTORY_TYPE_SINGLE_THREADED, &pD2DFactory);
 	}
 
-	FontBuilder::~FontBuilder()
+	DWriteFontBuilder::~DWriteFontBuilder()
 	{
 		//Clean Up
 		pBrush->Release();
@@ -167,14 +167,15 @@ private:
 		FontDataFile::GlyphInfo info;
 		info.advance = FLOAT(metrics.advanceWidth) * designUnitsToPixels;
 		info.lsb = FLOAT(metrics.leftSideBearing) * designUnitsToPixels;
-		info.rsb = FLOAT(metrics.rightSideBearing) * designUnitsToPixels;
+		float rsb = FLOAT(metrics.rightSideBearing) * designUnitsToPixels;
+		info.top = FLOAT(metrics.topSideBearing) * designUnitsToPixels;
 
 		float boxWidth = info.advance;
 		if (info.lsb < 0)
 			boxWidth -= info.lsb;
 
-		if (info.rsb < 0)
-			boxWidth -= info.rsb;
+		if (rsb < 0)
+			boxWidth -= rsb;
 
 		if (m_fCurrentX + boxWidth > m_TextureSize)
 		{
@@ -239,7 +240,7 @@ namespace OS
 	//Create Font from a system installed Font
 	void BuildFont(const StdString& in_FontName, float in_fontSize, unsigned int textureSize)
 	{
-		FontBuilder* fontBuilder = new FontBuilder;
+		DWriteFontBuilder* fontBuilder = new DWriteFontBuilder;
 		fontBuilder->Build(in_FontName, in_fontSize, textureSize);
 		delete fontBuilder;
 	}

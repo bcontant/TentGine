@@ -23,4 +23,7 @@ namespace OS
 	bool LShiftDown();
 
 	std::vector<StdString> GetCallStack(void* sample_address);
+
+	__int64 GetTickCount();
+	__int64 GetTickFrequency();
 }
