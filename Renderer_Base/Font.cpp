@@ -2,18 +2,18 @@
 
 Font::Font(Renderer* pOwner) 
 :RendererObject(pOwner)
-,m_FontDataFile(NULL)
-,m_pFontTexture(NULL) 
+,m_FontDataFile(nullptr)
+,m_pFontTexture(nullptr) 
 {
 }
 
 Font::~Font()
 {
 	delete m_FontDataFile;
-	m_FontDataFile = NULL;
+	m_FontDataFile = nullptr;
 
 	delete m_pFontTexture;
-	m_pFontTexture = NULL;
+	m_pFontTexture = nullptr;
 }
 
 void Font::Load(const Path& in_filename)

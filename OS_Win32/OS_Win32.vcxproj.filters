@@ -18,9 +18,6 @@
     <ClCompile Include="Window_Win32.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="FontBuilder_Win32.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="System_Win32.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>

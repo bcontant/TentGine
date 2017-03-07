@@ -28,7 +28,7 @@ namespace OS
 		else
 			return -1;
 		
-		int iRet = MessageBox(NULL, message, title, type);
+		int iRet = MessageBox(nullptr, message, title, type);
 		switch (iRet)
 		{
 		case (IDOK) :
@@ -54,17 +54,17 @@ namespace OS
 		return (GetAsyncKeyState(VK_LSHIFT) & 0x8000) > 0;
 	}
 
-	std::vector<StdString> GetCallStack(void* sample_address)
+	std::vector<StdString> GetCallStack()
 	{
 		std::vector<StdString> stackTrace;
 		
 		HANDLE process = GetCurrentProcess();
-		SymInitialize(process, NULL, TRUE);
+		SymInitialize(process, nullptr, TRUE);
 
 		// ## The sum of the FramesToSkip and FramesToCapture parameters must be less than 63.
 		const int kMaxCallers = 62;
 		void* callers_stack[kMaxCallers];
-		unsigned short frames = RtlCaptureStackBackTrace(0, kMaxCallers, callers_stack, NULL);
+		unsigned short frames = RtlCaptureStackBackTrace(0, kMaxCallers, callers_stack, nullptr);
 
 		SYMBOL_INFO* symbol = (SYMBOL_INFO *)calloc(sizeof(SYMBOL_INFO) + 256 * sizeof(char), 1);
 		symbol->MaxNameLen = 255;

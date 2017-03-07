@@ -112,7 +112,7 @@ void Quad_DX11::Draw()
 	Renderer_DX11* pDX11Renderer = (Renderer_DX11*)GetOwner();
 
 	D3D11_MAPPED_SUBRESOURCE mappedResource;
-	HRESULT hr = pDX11Renderer->GetContext()->Map(pConstantBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedResource);
+	/*HRESULT hr = */pDX11Renderer->GetContext()->Map(pConstantBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedResource);
 
 	CBStruct* dataPtr = (CBStruct*)mappedResource.pData;
 

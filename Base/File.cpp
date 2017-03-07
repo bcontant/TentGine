@@ -14,7 +14,7 @@ const StringChar* File::s_FileModes[File::fmCount] =
 
 //--------------------------------------------------------------------------------
 File::File()
-	:m_FileHandle(NULL)
+	:m_FileHandle(nullptr)
 	,m_FileMode(fmCount)
 {
 }
@@ -56,7 +56,7 @@ bool File::Close()
 
 	// Close the handle
 	fclose(m_FileHandle);
-	m_FileHandle = NULL;
+	m_FileHandle = nullptr;
 
 	return true;
 }

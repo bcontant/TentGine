@@ -3,13 +3,13 @@
 #include "FontDataFile.h"
 
 FontDataFile::FontDataFile()
-	: m_FontSize(0.f)
+	: m_FontSize(0)
 	, m_TextureSize(0)
-	, m_pFontTextureData(NULL)
+	, m_pFontTextureData(nullptr)
 {
 }
 
-FontDataFile::FontDataFile(const StdString& in_FontName, float in_FontSize, unsigned int in_TextureSize, std::map<wchar_t, GlyphInfo> in_mGlyphs, const unsigned char* in_pData)
+FontDataFile::FontDataFile(const StdString& in_FontName, unsigned int in_FontSize, unsigned int in_TextureSize, std::map<wchar_t, GlyphInfo> in_mGlyphs, const unsigned char* in_pData)
 	: m_FontName(in_FontName)
 	, m_FontSize(in_FontSize)
 	, m_TextureSize(in_TextureSize) 
@@ -23,13 +23,14 @@ FontDataFile::FontDataFile(const StdString& in_FontName, float in_FontSize, unsi
 FontDataFile::~FontDataFile()
 {
 	delete[] m_pFontTextureData;
-	m_pFontTextureData = NULL;
+	m_pFontTextureData = nullptr;
 }
 
 void FontDataFile::Save(const Path& in_filename) const
 {
 	File fontFile;
-	fontFile.Open(in_filename, File::fmWriteOnly);
+	if (!fontFile.Open(in_filename, File::fmWriteOnly))
+		return;
 
 	fontFile.Write(m_FontName);
 	fontFile.Write(&m_FontSize, sizeof(float));
@@ -52,10 +53,11 @@ void FontDataFile::Save(const Path& in_filename) const
 void FontDataFile::Load(const Path& in_filename)
 {
 	delete[] m_pFontTextureData;
-	m_pFontTextureData = NULL;
+	m_pFontTextureData = nullptr;
 
 	File fontFile;
-	fontFile.Open(in_filename, File::fmReadOnly);
+	if (!fontFile.Open(in_filename, File::fmReadOnly))
+		return;
 
 	fontFile.Read(m_FontName);
 	fontFile.Read(&m_FontSize, sizeof(float));

@@ -24,7 +24,7 @@ private:
 	__int64 m_i64StartTime = 0;
 	__int64 m_i64StopTime = 0;
 
-	float m_fBlockTimeMs = 0.f;
+	double m_fBlockTimeMs = 0.f;
 
 	char* m_SectionID = nullptr;
 

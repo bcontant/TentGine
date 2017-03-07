@@ -9,9 +9,9 @@ class FontDataFile
 public:
 	struct GlyphInfo
 	{
-		float lsb;
-		float advance;
-		float top;
+		int left;
+		int advance;
+		int top;
 
 		float boxX;
 		float boxY;
@@ -20,7 +20,7 @@ public:
 	};
 
 	FontDataFile();
-	FontDataFile(const StdString& in_FontName, float in_FontSize, unsigned int in_TextureSize, std::map<wchar_t, GlyphInfo> in_mGlyphs, const unsigned char* in_pData);
+	FontDataFile(const StdString& in_FontName, unsigned int in_uiFontSize, unsigned int in_TextureSize, std::map<wchar_t, GlyphInfo> in_mGlyphs, const unsigned char* in_pData);
 
 	virtual ~FontDataFile();
 
@@ -28,14 +28,14 @@ public:
 	void Save(const Path& in_filename) const;
 
 	const StdString& GetFontName() const { return m_FontName; }
-	float GetFontSize() const { return m_FontSize; }
+	unsigned int GetFontSize() const { return m_FontSize; }
 
 	unsigned int GetTextureSize() const { return m_TextureSize; }
 	const unsigned char* const GetTextureData() const { return m_pFontTextureData; }
 		
 private:
 	StdString m_FontName;
-	float m_FontSize;
+	unsigned int m_FontSize;
 
 	std::map<wchar_t, GlyphInfo> m_mGlyphs;
 

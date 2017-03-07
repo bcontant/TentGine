@@ -55,9 +55,9 @@ void Renderer_DX11::StartFrame()
 		HRESULT hr = S_OK;
 		hr = pSwapChain->ResizeBuffers(1, m_pWindow->GetWidth(), m_pWindow->GetHeight(), DXGI_FORMAT_R8G8B8A8_UNORM, 0);
 		hr = pSwapChain->GetBuffer(0, __uuidof(ID3D11Texture2D), (void**)&pBackBuffer);
-		hr = pD3D11Device->CreateRenderTargetView(pBackBuffer, NULL, &pBackBufferView);
+		hr = pD3D11Device->CreateRenderTargetView(pBackBuffer, nullptr, &pBackBufferView);
 
-		pD3D11DeviceContext->OMSetRenderTargets(1, &pBackBufferView, NULL);
+		pD3D11DeviceContext->OMSetRenderTargets(1, &pBackBufferView, nullptr);
 
 		D3D11_VIEWPORT viewport = {};
 		viewport.TopLeftX = 0;
@@ -74,7 +74,7 @@ void Renderer_DX11::StartFrame()
 
 void Renderer_DX11::EndFrame()
 {
-	HRESULT hr = pSwapChain->Present(0, 0);
+	/*HRESULT hr = */pSwapChain->Present(0, 0);
 }
 
 unsigned int Renderer_DX11::GetBackBufferWidth() const
@@ -90,7 +90,7 @@ unsigned int Renderer_DX11::GetBackBufferHeight() const
 	return desc.Height;
 }
 
-void Renderer_DX11::Initialize(DisplayAdapter* in_pAdapter, Window* in_pWindow)
+void Renderer_DX11::Initialize(DisplayAdapter* /*in_pAdapter*/, Window* in_pWindow)
 {
 	DXGI_SWAP_CHAIN_DESC swapChainDesc = {};
 	swapChainDesc.BufferDesc.Width = in_pWindow->GetWidth();
@@ -107,12 +107,12 @@ void Renderer_DX11::Initialize(DisplayAdapter* in_pAdapter, Window* in_pWindow)
 	swapChainDesc.SwapEffect = DXGI_SWAP_EFFECT_DISCARD;
 	//swapChainDesc.SwapEffect = DXGI_SWAP_EFFECT_SEQUENTIAL;
 
-	HRESULT hr = D3D11CreateDeviceAndSwapChain(NULL, D3D_DRIVER_TYPE_HARDWARE, NULL, D3D11_CREATE_DEVICE_DEBUG, NULL, 0, D3D11_SDK_VERSION, &swapChainDesc, &pSwapChain, &pD3D11Device, NULL, &pD3D11DeviceContext);
-	//pRenderer->pSwapChain->SetFullscreenState(TRUE, NULL);
+	HRESULT hr = D3D11CreateDeviceAndSwapChain(nullptr, D3D_DRIVER_TYPE_HARDWARE, nullptr, D3D11_CREATE_DEVICE_DEBUG, nullptr, 0, D3D11_SDK_VERSION, &swapChainDesc, &pSwapChain, &pD3D11Device, nullptr, &pD3D11DeviceContext);
+	//pRenderer->pSwapChain->SetFullscreenState(TRUE, nullptr);
 
 	hr = pSwapChain->GetBuffer(0, __uuidof(ID3D11Texture2D), (void**)&pBackBuffer);
-	hr = pD3D11Device->CreateRenderTargetView(pBackBuffer, NULL, &pBackBufferView);
-	pD3D11DeviceContext->OMSetRenderTargets(1, &pBackBufferView, NULL);
+	hr = pD3D11Device->CreateRenderTargetView(pBackBuffer, nullptr, &pBackBufferView);
+	pD3D11DeviceContext->OMSetRenderTargets(1, &pBackBufferView, nullptr);
 
 	D3D11_VIEWPORT viewport = {};
 	viewport.TopLeftX = 0;
@@ -122,8 +122,8 @@ void Renderer_DX11::Initialize(DisplayAdapter* in_pAdapter, Window* in_pWindow)
 
 	pD3D11DeviceContext->RSSetViewports(1, &viewport);
 
-	hr = pD3D11Device->CreateVertexShader(g_VShader, sizeof(g_VShader), NULL, &pVertexShader);
-	hr = pD3D11Device->CreatePixelShader(g_PShader, sizeof(g_PShader), NULL, &pPixelShader);
+	hr = pD3D11Device->CreateVertexShader(g_VShader, sizeof(g_VShader), nullptr, &pVertexShader);
+	hr = pD3D11Device->CreatePixelShader(g_PShader, sizeof(g_PShader), nullptr, &pPixelShader);
 	pD3D11DeviceContext->VSSetShader(pVertexShader, 0, 0);
 	pD3D11DeviceContext->PSSetShader(pPixelShader, 0, 0);
 
@@ -139,7 +139,7 @@ void Renderer_DX11::Initialize(DisplayAdapter* in_pAdapter, Window* in_pWindow)
 	BlendState.RenderTarget[0].RenderTargetWriteMask = D3D11_COLOR_WRITE_ENABLE_ALL;
 	pD3D11Device->CreateBlendState(&BlendState, &pBlendState);
 
-	pD3D11DeviceContext->OMSetBlendState(pBlendState, NULL, 0xffffffff);
+	pD3D11DeviceContext->OMSetBlendState(pBlendState, nullptr, 0xffffffff);
 
 	IDXGIDevice * pDXGIDevice;
 	hr = pD3D11Device->QueryInterface(__uuidof(IDXGIDevice), (void **)&pDXGIDevice);

@@ -14,9 +14,9 @@ public:
 		m_mGlyphs.clear();
 
 		//Just in case no one else called it.
-		HRESULT hr = CoInitialize(NULL);
+		HRESULT hr = CoInitialize(nullptr);
 
-		hr = CoCreateInstance(CLSID_WICImagingFactory, NULL, CLSCTX_INPROC_SERVER, IID_IWICImagingFactory, (LPVOID*)&pWICFactory);
+		hr = CoCreateInstance(CLSID_WICImagingFactory, nullptr, CLSCTX_INPROC_SERVER, IID_IWICImagingFactory, (LPVOID*)&pWICFactory);
 		hr = DWriteCreateFactory(DWRITE_FACTORY_TYPE_SHARED, __uuidof(IDWriteFactory), reinterpret_cast<IUnknown**>(&pDWriteFactory));
 		hr = D2D1CreateFactory(D2D1_FACTORY_TYPE_SINGLE_THREADED, &pD2DFactory);
 	}
@@ -44,7 +44,7 @@ public:
 
 		//Init the string we'll use for creating the FontFileTexture
 		wchar_t wszTextureText[512] = {};
-		for (int i = 1; i <= 255; i++)
+		for (wchar_t i = 1; i <= 255; i++)
 			wszTextureText[i - 1] = i;
 		UINT32 cTextureTextLength = (UINT32)wcslen(wszTextureText);
 
@@ -52,7 +52,7 @@ public:
 		HRESULT hr = pWICFactory->CreateBitmap(in_TextureSize, in_TextureSize, GUID_WICPixelFormat8bppAlpha, WICBitmapCacheOnLoad, &pWICBitmap);
 
 		//Create the requested FontFormat
-		hr = pDWriteFactory->CreateTextFormat(TO_WSTRING(in_FontName).c_str(), NULL, DWRITE_FONT_WEIGHT_REGULAR, DWRITE_FONT_STYLE_NORMAL, DWRITE_FONT_STRETCH_NORMAL, in_FontSize * (96.f / 72.f), L"en-us", &pTextFormat);
+		hr = pDWriteFactory->CreateTextFormat(TO_WSTRING(in_FontName).c_str(), nullptr, DWRITE_FONT_WEIGHT_REGULAR, DWRITE_FONT_STYLE_NORMAL, DWRITE_FONT_STRETCH_NORMAL, in_FontSize * (96.f / 72.f), L"en-us", &pTextFormat);
 		hr = pTextFormat->SetTextAlignment(DWRITE_TEXT_ALIGNMENT_LEADING);
 		hr = pTextFormat->SetParagraphAlignment(DWRITE_PARAGRAPH_ALIGNMENT_NEAR);
 		
@@ -84,9 +84,9 @@ public:
 		//Render characters one at a time in order to avoid : unwanted line breaks, kerning and other spacing oddities.
 		for (unsigned int i = 0; i < cTextureTextLength; i++)
 		{
-			IDWriteTextLayout* pTextLayout = NULL;
+			IDWriteTextLayout* pTextLayout = nullptr;
 			hr = pDWriteFactory->CreateTextLayout(wszTextureText + i, 1, pTextFormat, (FLOAT)in_TextureSize, (FLOAT)in_TextureSize, (IDWriteTextLayout**)&pTextLayout);
-			pTextLayout->Draw(NULL, this, this->m_fCurrentX, this->m_fCurrentY);
+			pTextLayout->Draw(nullptr, this, this->m_fCurrentX, this->m_fCurrentY);
 			pTextLayout->Release();
 		}
 
@@ -114,21 +114,21 @@ private:
 
 	std::map<wchar_t, FontDataFile::GlyphInfo> m_mGlyphs;
 
-	IWICImagingFactory* pWICFactory = NULL;
-	IWICBitmap *pWICBitmap = NULL;
+	IWICImagingFactory* pWICFactory = nullptr;
+	IWICBitmap *pWICBitmap = nullptr;
 
-	ID2D1Factory* pD2DFactory = NULL;
-	ID2D1RenderTarget* pRT = NULL;
-	ID2D1SolidColorBrush* pBrush = NULL;
+	ID2D1Factory* pD2DFactory = nullptr;
+	ID2D1RenderTarget* pRT = nullptr;
+	ID2D1SolidColorBrush* pBrush = nullptr;
 
-	IDWriteFactory* pDWriteFactory = NULL;
-	IDWriteTextFormat* pTextFormat = NULL;
-	IDWriteFont* pFont = NULL;
-	IDWriteFontCollection* pFontCollection = NULL;
-	IDWriteFontFamily* pFontFamily = NULL;
+	IDWriteFactory* pDWriteFactory = nullptr;
+	IDWriteTextFormat* pTextFormat = nullptr;
+	IDWriteFont* pFont = nullptr;
+	IDWriteFontCollection* pFontCollection = nullptr;
+	IDWriteFontFamily* pFontFamily = nullptr;
 	
 	//IUnknown
-	HRESULT STDMETHODCALLTYPE QueryInterface(REFIID riid, _COM_Outptr_ void __RPC_FAR *__RPC_FAR *ppvObject) { return S_OK; };
+	HRESULT STDMETHODCALLTYPE QueryInterface(REFIID, _COM_Outptr_ void __RPC_FAR *__RPC_FAR *) { return S_OK; };
 	ULONG STDMETHODCALLTYPE AddRef(void) { return 1; };
 	ULONG STDMETHODCALLTYPE Release(void) { return 1; };
 
@@ -140,7 +140,7 @@ private:
 	}
 
 	//IDWriteTextRenderer
-	STDMETHOD(DrawGlyphRun)(_In_opt_ void* clientDrawingContext, FLOAT baselineOriginX, FLOAT baselineOriginY, DWRITE_MEASURING_MODE measuringMode, _In_ DWRITE_GLYPH_RUN const* glyphRun, _In_ DWRITE_GLYPH_RUN_DESCRIPTION const* glyphRunDescription, _In_opt_ IUnknown* clientDrawingEffect)
+	STDMETHOD(DrawGlyphRun)(_In_opt_ void* /*clientDrawingContext*/, FLOAT /*baselineOriginX*/, FLOAT baselineOriginY, DWRITE_MEASURING_MODE /*measuringMode*/, _In_ DWRITE_GLYPH_RUN const* glyphRun, _In_ DWRITE_GLYPH_RUN_DESCRIPTION const* glyphRunDescription, _In_opt_ IUnknown* /*clientDrawingEffect*/)
 	{
 		HRESULT hr = S_OK;
 
@@ -166,13 +166,13 @@ private:
 
 		FontDataFile::GlyphInfo info;
 		info.advance = FLOAT(metrics.advanceWidth) * designUnitsToPixels;
-		info.lsb = FLOAT(metrics.leftSideBearing) * designUnitsToPixels;
+		info.left = FLOAT(metrics.leftSideBearing) * designUnitsToPixels;
 		float rsb = FLOAT(metrics.rightSideBearing) * designUnitsToPixels;
 		info.top = FLOAT(metrics.topSideBearing) * designUnitsToPixels;
 
 		float boxWidth = info.advance;
-		if (info.lsb < 0)
-			boxWidth -= info.lsb;
+		if (info.left < 0)
+			boxWidth -= info.left;
 
 		if (rsb < 0)
 			boxWidth -= rsb;
@@ -191,8 +191,8 @@ private:
 		m_mGlyphs[glyphRunDescription->string[0]] = info;
 
 		D2D1_RECT_F rc = { m_fCurrentX, m_fCurrentY, 1024, 1024 };
-		if (info.lsb < 0)
-			rc.left -= info.lsb;
+		if (info.left < 0)
+			rc.left -= info.left;
 
 		pRT->DrawText(glyphRunDescription->string, 1, pTextFormat, rc, pBrush);
 
@@ -201,34 +201,34 @@ private:
 		return S_OK;
 	}
 
-	STDMETHOD(DrawUnderline)(_In_opt_ void* clientDrawingContext, FLOAT baselineOriginX, FLOAT baselineOriginY, _In_ DWRITE_UNDERLINE const* underline, _In_opt_ IUnknown* clientDrawingEffect)
+	STDMETHOD(DrawUnderline)(_In_opt_ void*, FLOAT, FLOAT, _In_ DWRITE_UNDERLINE const*, _In_opt_ IUnknown*)
 	{
 		return S_OK;
 	}
 
-	STDMETHOD(DrawStrikethrough)(_In_opt_ void* clientDrawingContext, FLOAT baselineOriginX, FLOAT baselineOriginY, _In_ DWRITE_STRIKETHROUGH const* strikethrough, _In_opt_ IUnknown* clientDrawingEffect)
+	STDMETHOD(DrawStrikethrough)(_In_opt_ void*, FLOAT, FLOAT, _In_ DWRITE_STRIKETHROUGH const*, _In_opt_ IUnknown*)
 	{
 		return S_OK;
 	}
 
-	STDMETHOD(DrawInlineObject)(_In_opt_ void* clientDrawingContext, FLOAT originX, FLOAT originY, _In_ IDWriteInlineObject* inlineObject, BOOL isSideways, BOOL isRightToLeft, _In_opt_ IUnknown* clientDrawingEffect)
+	STDMETHOD(DrawInlineObject)(_In_opt_ void*, FLOAT, FLOAT, _In_ IDWriteInlineObject*, BOOL, BOOL, _In_opt_ IUnknown*)
 	{
 		return S_OK;
 	}
 
-	STDMETHOD(IsPixelSnappingDisabled)(_In_opt_ void* clientDrawingContext, _Out_ BOOL* isDisabled)
+	STDMETHOD(IsPixelSnappingDisabled)(_In_opt_ void*, _Out_ BOOL* isDisabled)
 	{
 		*isDisabled = FALSE;
 		return S_OK;
 	}
 
-	STDMETHOD(GetCurrentTransform)(_In_opt_ void* clientDrawingContext, _Out_ DWRITE_MATRIX* transform)
+	STDMETHOD(GetCurrentTransform)(_In_opt_ void*, _Out_ DWRITE_MATRIX* transform)
 	{
 		pRT->GetTransform(reinterpret_cast<D2D1_MATRIX_3X2_F*>(transform));
 		return S_OK;
 	}
 
-	STDMETHOD(GetPixelsPerDip)(_In_opt_ void* clientDrawingContext, _Out_ FLOAT* pixelsPerDip)
+	STDMETHOD(GetPixelsPerDip)(_In_opt_ void* , _Out_ FLOAT* pixelsPerDip)
 	{
 		*pixelsPerDip = 1.f;
 		return S_OK;

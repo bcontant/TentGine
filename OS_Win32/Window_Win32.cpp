@@ -11,7 +11,7 @@ Window_Win32::~Window_Win32()
 {
 }
 
-void Window_Win32::InitWindow(int width, int height, bool fullscreen, void* hInstance)
+void Window_Win32::InitWindow(int width, int height, bool /*fullscreen*/, void* hInstance)
 {
 	WNDCLASSEX wcex = { sizeof(WNDCLASSEX) };
 	wcex.style = CS_HREDRAW | CS_VREDRAW;
@@ -19,9 +19,9 @@ void Window_Win32::InitWindow(int width, int height, bool fullscreen, void* hIns
 	wcex.cbClsExtra = 0;
 	wcex.cbWndExtra = sizeof(LONG_PTR);
 	wcex.hInstance = (HINSTANCE)hInstance;
-	wcex.hbrBackground = NULL;
-	wcex.lpszMenuName = NULL;
-	wcex.hCursor = LoadCursor(NULL, IDI_APPLICATION);
+	wcex.hbrBackground = nullptr;
+	wcex.lpszMenuName = nullptr;
+	wcex.hCursor = LoadCursor(nullptr, IDI_APPLICATION);
 	wcex.lpszClassName = L("DX11App");
 
 	RegisterClassEx(&wcex);
@@ -29,7 +29,7 @@ void Window_Win32::InitWindow(int width, int height, bool fullscreen, void* hIns
 	RECT rc = { 0, 0, width, height };
 	AdjustWindowRect(&rc, WS_OVERLAPPEDWINDOW, FALSE);
 
-	m_windowHandle = (void*)CreateWindow(L("DX11App"), L("DX11 App"), WS_OVERLAPPEDWINDOW, CW_USEDEFAULT, CW_USEDEFAULT, rc.right - rc.left, rc.bottom - rc.top, NULL, NULL, (HINSTANCE)hInstance, this);
+	m_windowHandle = (void*)CreateWindow(L("DX11App"), L("DX11 App"), WS_OVERLAPPEDWINDOW, CW_USEDEFAULT, CW_USEDEFAULT, rc.right - rc.left, rc.bottom - rc.top, nullptr, nullptr, (HINSTANCE)hInstance, this);
 
 	ShowWindow((HWND)m_windowHandle, SW_SHOWNORMAL);
 	UpdateWindow((HWND)m_windowHandle);
@@ -41,7 +41,7 @@ void Window_Win32::InitWindow(int width, int height, bool fullscreen, void* hIns
 bool Window_Win32::ProcessMessages()
 {
 	MSG msg;
-	if(PeekMessage(&msg, NULL, 0, 0, PM_REMOVE))
+	if(PeekMessage(&msg, nullptr, 0, 0, PM_REMOVE))
 	{
 		if (msg.message == WM_QUIT)
 			return false;
@@ -52,7 +52,7 @@ bool Window_Win32::ProcessMessages()
 	return true;
 }
 
-bool Window_Win32::MessageCallback(void* hwnd, unsigned int message, uint64_t wParam, int64_t lParam)
+bool Window_Win32::MessageCallback(void* /*hwnd*/, unsigned int message, uint64_t /*wParam*/, int64_t lParam)
 {
 	switch (message)
 	{

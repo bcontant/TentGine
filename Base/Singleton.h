@@ -23,7 +23,7 @@ public:
 
 	static void CreateInstance()
 	{
-		AssertMsg(!Singleton<T>::ms_pInstance, L("%s::CreateInstance : Instance already created"), T::GET_NAME());
+		AssertMsg(!Singleton<T>::ms_pInstance, L("Instance already created"));
 		if (!Singleton<T>::ms_pInstance)
 		{
 			Singleton<T>::ms_pInstance = new T;
@@ -40,7 +40,7 @@ protected:
 	Singleton(const Singleton &);
 	void operator =(const Singleton &);
 
-	virtual void Initialize() = 0;
+	virtual void Initialize() {};
 
 	//Unique instance
 	static T *ms_pInstance;

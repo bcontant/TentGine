@@ -9,7 +9,7 @@ Texture_DX11::~Texture_DX11()
 void Texture_DX11::Initialize(const Path& filename)
 {
 	Renderer_DX11* pOwner = (Renderer_DX11*)GetOwner();
-	HRESULT hr = CreateWICTextureFromFile(pOwner->GetDevice(), pOwner->GetContext(), filename.GetData(), &pTexture, &pShaderResourceView, 0);
+	/*HRESULT hr = */CreateWICTextureFromFile(pOwner->GetDevice(), pOwner->GetContext(), filename.GetData(), &pTexture, &pShaderResourceView, 0);
 }
 
 void Texture_DX11::Initialize(unsigned int width, unsigned int height, const unsigned char* pBits)
@@ -47,7 +47,7 @@ void Texture_DX11::Initialize(unsigned int width, unsigned int height, const uns
 	hr = pOwner->GetDevice()->CreateShaderResourceView(pTexture, &SRVDesc, &pShaderResourceView);
 }
 
-void Texture_DX11::Bind(unsigned int startSlot)
+void Texture_DX11::Bind(unsigned int /*startSlot*/)
 {
 	Renderer_DX11* pDX11Renderer = (Renderer_DX11*) GetOwner();
 	pDX11Renderer->GetContext()->PSSetShaderResources(0, 1, &pShaderResourceView);

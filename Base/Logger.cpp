@@ -41,7 +41,7 @@ void Logger::Initialize()
 
 void Logger::Log(ELogCategory in_eCategory, ELogSeverity in_eSeverity, ELogType in_eLogType, const StringChar* in_pMsg, ...)
 {
-	if (this == NULL)
+	if (this == nullptr)
 		return;
 
 	static StringChar strTemp[16384];
