@@ -25,12 +25,14 @@ int CALLBACK WinMain(HINSTANCE hInstance, HINSTANCE, LPSTR, int)
 
 	CoInitialize(nullptr);
 
-	OS::BuildFont(L("../../data/Comic.ttf"), 72, 1024, OS::eFF_ForceAutoHint | OS::eFF_Mono);
+	OS::BuildFont(L("../../data/Comic.ttf"), 72, 1024, OS::eFF_ForceAutoHint/* | OS::eFF_Mono*/);
 					
 	Window* pWindow = Window::Create(1024, 1024, false, hInstance);
 
 	BitmapData* pImage = LoadTGA(L("../../data/fontrect.tga"));
-	SaveTGA(L("../../data/TEST.tga"), pImage);
+	SaveTGA(L("../../data/TEST.tga"), pImage, true);
+	//pImage = LoadTGA(L("../../data/TEST.tga"));
+	//SaveTGA(L("../../data/TEST2.tga"), pImage, false);
 	
 	//OS::GetDisplayAdapters();
 	

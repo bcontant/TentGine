@@ -63,13 +63,13 @@ void SaveTGA(const Path& in_file, BitmapData* in_pData, bool in_bCompress)
 	case BitmapData::eBF_ARGB_U32:
 		hdr.ImageType = eTGA_TrueColor; hdr.ImageDescriptor = 8; break;
 	default:	
-		AssertMsg(false, "Unsupported format (%d)", in_pData->GetFormat());
+		AssertMsg(false, L("Unsupported format (%d)"), in_pData->GetFormat());
 		return;
 	}
 
 	//TODO
-	//if (in_bCompress)
-	//	hdr.ImageType |= eTGA_RLE;
+	if (in_bCompress)
+		hdr.ImageType |= eTGA_RLE;
 
 	hdr.ColorMapOrigin = 0;
 	hdr.ColorMapLength = 0;
@@ -88,12 +88,67 @@ void SaveTGA(const Path& in_file, BitmapData* in_pData, bool in_bCompress)
 	TGAFile.Open(in_file, File::fmWriteOnly);
 	TGAFile.Write(&hdr, sizeof(TGA_Header));
 
-	unsigned int uiLineSize = in_pData->GetBufferPitch();
-	unsigned char* pCurrentLine = (unsigned char*)in_pData->GetBuffer();
-	for (unsigned int i = 0; i < in_pData->GetHeight(); i++)
+	if (!in_bCompress)
 	{
-		TGAFile.Write(pCurrentLine, uiLineSize);
-		pCurrentLine += uiLineSize;
+		TGAFile.Write(in_pData->GetBuffer(), in_pData->GetBufferSize());
+	}
+	else
+	{
+		unsigned int writtenBytes = 0;
+		unsigned char consecutiveRunSize = 1;
+		unsigned char rawRunSize = 0;
+		unsigned int currentRunIndex = 0;
+
+		unsigned char* pBuffer = (unsigned char*)in_pData->GetBuffer();
+		while (writtenBytes < in_pData->GetBufferSize())
+		{
+			while (consecutiveRunSize < 128 && rawRunSize < 128 && writtenBytes + currentRunIndex < in_pData->GetBufferSize())
+			{
+				if (writtenBytes + currentRunIndex + 1 < in_pData->GetBufferSize() &&
+					pBuffer[writtenBytes + currentRunIndex] == pBuffer[writtenBytes + currentRunIndex + 1])
+				{
+					consecutiveRunSize++;
+				}
+				else
+				{
+					if (consecutiveRunSize >= 3)
+					{
+						break;
+					}
+
+					rawRunSize++;
+					if (consecutiveRunSize > 1)
+						rawRunSize++;
+
+					consecutiveRunSize = 1;
+				}
+				currentRunIndex++;
+			} 
+
+			//Write the rawRun if any
+			if (rawRunSize > 0)
+			{
+				Assert(rawRunSize > 0);
+				unsigned char runSize = rawRunSize - 1;
+				TGAFile.Write(&runSize, 1);
+				TGAFile.Write(&pBuffer[writtenBytes], rawRunSize);
+				writtenBytes += rawRunSize;
+			}
+
+			//Write the consecutiveRun if any
+			if (consecutiveRunSize >= 3)
+			{
+				unsigned char runSize = consecutiveRunSize - 1;
+				runSize |= 0x80;
+				TGAFile.Write(&runSize, 1);
+				TGAFile.Write(&pBuffer[writtenBytes], 1);
+				writtenBytes += consecutiveRunSize;
+			}
+
+			rawRunSize = 0;
+			consecutiveRunSize = 1;
+			currentRunIndex = 0;
+		}
 	}
 
 	TGAFile.Close();

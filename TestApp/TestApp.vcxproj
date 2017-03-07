@@ -187,7 +187,7 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalDependencies>d3d11.lib;d2d1.lib;dwrite.lib;windowscodecs.lib;dxgi.lib;dbghelp.lib;Base.lib;OS_Base.lib;OS_Win32.lib;Renderer_Base.lib;Renderer_DX11.lib;freetype271d.lib;;%(AdditionalDependencies)</AdditionalDependencies>
       <ShowProgress>NotSet</ShowProgress>
-      <AdditionalLibraryDirectories>$(SolutionDir)lib\$(Configuration)_$(PlatformTarget)\;..\..\freetype-2.7.1\objs\vc2015\Win32</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>$(SolutionDir)lib\$(Configuration)_$(PlatformTarget)\;$(SolutionDir)sdks\freetype-2.7.1\lib\Win32</AdditionalLibraryDirectories>
       <OutputFile>$(OutDir)$(TargetName)$(TargetExt)</OutputFile>
     </Link>
     <Bscmake>
@@ -210,7 +210,7 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalDependencies>d3d11.lib;d2d1.lib;dwrite.lib;windowscodecs.lib;dxgi.lib;dbghelp.lib;Base.lib;OS_Base.lib;OS_Win32.lib;Renderer_Base.lib;Renderer_DX11.lib;freetype271d.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <ShowProgress>NotSet</ShowProgress>
-      <AdditionalLibraryDirectories>$(SolutionDir)lib\$(Configuration)_$(PlatformTarget)\;..\..\freetype-2.7.1\objs\vc2015\Win32</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>$(SolutionDir)lib\$(Configuration)_$(PlatformTarget)\;$(SolutionDir)sdks\freetype-2.7.1\lib\Win32</AdditionalLibraryDirectories>
       <OutputFile>$(OutDir)$(TargetName)$(TargetExt)</OutputFile>
     </Link>
     <Bscmake>
@@ -232,7 +232,7 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <ShowProgress>NotSet</ShowProgress>
       <AdditionalDependencies>d3d11.lib;d2d1.lib;dwrite.lib;windowscodecs.lib;dxgi.lib;dbghelp.lib;Base.lib;OS_Base.lib;OS_Win32.lib;Renderer_Base.lib;Renderer_DX11.lib;freetype271d.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <AdditionalLibraryDirectories>$(SolutionDir)lib\$(Configuration)_$(PlatformTarget)\;..\..\freetype-2.7.1\objs\vc2015\x64</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>$(SolutionDir)lib\$(Configuration)_$(PlatformTarget)\;$(SolutionDir)sdks\freetype-2.7.1\lib\x64</AdditionalLibraryDirectories>
       <OutputFile>$(OutDir)$(TargetName)$(TargetExt)</OutputFile>
     </Link>
   </ItemDefinitionGroup>
@@ -251,7 +251,7 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <ShowProgress>NotSet</ShowProgress>
       <AdditionalDependencies>d3d11.lib;d2d1.lib;dwrite.lib;windowscodecs.lib;dxgi.lib;dbghelp.lib;Base.lib;OS_Base.lib;OS_Win32.lib;Renderer_Base.lib;Renderer_DX11.lib;freetype271d.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <AdditionalLibraryDirectories>$(SolutionDir)lib\$(Configuration)_$(PlatformTarget)\;..\..\freetype-2.7.1\objs\vc2015\x64</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>$(SolutionDir)lib\$(Configuration)_$(PlatformTarget)\;$(SolutionDir)sdks\freetype-2.7.1\lib\x64</AdditionalLibraryDirectories>
       <OutputFile>$(OutDir)$(TargetName)$(TargetExt)</OutputFile>
     </Link>
   </ItemDefinitionGroup>
@@ -274,7 +274,7 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalDependencies>d3d11.lib;d2d1.lib;dwrite.lib;windowscodecs.lib;dxgi.lib;dbghelp.lib;Base.lib;OS_Base.lib;OS_Win32.lib;Renderer_Base.lib;Renderer_DX11.lib;freetype271.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <ShowProgress>NotSet</ShowProgress>
-      <AdditionalLibraryDirectories>$(SolutionDir)lib\$(Configuration)_$(PlatformTarget)\;..\..\freetype-2.7.1\objs\vc2015\Win32</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>$(SolutionDir)lib\$(Configuration)_$(PlatformTarget)\;$(SolutionDir)sdks\freetype-2.7.1\lib\Win32</AdditionalLibraryDirectories>
       <OutputFile>$(OutDir)$(TargetName)$(TargetExt)</OutputFile>
     </Link>
   </ItemDefinitionGroup>
@@ -297,7 +297,7 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalDependencies>d3d11.lib;d2d1.lib;dwrite.lib;windowscodecs.lib;dxgi.lib;dbghelp.lib;Base.lib;OS_Base.lib;OS_Win32.lib;Renderer_Base.lib;Renderer_DX11.lib;freetype271.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <ShowProgress>NotSet</ShowProgress>
-      <AdditionalLibraryDirectories>$(SolutionDir)lib\$(Configuration)_$(PlatformTarget)\;..\..\freetype-2.7.1\objs\vc2015\Win32</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>$(SolutionDir)lib\$(Configuration)_$(PlatformTarget)\;$(SolutionDir)sdks\freetype-2.7.1\lib\Win32</AdditionalLibraryDirectories>
       <OutputFile>$(OutDir)$(TargetName)$(TargetExt)</OutputFile>
     </Link>
   </ItemDefinitionGroup>
@@ -321,7 +321,7 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <ShowProgress>NotSet</ShowProgress>
       <AdditionalDependencies>d3d11.lib;d2d1.lib;dwrite.lib;windowscodecs.lib;dxgi.lib;dbghelp.lib;Base.lib;OS_Base.lib;OS_Win32.lib;Renderer_Base.lib;Renderer_DX11.lib;freetype271MT.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <AdditionalLibraryDirectories>$(SolutionDir)lib\$(Configuration)_$(PlatformTarget)\;..\..\freetype-2.7.1\objs\vc2015\x64</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>$(SolutionDir)lib\$(Configuration)_$(PlatformTarget)\;$(SolutionDir)sdks\freetype-2.7.1\lib\x64</AdditionalLibraryDirectories>
       <OutputFile>$(OutDir)$(TargetName)$(TargetExt)</OutputFile>
     </Link>
   </ItemDefinitionGroup>
@@ -344,7 +344,7 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <ShowProgress>NotSet</ShowProgress>
       <AdditionalDependencies>d3d11.lib;d2d1.lib;dwrite.lib;windowscodecs.lib;dxgi.lib;dbghelp.lib;Base.lib;OS_Base.lib;OS_Win32.lib;Renderer_Base.lib;Renderer_DX11.lib;freetype271.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <AdditionalLibraryDirectories>$(SolutionDir)lib\$(Configuration)_$(PlatformTarget)\;..\..\freetype-2.7.1\objs\vc2015\x64</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>$(SolutionDir)lib\$(Configuration)_$(PlatformTarget)\;$(SolutionDir)sdks\freetype-2.7.1\lib\x64</AdditionalLibraryDirectories>
       <OutputFile>$(OutDir)$(TargetName)$(TargetExt)</OutputFile>
     </Link>
   </ItemDefinitionGroup>
