@@ -18,6 +18,8 @@
 #include "../Renderer_Base/Quad.h"
 #include "../Renderer_Base/Texture.h"
 
+#include "zlib.h"
+
 int CALLBACK WinMain(HINSTANCE hInstance, HINSTANCE, LPSTR, int)
 {
 	Logger::CreateInstance();

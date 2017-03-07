@@ -180,14 +180,14 @@
       <PreprocessorDefinitions>WIN32;_DEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
       <BrowseInformation>true</BrowseInformation>
-      <AdditionalIncludeDirectories>..\..\freetype-2.7.1\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)sdks\freetype-2.7.1\include;$(SolutionDir)sdks\zlib-1.2.11\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>d3d11.lib;d2d1.lib;dwrite.lib;windowscodecs.lib;dxgi.lib;dbghelp.lib;Base.lib;OS_Base.lib;OS_Win32.lib;Renderer_Base.lib;Renderer_DX11.lib;freetype271d.lib;;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>d3d11.lib;d2d1.lib;dwrite.lib;windowscodecs.lib;dxgi.lib;dbghelp.lib;Base.lib;OS_Base.lib;OS_Win32.lib;Renderer_Base.lib;Renderer_DX11.lib;zlib.lib;freetype271d.lib;;%(AdditionalDependencies)</AdditionalDependencies>
       <ShowProgress>NotSet</ShowProgress>
-      <AdditionalLibraryDirectories>$(SolutionDir)lib\$(Configuration)_$(PlatformTarget)\;$(SolutionDir)sdks\freetype-2.7.1\lib\Win32</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>$(SolutionDir)lib\$(Configuration)_$(PlatformTarget)\;$(SolutionDir)sdks\freetype-2.7.1\lib\Win32;$(SolutionDir)sdks\zlib-1.2.11\lib\Win32</AdditionalLibraryDirectories>
       <OutputFile>$(OutDir)$(TargetName)$(TargetExt)</OutputFile>
     </Link>
     <Bscmake>
@@ -203,14 +203,14 @@
       <PreprocessorDefinitions>WIN32;_DEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
       <BrowseInformation>true</BrowseInformation>
-      <AdditionalIncludeDirectories>..\..\freetype-2.7.1\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)sdks\freetype-2.7.1\include;$(SolutionDir)sdks\zlib-1.2.11\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>d3d11.lib;d2d1.lib;dwrite.lib;windowscodecs.lib;dxgi.lib;dbghelp.lib;Base.lib;OS_Base.lib;OS_Win32.lib;Renderer_Base.lib;Renderer_DX11.lib;freetype271d.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>d3d11.lib;d2d1.lib;dwrite.lib;windowscodecs.lib;dxgi.lib;dbghelp.lib;Base.lib;OS_Base.lib;OS_Win32.lib;Renderer_Base.lib;Renderer_DX11.lib;zlib.lib;freetype271d.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <ShowProgress>NotSet</ShowProgress>
-      <AdditionalLibraryDirectories>$(SolutionDir)lib\$(Configuration)_$(PlatformTarget)\;$(SolutionDir)sdks\freetype-2.7.1\lib\Win32</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>$(SolutionDir)lib\$(Configuration)_$(PlatformTarget)\;$(SolutionDir)sdks\freetype-2.7.1\lib\Win32;$(SolutionDir)sdks\zlib-1.2.11\lib\Win32</AdditionalLibraryDirectories>
       <OutputFile>$(OutDir)$(TargetName)$(TargetExt)</OutputFile>
     </Link>
     <Bscmake>
@@ -225,14 +225,14 @@
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>_DEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>..\..\freetype-2.7.1\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)sdks\freetype-2.7.1\include;$(SolutionDir)sdks\zlib-1.2.11\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <ShowProgress>NotSet</ShowProgress>
-      <AdditionalDependencies>d3d11.lib;d2d1.lib;dwrite.lib;windowscodecs.lib;dxgi.lib;dbghelp.lib;Base.lib;OS_Base.lib;OS_Win32.lib;Renderer_Base.lib;Renderer_DX11.lib;freetype271d.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <AdditionalLibraryDirectories>$(SolutionDir)lib\$(Configuration)_$(PlatformTarget)\;$(SolutionDir)sdks\freetype-2.7.1\lib\x64</AdditionalLibraryDirectories>
+      <AdditionalDependencies>d3d11.lib;d2d1.lib;dwrite.lib;windowscodecs.lib;dxgi.lib;dbghelp.lib;Base.lib;OS_Base.lib;OS_Win32.lib;Renderer_Base.lib;Renderer_DX11.lib;zlib.lib;freetype271d.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(SolutionDir)lib\$(Configuration)_$(PlatformTarget)\;$(SolutionDir)sdks\freetype-2.7.1\lib\x64;$(SolutionDir)sdks\zlib-1.2.11\lib\x64</AdditionalLibraryDirectories>
       <OutputFile>$(OutDir)$(TargetName)$(TargetExt)</OutputFile>
     </Link>
   </ItemDefinitionGroup>
@@ -244,14 +244,14 @@
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>_DEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>..\..\freetype-2.7.1\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)sdks\freetype-2.7.1\include;$(SolutionDir)sdks\zlib-1.2.11\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <ShowProgress>NotSet</ShowProgress>
-      <AdditionalDependencies>d3d11.lib;d2d1.lib;dwrite.lib;windowscodecs.lib;dxgi.lib;dbghelp.lib;Base.lib;OS_Base.lib;OS_Win32.lib;Renderer_Base.lib;Renderer_DX11.lib;freetype271d.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <AdditionalLibraryDirectories>$(SolutionDir)lib\$(Configuration)_$(PlatformTarget)\;$(SolutionDir)sdks\freetype-2.7.1\lib\x64</AdditionalLibraryDirectories>
+      <AdditionalDependencies>d3d11.lib;d2d1.lib;dwrite.lib;windowscodecs.lib;dxgi.lib;dbghelp.lib;Base.lib;OS_Base.lib;OS_Win32.lib;Renderer_Base.lib;Renderer_DX11.lib;zlib.lib;freetype271d.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(SolutionDir)lib\$(Configuration)_$(PlatformTarget)\;$(SolutionDir)sdks\freetype-2.7.1\lib\x64;$(SolutionDir)sdks\zlib-1.2.11\lib\x64</AdditionalLibraryDirectories>
       <OutputFile>$(OutDir)$(TargetName)$(TargetExt)</OutputFile>
     </Link>
   </ItemDefinitionGroup>
@@ -265,16 +265,16 @@
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <PreprocessorDefinitions>WIN32;NDEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>..\..\freetype-2.7.1\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)sdks\freetype-2.7.1\include;$(SolutionDir)sdks\zlib-1.2.11\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>d3d11.lib;d2d1.lib;dwrite.lib;windowscodecs.lib;dxgi.lib;dbghelp.lib;Base.lib;OS_Base.lib;OS_Win32.lib;Renderer_Base.lib;Renderer_DX11.lib;freetype271.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>d3d11.lib;d2d1.lib;dwrite.lib;windowscodecs.lib;dxgi.lib;dbghelp.lib;Base.lib;OS_Base.lib;OS_Win32.lib;Renderer_Base.lib;Renderer_DX11.lib;zlib.lib;freetype271.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <ShowProgress>NotSet</ShowProgress>
-      <AdditionalLibraryDirectories>$(SolutionDir)lib\$(Configuration)_$(PlatformTarget)\;$(SolutionDir)sdks\freetype-2.7.1\lib\Win32</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>$(SolutionDir)lib\$(Configuration)_$(PlatformTarget)\;$(SolutionDir)sdks\freetype-2.7.1\lib\Win32;$(SolutionDir)sdks\zlib-1.2.11\lib\Win32</AdditionalLibraryDirectories>
       <OutputFile>$(OutDir)$(TargetName)$(TargetExt)</OutputFile>
     </Link>
   </ItemDefinitionGroup>
@@ -288,16 +288,16 @@
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <PreprocessorDefinitions>WIN32;NDEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>..\..\freetype-2.7.1\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)sdks\freetype-2.7.1\include;$(SolutionDir)sdks\zlib-1.2.11\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>d3d11.lib;d2d1.lib;dwrite.lib;windowscodecs.lib;dxgi.lib;dbghelp.lib;Base.lib;OS_Base.lib;OS_Win32.lib;Renderer_Base.lib;Renderer_DX11.lib;freetype271.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>d3d11.lib;d2d1.lib;dwrite.lib;windowscodecs.lib;dxgi.lib;dbghelp.lib;Base.lib;OS_Base.lib;OS_Win32.lib;Renderer_Base.lib;Renderer_DX11.lib;zlib.lib;freetype271.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <ShowProgress>NotSet</ShowProgress>
-      <AdditionalLibraryDirectories>$(SolutionDir)lib\$(Configuration)_$(PlatformTarget)\;$(SolutionDir)sdks\freetype-2.7.1\lib\Win32</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>$(SolutionDir)lib\$(Configuration)_$(PlatformTarget)\;$(SolutionDir)sdks\freetype-2.7.1\lib\Win32;$(SolutionDir)sdks\zlib-1.2.11\lib\Win32</AdditionalLibraryDirectories>
       <OutputFile>$(OutDir)$(TargetName)$(TargetExt)</OutputFile>
     </Link>
   </ItemDefinitionGroup>
@@ -311,7 +311,7 @@
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <PreprocessorDefinitions>NDEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>..\..\freetype-2.7.1\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)sdks\freetype-2.7.1\include;$(SolutionDir)sdks\zlib-1.2.11\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
     </ClCompile>
     <Link>
@@ -320,8 +320,8 @@
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <ShowProgress>NotSet</ShowProgress>
-      <AdditionalDependencies>d3d11.lib;d2d1.lib;dwrite.lib;windowscodecs.lib;dxgi.lib;dbghelp.lib;Base.lib;OS_Base.lib;OS_Win32.lib;Renderer_Base.lib;Renderer_DX11.lib;freetype271MT.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <AdditionalLibraryDirectories>$(SolutionDir)lib\$(Configuration)_$(PlatformTarget)\;$(SolutionDir)sdks\freetype-2.7.1\lib\x64</AdditionalLibraryDirectories>
+      <AdditionalDependencies>d3d11.lib;d2d1.lib;dwrite.lib;windowscodecs.lib;dxgi.lib;dbghelp.lib;Base.lib;OS_Base.lib;OS_Win32.lib;Renderer_Base.lib;Renderer_DX11.lib;zlib.lib;freetype271MT.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(SolutionDir)lib\$(Configuration)_$(PlatformTarget)\;$(SolutionDir)sdks\freetype-2.7.1\lib\x64;$(SolutionDir)sdks\zlib-1.2.11\lib\x64</AdditionalLibraryDirectories>
       <OutputFile>$(OutDir)$(TargetName)$(TargetExt)</OutputFile>
     </Link>
   </ItemDefinitionGroup>
@@ -335,7 +335,7 @@
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <PreprocessorDefinitions>NDEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>..\..\freetype-2.7.1\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)sdks\freetype-2.7.1\include;$(SolutionDir)sdks\zlib-1.2.11\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -343,8 +343,8 @@
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <ShowProgress>NotSet</ShowProgress>
-      <AdditionalDependencies>d3d11.lib;d2d1.lib;dwrite.lib;windowscodecs.lib;dxgi.lib;dbghelp.lib;Base.lib;OS_Base.lib;OS_Win32.lib;Renderer_Base.lib;Renderer_DX11.lib;freetype271.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <AdditionalLibraryDirectories>$(SolutionDir)lib\$(Configuration)_$(PlatformTarget)\;$(SolutionDir)sdks\freetype-2.7.1\lib\x64</AdditionalLibraryDirectories>
+      <AdditionalDependencies>d3d11.lib;d2d1.lib;dwrite.lib;windowscodecs.lib;dxgi.lib;dbghelp.lib;Base.lib;OS_Base.lib;OS_Win32.lib;Renderer_Base.lib;Renderer_DX11.lib;zlib.lib;freetype271.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(SolutionDir)lib\$(Configuration)_$(PlatformTarget)\;$(SolutionDir)sdks\freetype-2.7.1\lib\x64;$(SolutionDir)sdks\zlib-1.2.11\lib\x64</AdditionalLibraryDirectories>
       <OutputFile>$(OutDir)$(TargetName)$(TargetExt)</OutputFile>
     </Link>
   </ItemDefinitionGroup>
