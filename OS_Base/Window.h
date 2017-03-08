@@ -4,6 +4,7 @@
 
 class Window;
 
+//--------------------------------------------------------------------------------
 class IWindowMessageCallback
 {
 public:
@@ -15,6 +16,7 @@ protected:
 	Window* m_pWindow;
 };
 
+//--------------------------------------------------------------------------------
 class Window : public IWindowMessageCallback
 {
 public:

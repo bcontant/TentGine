@@ -9,6 +9,7 @@ class Quad;
 class Font;
 class Window;
 
+//--------------------------------------------------------------------------------
 class Renderer
 {
 public:

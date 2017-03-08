@@ -1,5 +1,6 @@
 #include "precompiled.h"
 
+//--------------------------------------------------------------------------------
 Window* Window::Create(int width, int height, bool fullscreen, void* hInstance)
 {
 	Window* pWindow = new Window_Win32();
@@ -7,10 +8,12 @@ Window* Window::Create(int width, int height, bool fullscreen, void* hInstance)
 	return pWindow;
 }
 
+//--------------------------------------------------------------------------------
 Window_Win32::~Window_Win32()
 {
 }
 
+//--------------------------------------------------------------------------------
 void Window_Win32::InitWindow(int width, int height, bool /*fullscreen*/, void* hInstance)
 {
 	WNDCLASSEX wcex = { sizeof(WNDCLASSEX) };
@@ -38,6 +41,7 @@ void Window_Win32::InitWindow(int width, int height, bool /*fullscreen*/, void* 
 	m_height = height;
 }
 
+//--------------------------------------------------------------------------------
 bool Window_Win32::ProcessMessages()
 {
 	MSG msg;
@@ -52,6 +56,7 @@ bool Window_Win32::ProcessMessages()
 	return true;
 }
 
+//--------------------------------------------------------------------------------
 bool Window_Win32::MessageCallback(void* /*hwnd*/, unsigned int message, uint64_t /*wParam*/, int64_t lParam)
 {
 	switch (message)
@@ -71,6 +76,7 @@ bool Window_Win32::MessageCallback(void* /*hwnd*/, unsigned int message, uint64_
 	return false;
 }
 
+//--------------------------------------------------------------------------------
 LRESULT CALLBACK Window_Win32::WndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
 {
 	if (message == WM_NCCREATE)

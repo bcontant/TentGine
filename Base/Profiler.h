@@ -9,6 +9,7 @@
 #include <map>
 #include <thread>
 
+//--------------------------------------------------------------------------------
 class ProfileBlock
 {
 public:
@@ -32,6 +33,7 @@ private:
 	ProfileBlock* m_pActiveChild = nullptr;
 };
 
+//--------------------------------------------------------------------------------
 class Profiler : public Singleton<Profiler>
 {
 	MAKE_SINGLETON(Profiler);
@@ -52,6 +54,7 @@ private:
 	std::map<std::thread::id, ProfileBlock*> m_vActiveBlocks;
 };
 
+//--------------------------------------------------------------------------------
 class AutoProfileBlock
 {
 public:

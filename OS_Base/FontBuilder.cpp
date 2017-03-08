@@ -12,6 +12,7 @@
 
 #define GLYPH_TEXTURE_PADDING 2
 
+//--------------------------------------------------------------------------------
 void OS::BuildFont(const Path& in_FontFile, unsigned int in_uiFontSize, unsigned int in_uiTextureSize, unsigned int in_uiFlags, const Path& in_FontDataFileName)
 {
 	//Init the string we'll use for creating the FontFileTexture
@@ -106,7 +107,6 @@ void OS::BuildFont(const Path& in_FontFile, unsigned int in_uiFontSize, unsigned
 	}
 
 	pRects->ConvertTo(BitmapData::eBF_A_U8);
-	//SaveTGA(L("f:\\fontrect.tga"), pRects);
 
 	StdString fontName = Format(L("%s %s %dpt%s"), FROM_STRING(face->family_name).c_str(), FROM_STRING(face->style_name).c_str(), in_uiFontSize, in_uiFlags & eFF_Mono ? L(" Mono") : L(""));
 	

@@ -3,6 +3,7 @@
 #include "../OS_Base/Window.h"
 #include <windows.h>
 
+//--------------------------------------------------------------------------------
 class Window_Win32 : public Window
 {
 public:

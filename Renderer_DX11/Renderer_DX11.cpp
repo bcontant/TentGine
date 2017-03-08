@@ -3,11 +3,13 @@
 #include "simple_pixel.h"
 #include "simple_vertex.h"
 
+//--------------------------------------------------------------------------------
 Renderer_DX11::Renderer_DX11(Window* in_pWindow)
 	:Renderer(in_pWindow)
 {
 }
 
+//--------------------------------------------------------------------------------
 Renderer_DX11::~Renderer_DX11()
 {
 	pBlendState->Release();
@@ -20,6 +22,7 @@ Renderer_DX11::~Renderer_DX11()
 	pD3D11Device->Release();
 }
 
+//--------------------------------------------------------------------------------
 Texture* Renderer_DX11::CreateTexture(const Path& filename)
 {
 	Texture* pTexture = new Texture_DX11(this);
@@ -27,6 +30,7 @@ Texture* Renderer_DX11::CreateTexture(const Path& filename)
 	return pTexture;
 }
 
+//--------------------------------------------------------------------------------
 Texture* Renderer_DX11::CreateTexture(unsigned int width, unsigned int height, const unsigned char* pBits)
 {
 	Texture* pTexture = new Texture_DX11(this);
@@ -34,6 +38,7 @@ Texture* Renderer_DX11::CreateTexture(unsigned int width, unsigned int height, c
 	return pTexture;
 }
 
+//--------------------------------------------------------------------------------
 Quad* Renderer_DX11::CreateQuad(float posX, float posY, Texture* texture)
 {
 	Quad_DX11* pQuad = new Quad_DX11(this);
@@ -43,6 +48,7 @@ Quad* Renderer_DX11::CreateQuad(float posX, float posY, Texture* texture)
 	return pQuad;
 }
 
+//--------------------------------------------------------------------------------
 void Renderer_DX11::StartFrame()
 {
 	if (GetBackBufferWidth() != m_pWindow->GetWidth() || GetBackBufferHeight() != m_pWindow->GetHeight())
@@ -72,17 +78,21 @@ void Renderer_DX11::StartFrame()
 	pD3D11DeviceContext->ClearRenderTargetView(pBackBufferView, (CONST FLOAT*)&clearColor);
 }
 
+//--------------------------------------------------------------------------------
 void Renderer_DX11::EndFrame()
 {
 	/*HRESULT hr = */pSwapChain->Present(0, 0);
 }
 
+//--------------------------------------------------------------------------------
 unsigned int Renderer_DX11::GetBackBufferWidth() const
 {
 	D3D11_TEXTURE2D_DESC desc;
 	pBackBuffer->GetDesc(&desc);
 	return desc.Width;
 }
+
+//--------------------------------------------------------------------------------
 unsigned int Renderer_DX11::GetBackBufferHeight() const
 {
 	D3D11_TEXTURE2D_DESC desc;
@@ -90,6 +100,7 @@ unsigned int Renderer_DX11::GetBackBufferHeight() const
 	return desc.Height;
 }
 
+//--------------------------------------------------------------------------------
 void Renderer_DX11::Initialize(DisplayAdapter* /*in_pAdapter*/, Window* in_pWindow)
 {
 	DXGI_SWAP_CHAIN_DESC swapChainDesc = {};
@@ -158,6 +169,7 @@ void Renderer_DX11::Initialize(DisplayAdapter* /*in_pAdapter*/, Window* in_pWind
 	pDXGIDevice->Release();
 }
 
+//--------------------------------------------------------------------------------
 Renderer* Renderer::CreateRenderer(DisplayAdapter* in_pAdapter, Window* in_pWindow)
 {
 	Renderer_DX11* pRenderer = new Renderer_DX11(in_pWindow);

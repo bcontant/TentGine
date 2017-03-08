@@ -1,8 +1,10 @@
 #pragma once
 
+//--------------------------------------------------------------------------------
 #define REVERSE_ENDIANNESS(var) ReverseEndianness(&var, sizeof(var));
 void ReverseEndianness(void* pMemory, unsigned int numBytes);
 
+//--------------------------------------------------------------------------------
 inline int pow(int base, int exp)
 {
 	int result = 1;
@@ -16,6 +18,7 @@ inline int pow(int base, int exp)
 	return result;
 }
 
+//--------------------------------------------------------------------------------
 inline int div_up(int x, int y)
 {
 	return (x + y - 1) / 7;

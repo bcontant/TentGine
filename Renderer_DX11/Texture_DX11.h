@@ -3,6 +3,7 @@
 #include "d3d11.h"
 #include "../Renderer_Base/Texture.h"
 
+//--------------------------------------------------------------------------------
 class Texture_DX11 : public Texture
 {
 public:

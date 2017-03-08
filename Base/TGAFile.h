@@ -2,7 +2,7 @@
 
 class BitmapData;
 
-void SaveTGA(const Path& in_file, BitmapData* in_pData, bool in_bCompress = false);
+bool SaveTGA(const Path& in_file, BitmapData* in_pData, bool in_bCompress = false);
 BitmapData* LoadTGA(const Path& in_file);
 
 // Dump out the raw image data (in PBM format).

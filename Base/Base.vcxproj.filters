@@ -16,17 +16,11 @@
     <Filter Include="Header Files\DevTools">
       <UniqueIdentifier>{0e4a555f-10ad-45d9-8bf2-0802e6829d42}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Header Files\FileSystem">
-      <UniqueIdentifier>{fc277246-5b66-4303-93c7-e6c7c1d024e3}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Header Files\Graphics">
       <UniqueIdentifier>{55ecb713-048a-4946-98fb-d0fef5a6e195}</UniqueIdentifier>
     </Filter>
     <Filter Include="Source Files\DevTools">
       <UniqueIdentifier>{97d6e934-08ee-417f-bd51-fcac31bef6cb}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Source Files\FileSystem">
-      <UniqueIdentifier>{e8a23587-7aed-4fe8-a452-2f07aa279d16}</UniqueIdentifier>
     </Filter>
     <Filter Include="Source Files\Graphics">
       <UniqueIdentifier>{1d03e513-1e46-4c4f-9940-3eea59c10c00}</UniqueIdentifier>
@@ -36,6 +30,12 @@
     </Filter>
     <Filter Include="Source Files\Math">
       <UniqueIdentifier>{6e2300e7-c6c8-4b56-9e4c-6a60768d2e74}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\I/O">
+      <UniqueIdentifier>{fc277246-5b66-4303-93c7-e6c7c1d024e3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\I/O">
+      <UniqueIdentifier>{e8a23587-7aed-4fe8-a452-2f07aa279d16}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -52,10 +52,10 @@
       <Filter>Header Files\DevTools</Filter>
     </ClInclude>
     <ClInclude Include="File.h">
-      <Filter>Header Files\FileSystem</Filter>
+      <Filter>Header Files\I/O</Filter>
     </ClInclude>
     <ClInclude Include="Path.h">
-      <Filter>Header Files\FileSystem</Filter>
+      <Filter>Header Files\I/O</Filter>
     </ClInclude>
     <ClInclude Include="BitmapData.h">
       <Filter>Header Files\Graphics</Filter>
@@ -81,6 +81,18 @@
     <ClInclude Include="BitField.h">
       <Filter>Header Files\DevTools</Filter>
     </ClInclude>
+    <ClInclude Include="CompressionUtils.h">
+      <Filter>Header Files\DevTools</Filter>
+    </ClInclude>
+    <ClInclude Include="Buffer.h">
+      <Filter>Header Files\I/O</Filter>
+    </ClInclude>
+    <ClInclude Include="MemoryBuffer.h">
+      <Filter>Header Files\I/O</Filter>
+    </ClInclude>
+    <ClInclude Include="PNGFile.h">
+      <Filter>Header Files\Graphics</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="precompiled.cpp">
@@ -93,10 +105,10 @@
       <Filter>Source Files\Graphics</Filter>
     </ClCompile>
     <ClCompile Include="File.cpp">
-      <Filter>Source Files\FileSystem</Filter>
+      <Filter>Source Files\I/O</Filter>
     </ClCompile>
     <ClCompile Include="Path.cpp">
-      <Filter>Source Files\FileSystem</Filter>
+      <Filter>Source Files\I/O</Filter>
     </ClCompile>
     <ClCompile Include="FontDataFile.cpp">
       <Filter>Source Files\Graphics</Filter>
@@ -121,6 +133,15 @@
     </ClCompile>
     <ClCompile Include="BitField.cpp">
       <Filter>Source Files\DevTools</Filter>
+    </ClCompile>
+    <ClCompile Include="CompressionUtils.cpp">
+      <Filter>Source Files\DevTools</Filter>
+    </ClCompile>
+    <ClCompile Include="MemoryBuffer.cpp">
+      <Filter>Source Files\I/O</Filter>
+    </ClCompile>
+    <ClCompile Include="PNGFile.cpp">
+      <Filter>Source Files\Graphics</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

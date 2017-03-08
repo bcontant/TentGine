@@ -4,6 +4,7 @@
 
 class Texture;
 
+//--------------------------------------------------------------------------------
 class Quad : public RendererObject
 {
 public:

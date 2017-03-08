@@ -4,12 +4,14 @@
 #include "BitField.h"
 
 
+//--------------------------------------------------------------------------------
 bool RequiresConversion(BitmapData::EBufferFormat in_eSrcFormat, BitmapData::EBufferFormat in_eDstFormat);
 
 //Function pointer type to convert one pixel format to another
 using ConvertPixelFunc = void(*)(const unsigned char*, unsigned char*, const unsigned int);
 ConvertPixelFunc GetConvertPixelFunction(BitmapData::EBufferFormat in_eSrcFormat, BitmapData::EBufferFormat in_eDstFormat);
 
+//--------------------------------------------------------------------------------
 //Static values for 1 to 7 bit pixels which can't return their addresses
 static unsigned char ucPixelValues[128] = 
 { 
@@ -23,6 +25,7 @@ static unsigned char ucPixelValues[128] =
 	112, 113, 114, 115, 116, 117, 118, 119, 120, 121, 122, 123, 124, 125, 126, 127
 };
 
+//--------------------------------------------------------------------------------
 BitmapData::BitmapData(unsigned int in_uiWidth, unsigned int in_uiHeight, EBufferFormat in_eFormat)
 	: m_uiWidth(in_uiWidth)
 	, m_uiHeight(in_uiHeight)
@@ -31,6 +34,7 @@ BitmapData::BitmapData(unsigned int in_uiWidth, unsigned int in_uiHeight, EBuffe
 	Initialize();
 }
 
+//--------------------------------------------------------------------------------
 BitmapData::BitmapData(unsigned int in_uiWidth, unsigned int in_uiHeight, void* in_pBuffer, EBufferFormat in_eFormat, unsigned int in_uiBufferPitch)
 	: BitmapData(in_uiWidth, in_uiHeight, in_eFormat)
 {
@@ -51,16 +55,19 @@ BitmapData::BitmapData(unsigned int in_uiWidth, unsigned int in_uiHeight, void* 
 	}
 }
 
+//--------------------------------------------------------------------------------
 BitmapData::BitmapData(const BitmapData& in_BitmapData)
 	: BitmapData(in_BitmapData.m_uiWidth, in_BitmapData.m_uiHeight, in_BitmapData.m_pBuffer, in_BitmapData.m_eFormat, in_BitmapData.m_uiBufferPitch)
 {
 }
 
+//--------------------------------------------------------------------------------
 BitmapData::~BitmapData()
 {
 	delete[] m_pBuffer;
 }
 
+//--------------------------------------------------------------------------------
 void BitmapData::Initialize()
 {
 	UpdateBitsPerPixel();
@@ -70,6 +77,7 @@ void BitmapData::Initialize()
 	memset(m_pBuffer, 0, m_uiBufferSize);
 }
 
+//--------------------------------------------------------------------------------
 BitmapData* BitmapData::ConvertTo(EBufferFormat in_eFormat)
 {
 	PROFILE_BLOCK;
@@ -116,6 +124,7 @@ BitmapData* BitmapData::ConvertTo(EBufferFormat in_eFormat)
 	return this;
 }
 
+//--------------------------------------------------------------------------------
 const void* BitmapData::Get(int in_x, int in_y) const
 {
 	AssertMsg(in_x >= 0 && static_cast<unsigned int>(in_x) < m_uiWidth, L("Invalid x (%d)"), in_x);
@@ -138,6 +147,7 @@ const void* BitmapData::Get(int in_x, int in_y) const
 	}
 }
 
+//--------------------------------------------------------------------------------
 void BitmapData::Set(int in_x, int in_y, const void* in_pValue)
 {
 	AssertMsg(in_x >= 0 && static_cast<unsigned int>(in_x) < m_uiWidth, L("Invalid x (%d)"), in_x);
@@ -156,6 +166,7 @@ void BitmapData::Set(int in_x, int in_y, const void* in_pValue)
 	}
 }
 
+//--------------------------------------------------------------------------------
 void BitmapData::Blit(int in_x, int in_y, const BitmapData* in_pData)
 {
 	AssertMsg(in_x >= 0 && static_cast<unsigned int>(in_x) < m_uiWidth, L("Invalid x (%d)"), in_x);
@@ -188,12 +199,14 @@ void BitmapData::Blit(int in_x, int in_y, const BitmapData* in_pData)
 	}
 }
 
+//--------------------------------------------------------------------------------
 void BitmapData::FlipX()
 {
 	//TODO
 	Assert(false);
 }
 
+//--------------------------------------------------------------------------------
 void BitmapData::FlipY()
 {
 	unsigned char* pTmp = new unsigned char[m_uiBufferPitch];
@@ -212,6 +225,7 @@ void BitmapData::FlipY()
 	}
 }
 
+//--------------------------------------------------------------------------------
 void BitmapData::UpdateBufferSize()
 {
 	m_uiBufferPitch = (m_uiWidth * m_uiBitsPerPixel) / 8;
@@ -221,6 +235,7 @@ void BitmapData::UpdateBufferSize()
 	m_uiBufferSize = m_uiHeight * m_uiBufferPitch;
 }
 
+//--------------------------------------------------------------------------------
 void BitmapData::UpdateBitsPerPixel()
 {
 	switch (m_eFormat)
@@ -236,9 +251,11 @@ void BitmapData::UpdateBitsPerPixel()
 	case eBF_R5G6B5_U16:
 	case eBF_A1R5G5B5_U16:	m_uiBitsPerPixel = 16; break;
 
+	case eBF_BGR_U24:
 	case eBF_RGB_U24:		m_uiBitsPerPixel = 24; break;
 
 	case eBF_RGBA_U32:
+	case eBF_ABGR_U32:
 	case eBF_ARGB_U32:
 	case eBF_R_F32:			m_uiBitsPerPixel = 32; break;
 
@@ -246,6 +263,7 @@ void BitmapData::UpdateBitsPerPixel()
 	}
 }
 
+//--------------------------------------------------------------------------------
 bool RequiresConversion(BitmapData::EBufferFormat in_eSrcFormat, BitmapData::EBufferFormat in_eDstFormat)
 {
 	if (in_eSrcFormat == in_eDstFormat)
@@ -268,6 +286,7 @@ bool RequiresConversion(BitmapData::EBufferFormat in_eSrcFormat, BitmapData::EBu
 // 0x02 : GG
 // 0x03 : RR
 
+//--------------------------------------------------------------------------------
 template<int BPP>
 void ConvertPixel_NoOp(const unsigned char* in_pSrc, unsigned char* in_pDst, const unsigned int in_uiPixelCount)
 {
@@ -276,6 +295,7 @@ void ConvertPixel_NoOp(const unsigned char* in_pSrc, unsigned char* in_pDst, con
 	memcpy(in_pDst, in_pSrc, (BPP * in_uiPixelCount) >> 3);
 }
 
+//--------------------------------------------------------------------------------
 template<int SrcBPP, int DstBPP>
 void ConvertPixel_8BPP(const unsigned char* in_pSrc, unsigned char* in_pDst, const unsigned int in_uiPixelCount)
 {
@@ -294,9 +314,9 @@ void ConvertPixel_8BPP(const unsigned char* in_pSrc, unsigned char* in_pDst, con
 	}
 }
 
-
+//--------------------------------------------------------------------------------
 //BitmapData::eBF_A_U1
-
+//--------------------------------------------------------------------------------
 template<>
 void ConvertPixel_8BPP<1, 8>(const unsigned char* in_pSrc, unsigned char* in_pDst, const unsigned int in_uiPixelCount)
 {
@@ -307,6 +327,7 @@ void ConvertPixel_8BPP<1, 8>(const unsigned char* in_pSrc, unsigned char* in_pDs
 	}
 }
 
+//--------------------------------------------------------------------------------
 void ConvertPixel_A_U1_To_RGBA_U32(const unsigned char* in_pSrc, unsigned char* in_pDst, const unsigned int in_uiPixelCount)
 {
 	BitField bf((unsigned char*)in_pSrc, in_uiPixelCount, 1, 0);
@@ -316,9 +337,9 @@ void ConvertPixel_A_U1_To_RGBA_U32(const unsigned char* in_pSrc, unsigned char* 
 	}
 }
 
-
+//--------------------------------------------------------------------------------
 //BitmapData::eBF_A_U5
-
+//--------------------------------------------------------------------------------
 template<>
 void ConvertPixel_8BPP<5, 8>(const unsigned char* in_pSrc, unsigned char* in_pDst, const unsigned int in_uiPixelCount)
 {
@@ -330,7 +351,7 @@ void ConvertPixel_8BPP<5, 8>(const unsigned char* in_pSrc, unsigned char* in_pDs
 	}
 }
 
-
+//--------------------------------------------------------------------------------
 void ConvertPixel_A_U5_To_RGBA_U32(const unsigned char* in_pSrc, unsigned char* in_pDst, const unsigned int in_uiPixelCount)
 {
 	BitField bf((unsigned char*)in_pSrc, in_uiPixelCount, 5, 0);
@@ -340,9 +361,9 @@ void ConvertPixel_A_U5_To_RGBA_U32(const unsigned char* in_pSrc, unsigned char* 
 	}
 }
 
-
+//--------------------------------------------------------------------------------
 //BitmapData::eBF_A_U8
-
+//--------------------------------------------------------------------------------
 template<>
 void ConvertPixel_8BPP<8, 5>(const unsigned char* in_pSrc, unsigned char* in_pDst, const unsigned int in_uiPixelCount)
 {
@@ -354,6 +375,7 @@ void ConvertPixel_8BPP<8, 5>(const unsigned char* in_pSrc, unsigned char* in_pDs
 	}
 }
 
+//--------------------------------------------------------------------------------
 void ConvertPixel_A_U8_To_R5G5B5_U16(const unsigned char* in_pSrc, unsigned char* in_pDst, const unsigned int in_uiPixelCount)
 {
 	for (unsigned int i = 0; i < in_uiPixelCount; i++, in_pSrc++, in_pDst += 2)
@@ -363,6 +385,7 @@ void ConvertPixel_A_U8_To_R5G5B5_U16(const unsigned char* in_pSrc, unsigned char
 	}
 }
 
+//--------------------------------------------------------------------------------
 void ConvertPixel_A_U8_To_R5G6B5_U16(const unsigned char* in_pSrc, unsigned char* in_pDst, const unsigned int in_uiPixelCount)
 {
 	for (unsigned int i = 0; i < in_uiPixelCount; i++, in_pSrc++, in_pDst += 2)
@@ -372,6 +395,7 @@ void ConvertPixel_A_U8_To_R5G6B5_U16(const unsigned char* in_pSrc, unsigned char
 	}
 }
 
+//--------------------------------------------------------------------------------
 void ConvertPixel_A_U8_To_R5G5B5A1_U16(const unsigned char* in_pSrc, unsigned char* in_pDst, const unsigned int in_uiPixelCount)
 {
 	for (unsigned int i = 0; i < in_uiPixelCount; i++, in_pSrc++, in_pDst += 2)
@@ -380,6 +404,7 @@ void ConvertPixel_A_U8_To_R5G5B5A1_U16(const unsigned char* in_pSrc, unsigned ch
 	}
 }
 
+//--------------------------------------------------------------------------------
 void ConvertPixel_A_U8_To_RGB_U24(const unsigned char* in_pSrc, unsigned char* in_pDst, const unsigned int in_uiPixelCount)
 {
 	for (unsigned int i = 0; i < in_uiPixelCount; i++, in_pSrc++, in_pDst += 3)
@@ -391,6 +416,7 @@ void ConvertPixel_A_U8_To_RGB_U24(const unsigned char* in_pSrc, unsigned char* i
 	}
 }
 
+//--------------------------------------------------------------------------------
 void ConvertPixel_A_U8_To_ARGB_U32(const unsigned char* in_pSrc, unsigned char* in_pDst, const unsigned int in_uiPixelCount)
 {
 	for (unsigned int i = 0; i < in_uiPixelCount; i++, in_pSrc++, in_pDst += 4)
@@ -399,6 +425,7 @@ void ConvertPixel_A_U8_To_ARGB_U32(const unsigned char* in_pSrc, unsigned char* 
 	}
 }
 
+//--------------------------------------------------------------------------------
 void ConvertPixel_A_U8_To_RGBA_U32(const unsigned char* in_pSrc, unsigned char* in_pDst, const unsigned int in_uiPixelCount)
 {
 	for (unsigned int i = 0; i < in_uiPixelCount; i++, in_pSrc++, in_pDst += 4)
@@ -407,8 +434,9 @@ void ConvertPixel_A_U8_To_RGBA_U32(const unsigned char* in_pSrc, unsigned char* 
 	}
 }
 
+//--------------------------------------------------------------------------------
 //BitmapData::eBF_R_U8
-
+//--------------------------------------------------------------------------------
 void ConvertPixel_R_U8_To_RGBA_U32(const unsigned char* in_pSrc, unsigned char* in_pDst, const unsigned int in_uiPixelCount)
 {
 	for (unsigned int i = 0; i < in_uiPixelCount; i++, in_pSrc++, in_pDst += 4)
@@ -417,8 +445,9 @@ void ConvertPixel_R_U8_To_RGBA_U32(const unsigned char* in_pSrc, unsigned char* 
 	}
 }
 
+//--------------------------------------------------------------------------------
 //BitmapData::eBF_X1R5G5B5_U16
-
+//--------------------------------------------------------------------------------
 void ConvertPixel_X1R5G5B5_U16_To_ARGB_U32(const unsigned char* in_pSrc, unsigned char* in_pDst, const unsigned int in_uiPixelCount)
 {
 	for (unsigned int i = 0; i < in_uiPixelCount; i++, in_pSrc += 2, in_pDst += 4)
@@ -441,6 +470,7 @@ void ConvertPixel_X1R5G5B5_U16_To_ARGB_U32(const unsigned char* in_pSrc, unsigne
 	}
 }
 
+//--------------------------------------------------------------------------------
 void ConvertPixel_X1R5G5B5_U16_To_RGBA_U32(const unsigned char* in_pSrc, unsigned char* in_pDst, const unsigned int in_uiPixelCount)
 {
 	for (unsigned int i = 0; i < in_uiPixelCount; i++, in_pSrc += 2, in_pDst += 4)
@@ -450,9 +480,9 @@ void ConvertPixel_X1R5G5B5_U16_To_RGBA_U32(const unsigned char* in_pSrc, unsigne
 	}
 }
 
-
+//--------------------------------------------------------------------------------
 //BitmapData::eBF_R5G6B5_U16
-
+//--------------------------------------------------------------------------------
 void ConvertPixel_R5G6B5_U16_To_ARGB_U32(const unsigned char* in_pSrc, unsigned char* in_pDst, const unsigned int in_uiPixelCount)
 {
 	/*
@@ -476,6 +506,7 @@ void ConvertPixel_R5G6B5_U16_To_ARGB_U32(const unsigned char* in_pSrc, unsigned 
 	}
 }
 
+//--------------------------------------------------------------------------------
 void ConvertPixel_R5G6B5_U16_To_RGBA_U32(const unsigned char* in_pSrc, unsigned char* in_pDst, const unsigned int in_uiPixelCount)
 {
 	for (unsigned int i = 0; i < in_uiPixelCount; i++, in_pSrc += 2, in_pDst += 4)
@@ -485,9 +516,9 @@ void ConvertPixel_R5G6B5_U16_To_RGBA_U32(const unsigned char* in_pSrc, unsigned 
 	}
 }
 
-
+//--------------------------------------------------------------------------------
 //BitmapData::eBF_R5G5B5A1_U16
-
+//--------------------------------------------------------------------------------
 void ConvertPixel_A1R5G5B5_U16_To_ARGB_U32(const unsigned char* in_pSrc, unsigned char* in_pDst, const unsigned int in_uiPixelCount)
 {
 	/*
@@ -511,6 +542,7 @@ void ConvertPixel_A1R5G5B5_U16_To_ARGB_U32(const unsigned char* in_pSrc, unsigne
 	}
 }
 
+//--------------------------------------------------------------------------------
 void ConvertPixel_A1R5G5B5_U16_To_RGBA_U32(const unsigned char* in_pSrc, unsigned char* in_pDst, const unsigned int in_uiPixelCount)
 {
 	for (unsigned int i = 0; i < in_uiPixelCount; i++, in_pSrc += 2, in_pDst += 4)
@@ -520,9 +552,40 @@ void ConvertPixel_A1R5G5B5_U16_To_RGBA_U32(const unsigned char* in_pSrc, unsigne
 	}
 }
 
+//--------------------------------------------------------------------------------
+//BitmapData::eBF_BGR_U24
+//--------------------------------------------------------------------------------
+void ConvertPixel_BGR_U24_To_RGB_U24(const unsigned char* in_pSrc, unsigned char* in_pDst, const unsigned int in_uiPixelCount)
+{
+	for (unsigned int i = 0; i < in_uiPixelCount; i++, in_pSrc += 3, in_pDst += 3)
+	{
+		in_pDst[0] = in_pSrc[2];
+		in_pDst[1] = in_pSrc[1];
+		in_pDst[2] = in_pSrc[0];
+	}
+}
 
+//--------------------------------------------------------------------------------
+void ConvertPixel_BGR_U24_To_RGBA_U32(const unsigned char* in_pSrc, unsigned char* in_pDst, const unsigned int in_uiPixelCount)
+{
+	for (unsigned int i = 0; i < in_uiPixelCount; i++, in_pSrc += 3, in_pDst += 4)
+	{
+		(*(unsigned int*)in_pDst) = (in_pSrc[0] << 24) + (in_pSrc[1] << 16) + (in_pSrc[2] << 8) + (0xFF << 0);
+	}
+}
+
+//--------------------------------------------------------------------------------
+void ConvertPixel_BGR_U24_To_ARGB_U32(const unsigned char* in_pSrc, unsigned char* in_pDst, const unsigned int in_uiPixelCount)
+{
+	for (unsigned int i = 0; i < in_uiPixelCount; i++, in_pSrc += 3, in_pDst += 4)
+	{
+		(*(unsigned int*)in_pDst) = (0xFF << 24) + (in_pSrc[0] << 16) + (in_pSrc[1] << 8) + (in_pSrc[2] << 0);
+	}
+}
+
+//--------------------------------------------------------------------------------
 //BitmapData::eBF_RGB_U24
-
+//--------------------------------------------------------------------------------
 void ConvertPixel_RGB_U24_To_RGBA_U32(const unsigned char* in_pSrc, unsigned char* in_pDst, const unsigned int in_uiPixelCount)
 {
 	for (unsigned int i = 0; i < in_uiPixelCount; i++, in_pSrc += 3, in_pDst += 4)
@@ -531,9 +594,9 @@ void ConvertPixel_RGB_U24_To_RGBA_U32(const unsigned char* in_pSrc, unsigned cha
 	}
 }
 
-
+//--------------------------------------------------------------------------------
 //BitmapData::eBF_ARGB_U32
-
+//--------------------------------------------------------------------------------
 void ConvertPixel_ARGB_U32_To_A_U8(const unsigned char* in_pSrc, unsigned char* in_pDst, const unsigned int in_uiPixelCount)
 {
 	//WARNING : LOSS OF RGB DATA
@@ -543,6 +606,16 @@ void ConvertPixel_ARGB_U32_To_A_U8(const unsigned char* in_pSrc, unsigned char* 
 	}
 }
 
+//--------------------------------------------------------------------------------
+void ConvertPixel_ARGB_U32_To_ABGR_U32(const unsigned char* in_pSrc, unsigned char* in_pDst, const unsigned int in_uiPixelCount)
+{
+	for (unsigned int i = 0; i < in_uiPixelCount; i++, in_pSrc += 4, in_pDst += 4)
+	{
+		(*(unsigned int*)in_pDst) = (in_pSrc[3] << 24) + (in_pSrc[0] << 16) + (in_pSrc[1] << 8) + (in_pSrc[2] << 0);
+	}
+}
+
+//--------------------------------------------------------------------------------
 void ConvertPixel_ARGB_U32_To_RGBA_U32(const unsigned char* in_pSrc, unsigned char* in_pDst, const unsigned int in_uiPixelCount)
 {
 	for (unsigned int i = 0; i < in_uiPixelCount; i++, in_pSrc += 4, in_pDst += 4)
@@ -551,9 +624,29 @@ void ConvertPixel_ARGB_U32_To_RGBA_U32(const unsigned char* in_pSrc, unsigned ch
 	}
 }
 
+//--------------------------------------------------------------------------------
+//BitmapData::eBF_ABGR_U32
+//--------------------------------------------------------------------------------
+void ConvertPixel_ABGR_U32_To_ARGB_U32(const unsigned char* in_pSrc, unsigned char* in_pDst, const unsigned int in_uiPixelCount)
+{
+	for (unsigned int i = 0; i < in_uiPixelCount; i++, in_pSrc += 4, in_pDst += 4)
+	{
+		(*(unsigned int*)in_pDst) = (in_pSrc[3] << 24) + (in_pSrc[0] << 16) + (in_pSrc[1] << 8) + (in_pSrc[2] << 0);
+	}
+}
 
+//--------------------------------------------------------------------------------
+void ConvertPixel_ABGR_U32_To_RGBA_U32(const unsigned char* in_pSrc, unsigned char* in_pDst, const unsigned int in_uiPixelCount)
+{
+	for (unsigned int i = 0; i < in_uiPixelCount; i++, in_pSrc += 4, in_pDst += 4)
+	{
+		(*(unsigned int*)in_pDst) = (in_pSrc[0] << 24) + (in_pSrc[1] << 16) + (in_pSrc[2] << 8) + (in_pSrc[3] << 0);
+	}
+}
+
+//--------------------------------------------------------------------------------
 //BitmapData::eBF_RGBA_U32
-
+//--------------------------------------------------------------------------------
 void ConvertPixel_RGBA_U32_To_A_U1(const unsigned char* in_pSrc, unsigned char* in_pDst, const unsigned int in_uiPixelCount)
 {
 	//WARNING : LOSS OF RGB DATA
@@ -564,6 +657,7 @@ void ConvertPixel_RGBA_U32_To_A_U1(const unsigned char* in_pSrc, unsigned char* 
 	}
 }
 
+//--------------------------------------------------------------------------------
 void ConvertPixel_RGBA_U32_To_A_U5(const unsigned char* in_pSrc, unsigned char* in_pDst, const unsigned int in_uiPixelCount)
 {
 	//WARNING : LOSS OF RGB DATA
@@ -574,6 +668,7 @@ void ConvertPixel_RGBA_U32_To_A_U5(const unsigned char* in_pSrc, unsigned char* 
 	}
 }
 
+//--------------------------------------------------------------------------------
 void ConvertPixel_RGBA_U32_To_A_U8(const unsigned char* in_pSrc, unsigned char* in_pDst, const unsigned int in_uiPixelCount)
 {
 	//WARNING : LOSS OF RGB DATA
@@ -584,6 +679,7 @@ void ConvertPixel_RGBA_U32_To_A_U8(const unsigned char* in_pSrc, unsigned char* 
 	}
 }
 
+//--------------------------------------------------------------------------------
 void ConvertPixel_RGBA_U32_To_R_U8(const unsigned char* in_pSrc, unsigned char* in_pDst, const unsigned int in_uiPixelCount)
 {
 	//WARNING : LOSS OF RGB DATA
@@ -594,6 +690,7 @@ void ConvertPixel_RGBA_U32_To_R_U8(const unsigned char* in_pSrc, unsigned char* 
 	}
 }
 
+//--------------------------------------------------------------------------------
 void ConvertPixel_RGBA_U32_To_X1R5G5B5_U16(const unsigned char* in_pSrc, unsigned char* in_pDst, const unsigned int in_uiPixelCount)
 {
 	//WARNING : LOSS OF ALPHA CHANNEL
@@ -605,6 +702,7 @@ void ConvertPixel_RGBA_U32_To_X1R5G5B5_U16(const unsigned char* in_pSrc, unsigne
 	}
 }
 
+//--------------------------------------------------------------------------------
 void ConvertPixel_RGBA_U32_To_R5G6B5_U16(const unsigned char* in_pSrc, unsigned char* in_pDst, const unsigned int in_uiPixelCount)
 {
 	//WARNING : LOSS OF ALPHA CHANNEL
@@ -616,6 +714,7 @@ void ConvertPixel_RGBA_U32_To_R5G6B5_U16(const unsigned char* in_pSrc, unsigned 
 	}
 }
 
+//--------------------------------------------------------------------------------
 void ConvertPixel_RGBA_U32_To_A1R5G5B5_U16(const unsigned char* in_pSrc, unsigned char* in_pDst, const unsigned int in_uiPixelCount)
 {
 	for (unsigned int i = 0; i < in_uiPixelCount; i++, in_pSrc += 4, in_pDst += 2)
@@ -625,6 +724,7 @@ void ConvertPixel_RGBA_U32_To_A1R5G5B5_U16(const unsigned char* in_pSrc, unsigne
 	}
 }
 
+//--------------------------------------------------------------------------------
 void ConvertPixel_RGBA_U32_To_RGB_U24(const unsigned char* in_pSrc, unsigned char* in_pDst, const unsigned int in_uiPixelCount)
 {
 	//WARNING : LOSS OF ALPHA CHANNEL
@@ -637,6 +737,7 @@ void ConvertPixel_RGBA_U32_To_RGB_U24(const unsigned char* in_pSrc, unsigned cha
 	}
 }
 
+//--------------------------------------------------------------------------------
 void ConvertPixel_RGBA_U32_To_ARGB_U32(const unsigned char* in_pSrc, unsigned char* in_pDst, const unsigned int in_uiPixelCount)
 {
 	for (unsigned int i = 0; i < in_uiPixelCount; i++, in_pSrc += 4, in_pDst += 4)
@@ -645,10 +746,19 @@ void ConvertPixel_RGBA_U32_To_ARGB_U32(const unsigned char* in_pSrc, unsigned ch
 	}
 }
 
+//--------------------------------------------------------------------------------
+void ConvertPixel_RGBA_U32_To_ABGR_U32(const unsigned char* in_pSrc, unsigned char* in_pDst, const unsigned int in_uiPixelCount)
+{
+	for (unsigned int i = 0; i < in_uiPixelCount; i++, in_pSrc += 4, in_pDst += 4)
+	{
+		(*(unsigned int*)in_pDst) = (in_pSrc[0] << 24) + (in_pSrc[1] << 16) + (in_pSrc[2] << 8) + (in_pSrc[3] << 0);
+	}
+}
+
+//--------------------------------------------------------------------------------
 ConvertPixelFunc GetConvertPixelFunction(BitmapData::EBufferFormat in_eSrcFormat, BitmapData::EBufferFormat in_eDstFormat)
 {
 	//TODO : Full support
-
 	switch (in_eSrcFormat)
 	{
 	case BitmapData::eBF_A_U1:
@@ -763,6 +873,23 @@ ConvertPixelFunc GetConvertPixelFunction(BitmapData::EBufferFormat in_eSrcFormat
 		case BitmapData::eBF_R_F32:			return nullptr;
 		default:							return nullptr;
 		}
+	case BitmapData::eBF_BGR_U24:
+		switch (in_eDstFormat)
+		{
+		case BitmapData::eBF_A_U1:			return nullptr;
+		case BitmapData::eBF_A_U5:			return nullptr;
+		case BitmapData::eBF_A_U8:			return nullptr;
+		case BitmapData::eBF_R_U8:			return nullptr;
+		case BitmapData::eBF_X1R5G5B5_U16:	return nullptr;
+		case BitmapData::eBF_R5G6B5_U16:	return nullptr;
+		case BitmapData::eBF_A1R5G5B5_U16:	return nullptr;
+		case BitmapData::eBF_BGR_U24:		return ConvertPixel_NoOp<24>;
+		case BitmapData::eBF_RGB_U24:		return ConvertPixel_BGR_U24_To_RGB_U24;
+		case BitmapData::eBF_ARGB_U32:		return ConvertPixel_BGR_U24_To_ARGB_U32;
+		case BitmapData::eBF_RGBA_U32:		return ConvertPixel_BGR_U24_To_RGBA_U32;
+		case BitmapData::eBF_R_F32:			return nullptr;
+		default:							return nullptr;
+		}
 	case BitmapData::eBF_RGB_U24:
 		switch (in_eDstFormat)
 		{
@@ -791,10 +918,29 @@ ConvertPixelFunc GetConvertPixelFunction(BitmapData::EBufferFormat in_eSrcFormat
 		case BitmapData::eBF_A1R5G5B5_U16:	return nullptr;
 		case BitmapData::eBF_RGB_U24:		return nullptr;
 		case BitmapData::eBF_ARGB_U32:		return ConvertPixel_NoOp<32>;
+		case BitmapData::eBF_ABGR_U32:		return ConvertPixel_ARGB_U32_To_ABGR_U32;
 		case BitmapData::eBF_RGBA_U32:		return ConvertPixel_ARGB_U32_To_RGBA_U32;
 		case BitmapData::eBF_R_F32:			return nullptr;
 		default:							return nullptr;
 		}
+	case BitmapData::eBF_ABGR_U32:
+		switch (in_eDstFormat)
+		{
+		case BitmapData::eBF_A_U1:			return nullptr;
+		case BitmapData::eBF_A_U5:			return nullptr;
+		case BitmapData::eBF_A_U8:			return nullptr;
+		case BitmapData::eBF_R_U8:			return nullptr;
+		case BitmapData::eBF_X1R5G5B5_U16:	return nullptr;
+		case BitmapData::eBF_R5G6B5_U16:	return nullptr;
+		case BitmapData::eBF_A1R5G5B5_U16:	return nullptr;
+		case BitmapData::eBF_RGB_U24:		return nullptr;
+		case BitmapData::eBF_ARGB_U32:		return ConvertPixel_ABGR_U32_To_ARGB_U32;
+		case BitmapData::eBF_ABGR_U32:		return ConvertPixel_NoOp<32>;
+		case BitmapData::eBF_RGBA_U32:		return ConvertPixel_ABGR_U32_To_RGBA_U32;
+		case BitmapData::eBF_R_F32:			return nullptr;
+		default:							return nullptr;
+		}
+
 	case BitmapData::eBF_RGBA_U32:
 		switch (in_eDstFormat)
 		{
@@ -807,6 +953,7 @@ ConvertPixelFunc GetConvertPixelFunction(BitmapData::EBufferFormat in_eSrcFormat
 		case BitmapData::eBF_A1R5G5B5_U16:	return ConvertPixel_RGBA_U32_To_A1R5G5B5_U16;
 		case BitmapData::eBF_RGB_U24:		return ConvertPixel_RGBA_U32_To_RGB_U24;
 		case BitmapData::eBF_ARGB_U32:		return ConvertPixel_RGBA_U32_To_ARGB_U32;
+		case BitmapData::eBF_ABGR_U32:		return ConvertPixel_RGBA_U32_To_ABGR_U32;
 		case BitmapData::eBF_RGBA_U32:		return ConvertPixel_NoOp<32>;
 		case BitmapData::eBF_R_F32:			return nullptr;
 		default:							return nullptr;

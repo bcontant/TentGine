@@ -7,6 +7,7 @@
 class Texture;
 class FontDataFile;
 
+//--------------------------------------------------------------------------------
 class Font : public RendererObject
 {
 public:

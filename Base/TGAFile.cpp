@@ -3,10 +3,13 @@
 #include "TGAFile.h"
 #include "BitmapData.h"
 #include "File.h"
+#include "MemoryBuffer.h"
+#include "CompressionUtils.h"
 
 #pragma pack(push)
 #pragma pack(1)
 
+//--------------------------------------------------------------------------------
 struct TGA_Header
 {
 	char  IDLength = 0;
@@ -25,6 +28,7 @@ struct TGA_Header
 
 #pragma pack(pop)
 
+//--------------------------------------------------------------------------------
 enum ETGAImageType
 {
 	eTGA_NoImage = 0,
@@ -34,6 +38,7 @@ enum ETGAImageType
 	eTGA_RLE = 1 << 3
 };
 
+//--------------------------------------------------------------------------------
 enum ETGAImageOrigin
 {
 	eTGA_BottomLeft = 0,
@@ -42,7 +47,8 @@ enum ETGAImageOrigin
 	eTGA_TopRight = 3
 };
 
-void SaveTGA(const Path& in_file, BitmapData* in_pData, bool in_bCompress)
+//--------------------------------------------------------------------------------
+bool SaveTGA(const Path& in_file, BitmapData* in_pData, bool in_bCompress)
 {
 	TGA_Header hdr;
 
@@ -64,10 +70,9 @@ void SaveTGA(const Path& in_file, BitmapData* in_pData, bool in_bCompress)
 		hdr.ImageType = eTGA_TrueColor; hdr.ImageDescriptor = 8; break;
 	default:	
 		AssertMsg(false, L("Unsupported format (%d)"), in_pData->GetFormat());
-		return;
+		return false;
 	}
 
-	//TODO
 	if (in_bCompress)
 		hdr.ImageType |= eTGA_RLE;
 
@@ -85,7 +90,9 @@ void SaveTGA(const Path& in_file, BitmapData* in_pData, bool in_bCompress)
 	hdr.ImageDescriptor |= eTGA_TopLeft << 4;
 		
 	File TGAFile;
-	TGAFile.Open(in_file, File::fmWriteOnly);
+	if(!TGAFile.Open(in_file, File::fmWriteOnly))
+		return false;
+
 	TGAFile.Write(&hdr, sizeof(TGA_Header));
 
 	if (!in_bCompress)
@@ -94,66 +101,15 @@ void SaveTGA(const Path& in_file, BitmapData* in_pData, bool in_bCompress)
 	}
 	else
 	{
-		unsigned int writtenBytes = 0;
-		unsigned char consecutiveRunSize = 1;
-		unsigned char rawRunSize = 0;
-		unsigned int currentRunIndex = 0;
-
-		unsigned char* pBuffer = (unsigned char*)in_pData->GetBuffer();
-		while (writtenBytes < in_pData->GetBufferSize())
-		{
-			while (consecutiveRunSize < 128 && rawRunSize < 128 && writtenBytes + currentRunIndex < in_pData->GetBufferSize())
-			{
-				if (writtenBytes + currentRunIndex + 1 < in_pData->GetBufferSize() &&
-					pBuffer[writtenBytes + currentRunIndex] == pBuffer[writtenBytes + currentRunIndex + 1])
-				{
-					consecutiveRunSize++;
-				}
-				else
-				{
-					if (consecutiveRunSize >= 3)
-					{
-						break;
-					}
-
-					rawRunSize++;
-					if (consecutiveRunSize > 1)
-						rawRunSize++;
-
-					consecutiveRunSize = 1;
-				}
-				currentRunIndex++;
-			} 
-
-			//Write the rawRun if any
-			if (rawRunSize > 0)
-			{
-				Assert(rawRunSize > 0);
-				unsigned char runSize = rawRunSize - 1;
-				TGAFile.Write(&runSize, 1);
-				TGAFile.Write(&pBuffer[writtenBytes], rawRunSize);
-				writtenBytes += rawRunSize;
-			}
-
-			//Write the consecutiveRun if any
-			if (consecutiveRunSize >= 3)
-			{
-				unsigned char runSize = consecutiveRunSize - 1;
-				runSize |= 0x80;
-				TGAFile.Write(&runSize, 1);
-				TGAFile.Write(&pBuffer[writtenBytes], 1);
-				writtenBytes += consecutiveRunSize;
-			}
-
-			rawRunSize = 0;
-			consecutiveRunSize = 1;
-			currentRunIndex = 0;
-		}
+		MemoryBuffer SrcBuffer((unsigned char*)in_pData->GetBuffer(), in_pData->GetBufferSize());
+		RLE_Encode(&SrcBuffer, &TGAFile, hdr.BPP / 8);
 	}
 
 	TGAFile.Close();
+	return true;
 }
 
+//--------------------------------------------------------------------------------
 BitmapData* LoadTGA(const Path& in_file)
 {
 	File TGAFile;
@@ -167,63 +123,15 @@ BitmapData* LoadTGA(const Path& in_file)
 	TGAFile.Advance(hdr.IDLength);
 
 	if (hdr.ColorMapType != 0)
-	{
 		return nullptr;
-	}
 
 	Assert(hdr.ColorMapOrigin == 0);
 	Assert(hdr.ColorMapLength == 0);
 	Assert(hdr.ColorMapBPP == 0);
 
-	unsigned int uiImageSize = hdr.Width * hdr.Height * (hdr.BPP / 8);
-	unsigned char* pImageData = new unsigned char[uiImageSize];
-
-	if (hdr.ImageType & eTGA_RLE)
-	{
-		unsigned int bytesRead = 0;
-		unsigned char* pCursor = pImageData;
-		const unsigned char pixelSize = (hdr.BPP / 8);
-		static unsigned char value[4];
-		unsigned char runCount = 0;
-
-		//Loop for the whole image
-		while (bytesRead < uiImageSize)
-		{
-			//MSB == 0 : Raw data   MSB == 1 : RLE data
-			TGAFile.Read(&runCount, 1);
-			if (runCount & 0x80)
-			{
-				runCount -= 127;
-				TGAFile.Read(value, pixelSize);
-				for (unsigned int i = 0; i < runCount; i++)
-				{
-					memcpy(pCursor, value, pixelSize);
-					pCursor += pixelSize;
-				}
-			}
-			else
-			{
-				++runCount;
-				TGAFile.Read(pCursor, runCount * pixelSize);
-				pCursor += runCount * pixelSize;
-			}
-			bytesRead += runCount * pixelSize;
-		}
-		Assert(bytesRead == uiImageSize);
-	}
-	else
-	{
-		unsigned int bytesRead = TGAFile.Read(pImageData, uiImageSize);
-		Assert(bytesRead == uiImageSize);
-	}
-
 	BitmapData::EBufferFormat eFormat;
 	switch (hdr.ImageType & 0x3)
 	{
-	case eTGA_NoImage: 
-	case eTGA_ColorMapped:
-		delete[] pImageData;
-		return nullptr;
 	case eTGA_TrueColor:
 		switch (hdr.BPP)
 		{
@@ -231,22 +139,43 @@ BitmapData* LoadTGA(const Path& in_file)
 		case 16: eFormat = BitmapData::eBF_A1R5G5B5_U16; break;
 		case 24: eFormat = BitmapData::eBF_RGB_U24; break;
 		case 32: eFormat = BitmapData::eBF_ARGB_U32; break;
-		default: 
-			Assert(false); 
-			delete[] pImageData;
+		default:
+			Assert(false);
 			return nullptr;
 		}
 		break;
+
 	case eTGA_Grayscale:
-		Assert(hdr.BPP == 8);
-		eFormat = BitmapData::eBF_A_U8;
+		switch (hdr.BPP)
+		{
+		case 8: eFormat = BitmapData::eBF_A_U8; break;
+		default:
+			Assert(false);
+			return nullptr;
+		}
 		break;
+
+	case eTGA_NoImage:
+	case eTGA_ColorMapped:
 	default:
 		Assert(false);
-		delete[] pImageData;
 		return nullptr;
 	}
 
+	unsigned int uiImageSize = hdr.Width * hdr.Height * (hdr.BPP / 8);
+	unsigned char* pImageData = new unsigned char[uiImageSize];
+
+	if (hdr.ImageType & eTGA_RLE)
+	{
+		MemoryBuffer DstBuffer(pImageData, uiImageSize);
+		RLE_Decode(&TGAFile, &DstBuffer, uiImageSize, hdr.BPP / 8);
+	}
+	else
+	{
+		unsigned int bytesRead = TGAFile.Read(pImageData, uiImageSize);
+		Assert(bytesRead == uiImageSize);
+	}
+	
 	BitmapData* pBitmapData = new BitmapData(hdr.Width, hdr.Height, pImageData, eFormat);
 	
 	ETGAImageOrigin origin = (ETGAImageOrigin)((hdr.ImageDescriptor >> 4) & 0x3);

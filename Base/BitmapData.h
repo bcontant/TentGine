@@ -16,9 +16,11 @@ public:
 		eBF_R5G6B5_U16,
 		eBF_A1R5G5B5_U16,
 
+		eBF_BGR_U24,
 		eBF_RGB_U24,
 
 		eBF_ARGB_U32,
+		eBF_ABGR_U32,
 		eBF_RGBA_U32,
 
 		eBF_R_F32,

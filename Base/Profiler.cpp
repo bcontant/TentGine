@@ -3,6 +3,7 @@
 #include "Profiler.h"
 #include "../OS_Base/System.h"
 
+//--------------------------------------------------------------------------------
 void ProfileBlock::StartBlock(ProfileBlock* in_pChild)
 {
 	if (m_pActiveChild)
@@ -11,6 +12,7 @@ void ProfileBlock::StartBlock(ProfileBlock* in_pChild)
 		m_pActiveChild = in_pChild;
 }
 
+//--------------------------------------------------------------------------------
 bool ProfileBlock::StopBlock()
 {
 	if (m_pActiveChild)
@@ -29,6 +31,7 @@ bool ProfileBlock::StopBlock()
 	}
 }
 
+//--------------------------------------------------------------------------------
 void ProfileBlock::Stop() 
 { 
 	m_i64StopTime = OS::GetTickCount(); 
@@ -36,6 +39,7 @@ void ProfileBlock::Stop()
 	m_fBlockTimeMs = (double(m_i64StopTime - m_i64StartTime) / OS::GetTickFrequency()) * 1000.f;
 }
 
+//--------------------------------------------------------------------------------
 void Profiler::StartBlock(void* in_sectionID, std::thread::id in_threadID)
 {
 	ProfileBlock* newBlock = new ProfileBlock(in_sectionID);
@@ -46,6 +50,7 @@ void Profiler::StartBlock(void* in_sectionID, std::thread::id in_threadID)
 		m_vActiveBlocks[in_threadID]->StartBlock(newBlock);
 }
 
+//--------------------------------------------------------------------------------
 void Profiler::EndBlock(std::thread::id in_threadID)
 {
 	if (m_vActiveBlocks[in_threadID]->StopBlock())

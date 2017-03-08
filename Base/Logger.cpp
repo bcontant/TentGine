@@ -2,6 +2,7 @@
 
 #include "../OS_Base/System.h"
 
+//--------------------------------------------------------------------------------
 const StringChar* kLogCategories[] =
 {
 	L("Init        "),
@@ -15,6 +16,7 @@ const StringChar* kLogCategories[] =
 	L("Rendering   "),
 };
 
+//--------------------------------------------------------------------------------
 const StringChar* kLogSeverities[] =
 {
 	L("Message  "),
@@ -22,16 +24,18 @@ const StringChar* kLogSeverities[] =
 	L("Error    ")
 };
 
-
+//--------------------------------------------------------------------------------
 Logger::Logger()
 {
 }
 
+//--------------------------------------------------------------------------------
 Logger::~Logger()
 {
 	m_LogFile.Close();
 }
 
+//--------------------------------------------------------------------------------
 void Logger::Initialize()
 {
 	m_LogFile.Open(L("log.txt"), File::fmWriteText);
@@ -39,6 +43,7 @@ void Logger::Initialize()
 	//Logger::GetInstance()->Log("LogFile created on %02d-%02d-%04d at %02d:%02d:%02d -- Part %d", sysTime.GetMonth(), sysTime.GetDay(), sysTime.GetYear(), sysTime.GetHour(), sysTime.GetMinute(), sysTime.GetSecond(), m_LogFileNumber);
 }
 
+//--------------------------------------------------------------------------------
 void Logger::Log(ELogCategory in_eCategory, ELogSeverity in_eSeverity, ELogType in_eLogType, const StringChar* in_pMsg, ...)
 {
 	if (this == nullptr)
@@ -54,6 +59,7 @@ void Logger::Log(ELogCategory in_eCategory, ELogSeverity in_eSeverity, ELogType 
 	LogFormattedMsg(in_eCategory, in_eSeverity, in_eLogType, strTemp);
 }
 
+//--------------------------------------------------------------------------------
 void Logger::LogFormattedMsg(ELogCategory in_eCategory, ELogSeverity in_eSeverity, ELogType in_eLogType, StringChar* in_pMsg)
 {
 	//Do the "Debug" part of the logType

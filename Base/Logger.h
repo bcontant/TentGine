@@ -3,6 +3,7 @@
 #include "Singleton.h"
 #include "File.h"
 
+//--------------------------------------------------------------------------------
 enum ELogCategory
 {
 	eLC_Init,
@@ -22,6 +23,7 @@ enum ELogCategory
 };
 extern const StringChar* kLogCategories[];
 
+//--------------------------------------------------------------------------------
 enum ELogSeverity
 {
 	eLS_Message,
@@ -31,6 +33,7 @@ enum ELogSeverity
 };
 extern const StringChar* kLogSeverities[];
 
+//--------------------------------------------------------------------------------
 enum ELogType
 {
 	eLT_File,
@@ -38,6 +41,7 @@ enum ELogType
 	eLogType_Count
 };
 
+//--------------------------------------------------------------------------------
 class Logger : public Singleton<Logger>
 {
 	MAKE_SINGLETON(Logger);

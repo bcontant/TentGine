@@ -1,9 +1,9 @@
 #pragma once
 
+//--------------------------------------------------------------------------------
 class BitField
 {
 public:
-	//BitField(unsigned char* in_pBitField, unsigned int in_uiBufferSizeInBytes, unsigned int in_uiBitsPerElement, unsigned int in_uiBufferStartOffsetInBits);
 	BitField(unsigned char* in_pBitField, unsigned int in_uiElementCount, unsigned int in_uiBitsPerElement, unsigned int in_uiBufferStartOffsetInBits);
 
 	unsigned char GetElement(unsigned int in_uiIndex) const;

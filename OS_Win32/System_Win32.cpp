@@ -7,11 +7,13 @@
 
 namespace OS
 {
+	//--------------------------------------------------------------------------------
 	void DebugOut(StringChar* in_pMessage)
 	{
 		OutputDebugString(in_pMessage);
 	}
 
+	//--------------------------------------------------------------------------------
 	int ShowMessageBox(const StringChar* title, const StringChar* message, unsigned int buttons)
 	{
 		UINT type = 0;
@@ -49,11 +51,13 @@ namespace OS
 		return -1;
 	}
 
+	//--------------------------------------------------------------------------------
 	bool LShiftDown()
 	{
 		return (GetAsyncKeyState(VK_LSHIFT) & 0x8000) > 0;
 	}
 
+	//--------------------------------------------------------------------------------
 	std::vector<StdString> GetCallStack()
 	{
 		std::vector<StdString> stackTrace;
@@ -84,6 +88,7 @@ namespace OS
 		return stackTrace;
 	}
 
+	//--------------------------------------------------------------------------------
 	__int64 GetTickCount()
 	{
 		__int64 t;
@@ -91,6 +96,7 @@ namespace OS
 		return t;
 	}
 
+	//--------------------------------------------------------------------------------
 	__int64 GetTickFrequency()
 	{
 		static __int64 freq = 0;

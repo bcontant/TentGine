@@ -1,12 +1,14 @@
 #include "precompiled.h"
 
+//--------------------------------------------------------------------------------
 Font::Font(Renderer* pOwner) 
-:RendererObject(pOwner)
-,m_FontDataFile(nullptr)
-,m_pFontTexture(nullptr) 
+	:RendererObject(pOwner)
+	, m_FontDataFile(nullptr)
+	, m_pFontTexture(nullptr)
 {
 }
 
+//--------------------------------------------------------------------------------
 Font::~Font()
 {
 	delete m_FontDataFile;
@@ -16,6 +18,7 @@ Font::~Font()
 	m_pFontTexture = nullptr;
 }
 
+//--------------------------------------------------------------------------------
 void Font::Load(const Path& in_filename)
 {
 	m_FontDataFile = new FontDataFile();

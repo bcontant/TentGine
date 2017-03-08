@@ -1,11 +1,14 @@
 #include "precompiled.h"
 
+//--------------------------------------------------------------------------------
 IWindowMessageCallback::IWindowMessageCallback(Window* pWindow)
 	: m_pWindow(pWindow)
 {
 	if(m_pWindow)
 		m_pWindow->RegisterMessageCallback(this);
 }
+
+//--------------------------------------------------------------------------------
 IWindowMessageCallback::~IWindowMessageCallback()
 {
 	if (m_pWindow)
@@ -13,11 +16,13 @@ IWindowMessageCallback::~IWindowMessageCallback()
 	m_pWindow = 0;
 }
 
+//--------------------------------------------------------------------------------
 void Window::RegisterMessageCallback(IWindowMessageCallback* pCallback)
 {
 	m_vMessageCallbacks.push_back(pCallback);
 }
 
+//--------------------------------------------------------------------------------
 Window::Window() 
 	:IWindowMessageCallback(0)
 {
@@ -25,6 +30,7 @@ Window::Window()
 	m_pWindow->RegisterMessageCallback(this);
 }
 
+//--------------------------------------------------------------------------------
 void Window::UnregisterMessageCallback(IWindowMessageCallback* pCallback)
 {
 	auto it = m_vMessageCallbacks.begin();
@@ -39,6 +45,7 @@ void Window::UnregisterMessageCallback(IWindowMessageCallback* pCallback)
 	}
 }
 
+//--------------------------------------------------------------------------------
 bool Window::NotifyCallbacks(void* hwnd, unsigned int message, uint64_t wParam, int64_t lParam)
 {
 	bool bHandled = false;

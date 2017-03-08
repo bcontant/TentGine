@@ -4,6 +4,7 @@
 #include "RendererObject.h"
 #include "../Base/Path.h"
 
+//--------------------------------------------------------------------------------
 class Texture : public RendererObject
 {
 public:

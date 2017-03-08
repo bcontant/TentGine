@@ -72,7 +72,7 @@ void File::Flush()
 }
 
 //--------------------------------------------------------------------------------
-long int File::Size()
+unsigned long int File::Size() const
 {
 	if (!m_FileHandle)
 		return 0;
@@ -122,6 +122,42 @@ unsigned int File::SeekTo(unsigned int offset)
 }
 
 //--------------------------------------------------------------------------------
+const void* File::PeekAt(unsigned int /*offset*/) const
+{
+	Assert(false);
+	return nullptr;
+}
+
+static unsigned char* pTmpBuffer = new unsigned char[1024];
+static unsigned int uiTmpBufferSize = 1024;
+
+//--------------------------------------------------------------------------------
+unsigned int File::Read(Buffer* buffer, unsigned int bufferSize)
+{ 
+	if (bufferSize > uiTmpBufferSize)
+	{
+		delete[] pTmpBuffer;
+		pTmpBuffer = new unsigned char[bufferSize];
+		uiTmpBufferSize = bufferSize;
+	}
+	Read(pTmpBuffer, bufferSize);
+	return buffer->Write(pTmpBuffer, bufferSize);
+}
+
+//--------------------------------------------------------------------------------
+unsigned int File::Write(Buffer* buffer, unsigned int bufferSize) 
+{ 
+	if (bufferSize > uiTmpBufferSize)
+	{
+		delete[] pTmpBuffer;
+		pTmpBuffer = new unsigned char[bufferSize];
+		uiTmpBufferSize = bufferSize;
+	}
+	buffer->Read(pTmpBuffer, bufferSize);
+	return Write(pTmpBuffer, bufferSize);;
+}
+
+//--------------------------------------------------------------------------------
 unsigned int File::Read(void* buffer, unsigned int bufferSize)
 {
 	AssertMsg(m_FileMode == fmReadOnly || m_FileMode == fmReadWrite || m_FileMode == fmReadAppend, L("Invalid Filemode"));
@@ -158,7 +194,7 @@ unsigned int File::Read(StdString& in_string)
 		return 0;
 
 #define MAX_STR_LEN 2048
-
+	//TODO : This probably should be a fixed type otherwise files created with a Unicode binary won't load with a UTF8 binary and vice-versa
 	unsigned int sizeRead = 0;
 	unsigned int size = 0;
 	sizeRead += static_cast<unsigned int>(fread(&size, sizeof(unsigned int), 1, m_FileHandle));
@@ -181,6 +217,7 @@ unsigned int File::Write(const StdString& in_string)
 	if (!m_FileHandle)
 		return 0;
 
+	//TODO : This probably should be a fixed type otherwise files created with a Unicode binary won't load with a UTF8 binary and vice-versa
 	unsigned int sizeWritten = 0;
 	unsigned int size = static_cast<unsigned int>(in_string.size());
 	sizeWritten += static_cast<unsigned int>(fwrite(&size, 1, sizeof(unsigned int), m_FileHandle));

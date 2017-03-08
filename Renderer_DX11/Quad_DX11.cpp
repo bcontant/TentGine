@@ -2,6 +2,7 @@
 
 #include "simple_vertex.h"
 
+//--------------------------------------------------------------------------------
 struct CBStruct
 {
 	DirectX::XMMATRIX world;
@@ -9,6 +10,7 @@ struct CBStruct
 	DirectX::XMMATRIX proj;
 };
 
+//--------------------------------------------------------------------------------
 struct SimpleVertex
 {
 	DirectX::XMFLOAT3 Pos;
@@ -24,6 +26,7 @@ For example a substrip BCDEF would represent triangles : BCD, CED, DEF.
 
 So in this case {ABCD}, we get ABC (CW) and BDC (CW, instead of BCD, which would be CCW)
 */
+//--------------------------------------------------------------------------------
 SimpleVertex quad_vertices[] =
 {
 	DirectX::XMFLOAT3(1.0f, 0.0f, 0.0f),
@@ -39,6 +42,7 @@ SimpleVertex quad_vertices[] =
 	DirectX::XMFLOAT2(0.0f, 1.0f),
 };
 
+//--------------------------------------------------------------------------------
 Quad_DX11::Quad_DX11(Renderer* pOwner) : Quad(pOwner)
 {
 	Renderer_DX11* pDX11Renderer = (Renderer_DX11*)GetOwner();
@@ -93,6 +97,7 @@ Quad_DX11::Quad_DX11(Renderer* pOwner) : Quad(pOwner)
 	hr = pDX11Renderer->GetDevice()->CreateInputLayout(inputElementDescs, 2, g_VShader, sizeof(g_VShader), &pInputLayout);
 }
 
+//--------------------------------------------------------------------------------
 Quad_DX11::~Quad_DX11()
 {
 	pInputLayout->Release();
@@ -101,12 +106,14 @@ Quad_DX11::~Quad_DX11()
 	pConstantBuffer->Release();
 }
 
+//--------------------------------------------------------------------------------
 void Quad_DX11::SetPosition(float x, float y)
 {
 	m_Position.x = x;
 	m_Position.y = y;
 }
 
+//--------------------------------------------------------------------------------
 void Quad_DX11::Draw()
 {
 	Renderer_DX11* pDX11Renderer = (Renderer_DX11*)GetOwner();
