@@ -1,5 +1,7 @@
 #pragma once
 
+#pragma warning(default : 4062)
+
 #include <stdio.h>
 #include <stdarg.h>
 #include <locale>

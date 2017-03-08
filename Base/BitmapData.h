@@ -54,7 +54,6 @@ public:
 	BitmapData* ConvertTo(EBufferFormat in_eFormat);
 
 private:
-	static void Convert(unsigned char* in_pSrc, unsigned int in_uiSrcPitch, EBufferFormat in_eSrcFormat, unsigned char** in_ppDst, unsigned int& in_uiDstPitch, EBufferFormat in_eDstFormat);
 	void Initialize(); 
 
 	void UpdateBufferSize();

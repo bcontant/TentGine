@@ -65,6 +65,9 @@ BitmapData::BitmapData(const BitmapData& in_BitmapData)
 BitmapData::~BitmapData()
 {
 	delete[] m_pBuffer;
+	m_pBuffer = nullptr;
+
+	m_eFormat = eBF_Invalid;
 }
 
 //--------------------------------------------------------------------------------
@@ -316,6 +319,10 @@ void ConvertPixel_8BPP(const unsigned char* in_pSrc, unsigned char* in_pDst, con
 
 //--------------------------------------------------------------------------------
 //BitmapData::eBF_A_U1
+//
+// Memory Layout (byte-order)
+//   AAAAAAAA
+//   0x00
 //--------------------------------------------------------------------------------
 template<>
 void ConvertPixel_8BPP<1, 8>(const unsigned char* in_pSrc, unsigned char* in_pDst, const unsigned int in_uiPixelCount)
@@ -339,6 +346,10 @@ void ConvertPixel_A_U1_To_RGBA_U32(const unsigned char* in_pSrc, unsigned char* 
 
 //--------------------------------------------------------------------------------
 //BitmapData::eBF_A_U5
+//
+// Memory Layout (byte-order)
+//   RRRRRRRR
+//   0x00 0x00 0x00 0x00 0x00
 //--------------------------------------------------------------------------------
 template<>
 void ConvertPixel_8BPP<5, 8>(const unsigned char* in_pSrc, unsigned char* in_pDst, const unsigned int in_uiPixelCount)
@@ -363,6 +374,10 @@ void ConvertPixel_A_U5_To_RGBA_U32(const unsigned char* in_pSrc, unsigned char* 
 
 //--------------------------------------------------------------------------------
 //BitmapData::eBF_A_U8
+//
+// Memory Layout (byte-order)
+//   A
+//   0x00
 //--------------------------------------------------------------------------------
 template<>
 void ConvertPixel_8BPP<8, 5>(const unsigned char* in_pSrc, unsigned char* in_pDst, const unsigned int in_uiPixelCount)
@@ -436,6 +451,10 @@ void ConvertPixel_A_U8_To_RGBA_U32(const unsigned char* in_pSrc, unsigned char* 
 
 //--------------------------------------------------------------------------------
 //BitmapData::eBF_R_U8
+//
+// Memory Layout (byte-order)
+//   R
+//   0x00
 //--------------------------------------------------------------------------------
 void ConvertPixel_R_U8_To_RGBA_U32(const unsigned char* in_pSrc, unsigned char* in_pDst, const unsigned int in_uiPixelCount)
 {
@@ -447,6 +466,10 @@ void ConvertPixel_R_U8_To_RGBA_U32(const unsigned char* in_pSrc, unsigned char* 
 
 //--------------------------------------------------------------------------------
 //BitmapData::eBF_X1R5G5B5_U16
+//
+// Memory Layout (byte-order)
+//   G3B5A  X1R5G2
+//   0x00   0x00
 //--------------------------------------------------------------------------------
 void ConvertPixel_X1R5G5B5_U16_To_ARGB_U32(const unsigned char* in_pSrc, unsigned char* in_pDst, const unsigned int in_uiPixelCount)
 {
@@ -482,6 +505,10 @@ void ConvertPixel_X1R5G5B5_U16_To_RGBA_U32(const unsigned char* in_pSrc, unsigne
 
 //--------------------------------------------------------------------------------
 //BitmapData::eBF_R5G6B5_U16
+//
+// Memory Layout (byte-order)
+//   G3B5A  R5G3
+//   0x00   0x00
 //--------------------------------------------------------------------------------
 void ConvertPixel_R5G6B5_U16_To_ARGB_U32(const unsigned char* in_pSrc, unsigned char* in_pDst, const unsigned int in_uiPixelCount)
 {
@@ -518,6 +545,10 @@ void ConvertPixel_R5G6B5_U16_To_RGBA_U32(const unsigned char* in_pSrc, unsigned 
 
 //--------------------------------------------------------------------------------
 //BitmapData::eBF_R5G5B5A1_U16
+//
+// Memory Layout (byte-order)
+//  G2B5A1  R5G3
+//   0x00   0x00
 //--------------------------------------------------------------------------------
 void ConvertPixel_A1R5G5B5_U16_To_ARGB_U32(const unsigned char* in_pSrc, unsigned char* in_pDst, const unsigned int in_uiPixelCount)
 {
@@ -554,6 +585,10 @@ void ConvertPixel_A1R5G5B5_U16_To_RGBA_U32(const unsigned char* in_pSrc, unsigne
 
 //--------------------------------------------------------------------------------
 //BitmapData::eBF_BGR_U24
+//
+// Memory Layout (byte-order)
+//   R    G    B
+//  0x00 0x00 0x00
 //--------------------------------------------------------------------------------
 void ConvertPixel_BGR_U24_To_RGB_U24(const unsigned char* in_pSrc, unsigned char* in_pDst, const unsigned int in_uiPixelCount)
 {
@@ -585,6 +620,10 @@ void ConvertPixel_BGR_U24_To_ARGB_U32(const unsigned char* in_pSrc, unsigned cha
 
 //--------------------------------------------------------------------------------
 //BitmapData::eBF_RGB_U24
+//
+// Memory Layout (byte-order)
+//   B    G    R
+//  0x00 0x00 0x00
 //--------------------------------------------------------------------------------
 void ConvertPixel_RGB_U24_To_RGBA_U32(const unsigned char* in_pSrc, unsigned char* in_pDst, const unsigned int in_uiPixelCount)
 {
@@ -596,6 +635,10 @@ void ConvertPixel_RGB_U24_To_RGBA_U32(const unsigned char* in_pSrc, unsigned cha
 
 //--------------------------------------------------------------------------------
 //BitmapData::eBF_ARGB_U32
+//
+// Memory Layout (byte-order)
+//  B    G    R    A
+// 0x00 0x00 0x00 0x00
 //--------------------------------------------------------------------------------
 void ConvertPixel_ARGB_U32_To_A_U8(const unsigned char* in_pSrc, unsigned char* in_pDst, const unsigned int in_uiPixelCount)
 {
@@ -626,6 +669,10 @@ void ConvertPixel_ARGB_U32_To_RGBA_U32(const unsigned char* in_pSrc, unsigned ch
 
 //--------------------------------------------------------------------------------
 //BitmapData::eBF_ABGR_U32
+//
+// Memory Layout (byte-order)
+//  R    G    B    A
+// 0x00 0x00 0x00 0x00
 //--------------------------------------------------------------------------------
 void ConvertPixel_ABGR_U32_To_ARGB_U32(const unsigned char* in_pSrc, unsigned char* in_pDst, const unsigned int in_uiPixelCount)
 {
@@ -646,7 +693,12 @@ void ConvertPixel_ABGR_U32_To_RGBA_U32(const unsigned char* in_pSrc, unsigned ch
 
 //--------------------------------------------------------------------------------
 //BitmapData::eBF_RGBA_U32
+//
+// Memory Layout (byte-order)
+//  A    B    G    R
+// 0x00 0x00 0x00 0x00
 //--------------------------------------------------------------------------------
+
 void ConvertPixel_RGBA_U32_To_A_U1(const unsigned char* in_pSrc, unsigned char* in_pDst, const unsigned int in_uiPixelCount)
 {
 	//WARNING : LOSS OF RGB DATA
@@ -900,8 +952,10 @@ ConvertPixelFunc GetConvertPixelFunction(BitmapData::EBufferFormat in_eSrcFormat
 		case BitmapData::eBF_X1R5G5B5_U16:	return nullptr;
 		case BitmapData::eBF_R5G6B5_U16:	return nullptr;
 		case BitmapData::eBF_A1R5G5B5_U16:	return nullptr;
+		case BitmapData::eBF_BGR_U24:		return nullptr;
 		case BitmapData::eBF_RGB_U24:		return ConvertPixel_NoOp<24>;
 		case BitmapData::eBF_ARGB_U32:		return nullptr;
+		case BitmapData::eBF_ABGR_U32:		return nullptr;
 		case BitmapData::eBF_RGBA_U32:		return ConvertPixel_RGB_U24_To_RGBA_U32;
 		case BitmapData::eBF_R_F32:			return nullptr;
 		default:							return nullptr;

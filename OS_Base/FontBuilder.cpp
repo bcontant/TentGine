@@ -6,6 +6,7 @@
 #include "../Base/BitmapData.h"
 #include "../Base/GraphicUtils.h"
 #include "../Base/TGAFile.h"
+#include "../Base/PNGFile.h"
 
 #include "ft2build.h"
 #include FT_FREETYPE_H
@@ -107,7 +108,7 @@ void OS::BuildFont(const Path& in_FontFile, unsigned int in_uiFontSize, unsigned
 	}
 
 	pRects->ConvertTo(BitmapData::eBF_A_U8);
-
+	
 	StdString fontName = Format(L("%s %s %dpt%s"), FROM_STRING(face->family_name).c_str(), FROM_STRING(face->style_name).c_str(), in_uiFontSize, in_uiFlags & eFF_Mono ? L(" Mono") : L(""));
 	
 	FontDataFile* newFont = new FontDataFile(fontName, in_uiFontSize, in_uiTextureSize, mFinalGlyphs, (const unsigned char*)pRects->GetBuffer());

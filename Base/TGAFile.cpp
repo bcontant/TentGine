@@ -50,27 +50,58 @@ enum ETGAImageOrigin
 //--------------------------------------------------------------------------------
 bool SaveTGA(const Path& in_file, BitmapData* in_pData, bool in_bCompress)
 {
+	if (in_pData == nullptr)
+		return false;
+
 	TGA_Header hdr;
 
 	hdr.IDLength = 0;
 	hdr.ColorMapType = 0;
-	
-	//Like most files, TGA has a BGRA format on disk (which becomes ARGB in memory on little-endian)
+
+	//Like most files, TGA has a BGRA (byte-order) format on disk (which becomes ARGB (word-order) in memory on little-endian)
+	BitmapData::EBufferFormat convertTo = BitmapData::eBF_Invalid;
 	switch (in_pData->GetFormat())
 	{
+	case BitmapData::eBF_A_U1:
+	case BitmapData::eBF_A_U5:
+		convertTo = BitmapData::eBF_A_U8;
 	case BitmapData::eBF_A_U8:		
 		hdr.ImageType = eTGA_Grayscale;	hdr.ImageDescriptor = 0;  break;
+
+	case BitmapData::eBF_R5G6B5_U16:
+		convertTo = BitmapData::eBF_X1R5G5B5_U16;
 	case BitmapData::eBF_X1R5G5B5_U16:
 		hdr.ImageType = eTGA_TrueColor; hdr.ImageDescriptor = 0; break;
+
 	case BitmapData::eBF_A1R5G5B5_U16:
 		hdr.ImageType = eTGA_TrueColor; hdr.ImageDescriptor = 1; break;
+
+	case BitmapData::eBF_R_U8:
+	case BitmapData::eBF_BGR_U24:
+	case BitmapData::eBF_R_F32:
+		convertTo = BitmapData::eBF_RGB_U24;
 	case BitmapData::eBF_RGB_U24:
 		hdr.ImageType = eTGA_TrueColor; hdr.ImageDescriptor = 0; break;
+
+	case BitmapData::eBF_RGBA_U32:
+	case BitmapData::eBF_ABGR_U32:
+		convertTo = BitmapData::eBF_ARGB_U32;
 	case BitmapData::eBF_ARGB_U32:
 		hdr.ImageType = eTGA_TrueColor; hdr.ImageDescriptor = 8; break;
+
 	default:	
 		AssertMsg(false, L("Unsupported format (%d)"), in_pData->GetFormat());
 		return false;
+	}
+
+	File TGAFile;
+	if (!TGAFile.Open(in_file, File::fmWriteOnly))
+		return false;
+
+	if (convertTo != BitmapData::eBF_Invalid)
+	{
+		in_pData = new BitmapData(*in_pData);
+		in_pData->ConvertTo(convertTo);
 	}
 
 	if (in_bCompress)
@@ -88,11 +119,7 @@ bool SaveTGA(const Path& in_file, BitmapData* in_pData, bool in_bCompress)
 	hdr.BPP = static_cast<char>(in_pData->GetBitsPerPixel());
 
 	hdr.ImageDescriptor |= eTGA_TopLeft << 4;
-		
-	File TGAFile;
-	if(!TGAFile.Open(in_file, File::fmWriteOnly))
-		return false;
-
+	
 	TGAFile.Write(&hdr, sizeof(TGA_Header));
 
 	if (!in_bCompress)
@@ -106,6 +133,12 @@ bool SaveTGA(const Path& in_file, BitmapData* in_pData, bool in_bCompress)
 	}
 
 	TGAFile.Close();
+
+	if (convertTo != BitmapData::eBF_Invalid)
+	{
+		delete in_pData;
+	}
+
 	return true;
 }
 

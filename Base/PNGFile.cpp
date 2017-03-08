@@ -8,8 +8,19 @@
 #pragma warning(disable:4611)
 #endif /* VC++ */
 
+enum EPNGColorType
+{
+	ePNG_GrayScale	= 0,
+	ePNG_Indexed	= 1 << 0,
+	ePNG_TrueColor	= 1 << 1,
+	ePNG_Alpha		= 1 << 2
+};
+
 bool SavePNG(const Path& in_file, BitmapData* in_pData)
 {
+	if (in_pData == nullptr)
+		return false;
+
 	FILE *fp = nullptr;
 	FOPEN(&fp, in_file.GetData(), L("wb"));	
 	if (!fp)
@@ -51,10 +62,14 @@ bool SavePNG(const Path& in_file, BitmapData* in_pData)
 	int color_type = 0;
 	switch (in_pData->GetFormat())
 	{
-	case BitmapData::eBF_A_U1:		color_type = 0;  bit_depth = 1; break;
-	case BitmapData::eBF_A_U8:		color_type = 0;  bit_depth = 8; break;
-	case BitmapData::eBF_BGR_U24:	color_type = 2;  bit_depth = 8; break;
-	case BitmapData::eBF_ABGR_U32:	color_type = 6;  bit_depth = 8; break;
+	case BitmapData::eBF_A_U1:		
+		color_type = ePNG_GrayScale;  bit_depth = 1; break;
+	case BitmapData::eBF_A_U8:		
+		color_type = ePNG_GrayScale;  bit_depth = 8; break;
+	case BitmapData::eBF_BGR_U24:	
+		color_type = ePNG_TrueColor;  bit_depth = 8; break;
+	case BitmapData::eBF_ABGR_U32:	
+		color_type = ePNG_TrueColor | ePNG_Alpha;  bit_depth = 8; break;
 	default:
 		return false;
 	}

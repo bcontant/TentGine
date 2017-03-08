@@ -28,16 +28,17 @@ int CALLBACK WinMain(HINSTANCE hInstance, HINSTANCE, LPSTR, int)
 
 	CoInitialize(nullptr);
 
-	BitmapData* pPNGTest = LoadPNG(L("../../data/pngtest_tc.png"));
+	BitmapData* pPNGTest = LoadPNG(L("../../data/red.png"));
 	SavePNG(L("../../data/TEST.png"), pPNGTest);
-	pPNGTest->ConvertTo(BitmapData::eBF_RGB_U24);
+	//pPNGTest->ConvertTo(BitmapData::eBF_RGB_U24);
 	SaveTGA(L("../../data/pngtest.tga"), pPNGTest, false);
 
-	OS::BuildFont(L("../../data/Comic.ttf"), 72, 1024, OS::eFF_ForceAutoHint/* | OS::eFF_Mono*/);
+	OS::BuildFont(L("../../data/Comic.ttf"), 72, 1024, OS::eFF_ForceAutoHint | OS::eFF_Mono);
 					
 	Window* pWindow = Window::Create(1024, 1024, false, hInstance);
 
-	BitmapData* pImage = LoadTGA(L("../../data/8bit_Grayscale_Uncompressed.tga"));
+	//BitmapData* pImage = LoadTGA(L("../../data/8bit_Grayscale_Uncompressed.tga"));
+	BitmapData* pImage = LoadTGA(L("../../data/red16bit.tga"));
 	pImage->ConvertTo(BitmapData::eBF_RGB_U24);
 	pImage->ConvertTo(BitmapData::eBF_ARGB_U32);
 	SaveTGA(L("../../data/TEST.tga"), pImage, true);
@@ -49,7 +50,7 @@ int CALLBACK WinMain(HINSTANCE hInstance, HINSTANCE, LPSTR, int)
 	Renderer* pRenderer = Renderer::CreateRenderer(nullptr, pWindow); 
 	Texture* pTexture1 = pRenderer->CreateTexture(L("../../data/stuff.gif"));
 	Texture* pTexture2 = pRenderer->CreateTexture(L("../../data/papa.jpg"));
-	Texture* pTexture3 = pRenderer->CreateTexture(L("../../data/trophy.gif"));
+	Texture* pTexture3 = pRenderer->CreateTexture(L("../../data/red.png"));
 
 	Font* pFont = pRenderer->LoadFont(L("Comic Sans MS Regular 72pt Mono.font"));
 

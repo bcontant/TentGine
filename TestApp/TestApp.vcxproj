@@ -185,7 +185,7 @@
     <Link>
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>d3d11.lib;d2d1.lib;dwrite.lib;windowscodecs.lib;dxgi.lib;dbghelp.lib;Base.lib;OS_Base.lib;OS_Win32.lib;Renderer_Base.lib;Renderer_DX11.lib;zlib_d.lib;freetype271d.lib;libpng_d.lib;;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>d3d11.lib;d2d1.lib;dwrite.lib;windowscodecs.lib;dxgi.lib;dbghelp.lib;Base.lib;OS_Base.lib;OS_Win32.lib;Renderer_Base.lib;Renderer_DX11.lib;zlibMTDLLd.lib;freetype271MTDLLd.lib;libpngMTDLLd.lib;;%(AdditionalDependencies)</AdditionalDependencies>
       <ShowProgress>NotSet</ShowProgress>
       <AdditionalLibraryDirectories>$(SolutionDir)lib\$(Configuration)_$(PlatformTarget)\;$(SolutionDir)sdks\freetype-2.7.1\lib\Win32;$(SolutionDir)sdks\zlib-1.2.11\lib\Win32;$(SolutionDir)sdks\libpng-1.6.28\lib\Win32</AdditionalLibraryDirectories>
       <OutputFile>$(OutDir)$(TargetName)$(TargetExt)</OutputFile>
@@ -208,7 +208,7 @@
     <Link>
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>d3d11.lib;d2d1.lib;dwrite.lib;windowscodecs.lib;dxgi.lib;dbghelp.lib;Base.lib;OS_Base.lib;OS_Win32.lib;Renderer_Base.lib;Renderer_DX11.lib;zlib_d.lib;freetype271d.lib;libpng_d.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>d3d11.lib;d2d1.lib;dwrite.lib;windowscodecs.lib;dxgi.lib;dbghelp.lib;Base.lib;OS_Base.lib;OS_Win32.lib;Renderer_Base.lib;Renderer_DX11.lib;zlibMTDLLd.lib;freetype271MTDLLd.lib;libpngMTDLLd.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <ShowProgress>NotSet</ShowProgress>
       <AdditionalLibraryDirectories>$(SolutionDir)lib\$(Configuration)_$(PlatformTarget)\;$(SolutionDir)sdks\freetype-2.7.1\lib\Win32;$(SolutionDir)sdks\zlib-1.2.11\lib\Win32;$(SolutionDir)sdks\libpng-1.6.28\lib\Win32</AdditionalLibraryDirectories>
       <OutputFile>$(OutDir)$(TargetName)$(TargetExt)</OutputFile>
@@ -232,7 +232,7 @@
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <ShowProgress>NotSet</ShowProgress>
-      <AdditionalDependencies>d3d11.lib;d2d1.lib;dwrite.lib;windowscodecs.lib;dxgi.lib;dbghelp.lib;Base.lib;OS_Base.lib;OS_Win32.lib;Renderer_Base.lib;Renderer_DX11.lib;zlib_d.lib;freetype271d.lib;libpng_d.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>d3d11.lib;d2d1.lib;dwrite.lib;windowscodecs.lib;dxgi.lib;dbghelp.lib;Base.lib;OS_Base.lib;OS_Win32.lib;Renderer_Base.lib;Renderer_DX11.lib;zlibMTDLLd.lib;freetype271MTDLLd.lib;libpngMTDLLd.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <AdditionalLibraryDirectories>$(SolutionDir)lib\$(Configuration)_$(PlatformTarget)\;$(SolutionDir)sdks\freetype-2.7.1\lib\x64;$(SolutionDir)sdks\zlib-1.2.11\lib\x64;$(SolutionDir)sdks\libpng-1.6.28\lib\x64</AdditionalLibraryDirectories>
       <OutputFile>$(OutDir)$(TargetName)$(TargetExt)</OutputFile>
     </Link>
@@ -251,7 +251,7 @@
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <ShowProgress>NotSet</ShowProgress>
-      <AdditionalDependencies>d3d11.lib;d2d1.lib;dwrite.lib;windowscodecs.lib;dxgi.lib;dbghelp.lib;Base.lib;OS_Base.lib;OS_Win32.lib;Renderer_Base.lib;Renderer_DX11.lib;zlib_d.lib;freetype271d.lib;libpng_d.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>d3d11.lib;d2d1.lib;dwrite.lib;windowscodecs.lib;dxgi.lib;dbghelp.lib;Base.lib;OS_Base.lib;OS_Win32.lib;Renderer_Base.lib;Renderer_DX11.lib;zlibMTDLLd.lib;freetype271MTDLLd.lib;libpngMTDLLd.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <AdditionalLibraryDirectories>$(SolutionDir)lib\$(Configuration)_$(PlatformTarget)\;$(SolutionDir)sdks\freetype-2.7.1\lib\x64;$(SolutionDir)sdks\zlib-1.2.11\lib\x64;$(SolutionDir)sdks\libpng-1.6.28\lib\x64</AdditionalLibraryDirectories>
       <OutputFile>$(OutDir)$(TargetName)$(TargetExt)</OutputFile>
     </Link>
@@ -273,7 +273,7 @@
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>d3d11.lib;d2d1.lib;dwrite.lib;windowscodecs.lib;dxgi.lib;dbghelp.lib;Base.lib;OS_Base.lib;OS_Win32.lib;Renderer_Base.lib;Renderer_DX11.lib;zlib.lib;libpng.lib;freetype271.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>d3d11.lib;d2d1.lib;dwrite.lib;windowscodecs.lib;dxgi.lib;dbghelp.lib;Base.lib;OS_Base.lib;OS_Win32.lib;Renderer_Base.lib;Renderer_DX11.lib;zlibMTDLL.lib;libpngMTDLL.lib;freetype271MTDLL.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <ShowProgress>NotSet</ShowProgress>
       <AdditionalLibraryDirectories>$(SolutionDir)lib\$(Configuration)_$(PlatformTarget)\;$(SolutionDir)sdks\freetype-2.7.1\lib\Win32;$(SolutionDir)sdks\zlib-1.2.11\lib\Win32;$(SolutionDir)sdks\libpng-1.6.28\lib\Win32</AdditionalLibraryDirectories>
       <OutputFile>$(OutDir)$(TargetName)$(TargetExt)</OutputFile>
@@ -296,7 +296,7 @@
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>d3d11.lib;d2d1.lib;dwrite.lib;windowscodecs.lib;dxgi.lib;dbghelp.lib;Base.lib;OS_Base.lib;OS_Win32.lib;Renderer_Base.lib;Renderer_DX11.lib;zlib.lib;freetype271.lib;libpng.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>d3d11.lib;d2d1.lib;dwrite.lib;windowscodecs.lib;dxgi.lib;dbghelp.lib;Base.lib;OS_Base.lib;OS_Win32.lib;Renderer_Base.lib;Renderer_DX11.lib;zlibMTDLL.lib;freetype271MTDLL.lib;libpngMTDLL.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <ShowProgress>NotSet</ShowProgress>
       <AdditionalLibraryDirectories>$(SolutionDir)lib\$(Configuration)_$(PlatformTarget)\;$(SolutionDir)sdks\freetype-2.7.1\lib\Win32;$(SolutionDir)sdks\zlib-1.2.11\lib\Win32;$(SolutionDir)sdks\libpng-1.6.28\lib\Win32</AdditionalLibraryDirectories>
       <OutputFile>$(OutDir)$(TargetName)$(TargetExt)</OutputFile>
@@ -321,7 +321,7 @@
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <ShowProgress>NotSet</ShowProgress>
-      <AdditionalDependencies>d3d11.lib;d2d1.lib;dwrite.lib;windowscodecs.lib;dxgi.lib;dbghelp.lib;Base.lib;OS_Base.lib;OS_Win32.lib;Renderer_Base.lib;Renderer_DX11.lib;zlib.lib;libpng.lib;freetype271.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>d3d11.lib;d2d1.lib;dwrite.lib;windowscodecs.lib;dxgi.lib;dbghelp.lib;Base.lib;OS_Base.lib;OS_Win32.lib;Renderer_Base.lib;Renderer_DX11.lib;zlibMTDLL.lib;libpngMTDLL.lib;freetype271MTDLL.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <AdditionalLibraryDirectories>$(SolutionDir)lib\$(Configuration)_$(PlatformTarget)\;$(SolutionDir)sdks\freetype-2.7.1\lib\x64;$(SolutionDir)sdks\zlib-1.2.11\lib\x64;$(SolutionDir)sdks\libpng-1.6.28\lib\x64</AdditionalLibraryDirectories>
       <OutputFile>$(OutDir)$(TargetName)$(TargetExt)</OutputFile>
     </Link>
@@ -344,7 +344,7 @@
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <ShowProgress>NotSet</ShowProgress>
-      <AdditionalDependencies>d3d11.lib;d2d1.lib;dwrite.lib;windowscodecs.lib;dxgi.lib;dbghelp.lib;Base.lib;OS_Base.lib;OS_Win32.lib;Renderer_Base.lib;Renderer_DX11.lib;zlib.lib;freetype271.lib;libpng.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>d3d11.lib;d2d1.lib;dwrite.lib;windowscodecs.lib;dxgi.lib;dbghelp.lib;Base.lib;OS_Base.lib;OS_Win32.lib;Renderer_Base.lib;Renderer_DX11.lib;zlibMTDLL.lib;freetype271MTDLL.lib;libpngMTDLL.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <AdditionalLibraryDirectories>$(SolutionDir)lib\$(Configuration)_$(PlatformTarget)\;$(SolutionDir)sdks\freetype-2.7.1\lib\x64;$(SolutionDir)sdks\zlib-1.2.11\lib\x64;$(SolutionDir)sdks\libpng-1.6.28\lib\x64</AdditionalLibraryDirectories>
       <OutputFile>$(OutDir)$(TargetName)$(TargetExt)</OutputFile>
     </Link>

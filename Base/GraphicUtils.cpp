@@ -49,7 +49,7 @@ std::vector<PackRect> PackTexture(std::vector<PackRect>& io_vRects, unsigned int
 {
 	PROFILE_BLOCK;
 
-	AssertMsg(in_uiPadding % 2 == 0, L("in_uiPadding should be dividable by 2"));
+	AssertMsg(in_uiPadding % 2 == 0, L("in_uiPadding (%d) should be dividable by 2"), in_uiPadding);
 	
 	std::vector<PackRect> vPackedRects;
 
