@@ -8,6 +8,7 @@ class Texture;
 class Quad;
 class Font;
 class Window;
+class BitmapData;
 
 //--------------------------------------------------------------------------------
 class Renderer
@@ -17,7 +18,7 @@ public:
 	virtual ~Renderer();
 
 	virtual Texture* CreateTexture(const Path& filename) = 0;
-	virtual Texture* CreateTexture(unsigned int width, unsigned int height, const unsigned char* pBits) = 0;
+	virtual Texture* CreateTexture(const BitmapData* in_pData) = 0;
 	virtual Quad* CreateQuad(float posX, float posY, Texture* texture) = 0;
 	
 	Font* LoadFont(const Path& filename);

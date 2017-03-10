@@ -13,5 +13,5 @@ namespace OS
 	};
 
 	//--------------------------------------------------------------------------------
-	void BuildFont(const Path& in_FontFile, unsigned int in_uiFontSize, unsigned int in_uiTextureSize, unsigned int in_eFlags = eFF_Default, const Path& in_FontDataFileName = L(""));
+	bool BuildFont(const Path& in_FontFile, unsigned int in_uiFontSize, unsigned int in_uiTextureSize, unsigned int in_eFlags = eFF_Default, const Path& in_FontDataFileName = L(""));
 }

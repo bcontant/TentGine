@@ -8,6 +8,7 @@
 #pragma warning(disable:4611)
 #endif /* VC++ */
 
+//--------------------------------------------------------------------------------
 enum EPNGColorType
 {
 	ePNG_GrayScale	= 0,
@@ -16,8 +17,11 @@ enum EPNGColorType
 	ePNG_Alpha		= 1 << 2
 };
 
+//--------------------------------------------------------------------------------
 bool SavePNG(const Path& in_file, BitmapData* in_pData)
 {
+	PROFILE_BLOCK;
+
 	if (in_pData == nullptr)
 		return false;
 
@@ -62,13 +66,13 @@ bool SavePNG(const Path& in_file, BitmapData* in_pData)
 	int color_type = 0;
 	switch (in_pData->GetFormat())
 	{
-	case BitmapData::eBF_A_U1:		
+	case BufferFormat::A_U1:
 		color_type = ePNG_GrayScale;  bit_depth = 1; break;
-	case BitmapData::eBF_A_U8:		
+	case BufferFormat::A_U8:
 		color_type = ePNG_GrayScale;  bit_depth = 8; break;
-	case BitmapData::eBF_BGR_U24:	
+	case BufferFormat::BGR_U24:
 		color_type = ePNG_TrueColor;  bit_depth = 8; break;
-	case BitmapData::eBF_ABGR_U32:	
+	case BufferFormat::ABGR_U32:
 		color_type = ePNG_TrueColor | ePNG_Alpha;  bit_depth = 8; break;
 	default:
 		return false;
@@ -108,8 +112,11 @@ bool SavePNG(const Path& in_file, BitmapData* in_pData)
 	return true;
 }
 
+//--------------------------------------------------------------------------------
 BitmapData* LoadPNG(const Path& in_file)
 {
+	PROFILE_BLOCK;
+
 	unsigned char header[8];
 
 	FILE *fp = nullptr;
@@ -177,17 +184,17 @@ BitmapData* LoadPNG(const Path& in_file)
 
 	fclose(fp);
 
-	BitmapData::EBufferFormat format;
+	BufferFormat format;
 	if (color_type == 0 && bit_depth == 1)
-		format = BitmapData::eBF_A_U1;
-	if (color_type == 0 && bit_depth == 8)
-		format = BitmapData::eBF_A_U8;
+		format = BufferFormat::A_U1;
+	else if (color_type == 0 && bit_depth == 8)
+		format = BufferFormat::A_U8;
 	else if (color_type == 2 && bit_depth == 8)
-		format = BitmapData::eBF_BGR_U24;
+		format = BufferFormat::BGR_U24;
 	else if (color_type == 3)
-		format = BitmapData::eBF_BGR_U24;
+		format = BufferFormat::BGR_U24;
 	else if (color_type == 6 && bit_depth == 8)
-		format = BitmapData::eBF_ABGR_U32;
+		format = BufferFormat::ABGR_U32;
 	else
 	{
 		Assert(false);

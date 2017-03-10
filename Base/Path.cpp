@@ -1,33 +1,44 @@
 #include "precompiled.h"
 
+// defines
+#define MAX_FILENAME_LEN 512
+
+// The number of characters at the start of an absolute filename.  e.g. in DOS,
+// absolute filenames start with "X:\" so this value should be 3, in UNIX they start
+// with "\" so this value should be 1.
 #ifdef _WIN32
 #define ABSOLUTE_NAME_START 3
 #else
 #define ABSOLUTE_NAME_START 1
 #endif
 
+//--------------------------------------------------------------------------------
 Path::Path()
 {
 }
 
+//--------------------------------------------------------------------------------
 Path::Path(const StringChar* in_path)
 {
 	m_strPath = in_path;
 	CleanUpPath();
 }
 
+//--------------------------------------------------------------------------------
 Path::Path(const StdString& in_path)
 {
 	m_strPath = in_path;
 	CleanUpPath();
 }
 
+//--------------------------------------------------------------------------------
 Path::Path(const Path& in_path)
 {
 	m_strPath = in_path.m_strPath;
 	CleanUpPath();
 }
 
+//--------------------------------------------------------------------------------
 Path& Path::operator=(const StringChar* in_path)
 {
 	m_strPath = in_path;
@@ -35,6 +46,7 @@ Path& Path::operator=(const StringChar* in_path)
 	return *this;
 }
 
+//--------------------------------------------------------------------------------
 Path& Path::operator=(const StdString& in_path)
 {
 	m_strPath = in_path;
@@ -42,6 +54,7 @@ Path& Path::operator=(const StdString& in_path)
 	return *this;
 }
 
+//--------------------------------------------------------------------------------
 Path& Path::operator=(const Path& in_path)
 {
 	m_strPath = in_path.m_strPath;
@@ -49,6 +62,7 @@ Path& Path::operator=(const Path& in_path)
 	return *this;
 }
 
+//--------------------------------------------------------------------------------
 Path Path::operator+(const Path& in_path) const
 {
 	Path path(*this);
@@ -57,6 +71,7 @@ Path Path::operator+(const Path& in_path) const
 	return path;
 }
 
+//--------------------------------------------------------------------------------
 Path& Path::operator+=(const Path& in_path)
 {
 	m_strPath += in_path.m_strPath;
@@ -64,21 +79,25 @@ Path& Path::operator+=(const Path& in_path)
 	return *this;
 }
 
+//--------------------------------------------------------------------------------
 bool Path::operator==(const Path& in_path) const
 {
 	return m_strPath == in_path.m_strPath;
 }
 
+//--------------------------------------------------------------------------------
 bool Path::operator!=(const Path& in_path) const
 {
 	return m_strPath != in_path.m_strPath;
 }
 
+//--------------------------------------------------------------------------------
 bool Path::operator<(const Path& in_path) const
 {
 	return m_strPath < in_path.m_strPath;
 }
 
+//--------------------------------------------------------------------------------
 Path& Path::SetFolder(const Path& in_Folder)
 {
 	AssertMsg(in_Folder.m_strPath.find_last_of('/') == in_Folder.m_strPath.size() - 1 || in_Folder.m_strPath.find_last_of('\\') == in_Folder.m_strPath.size() - 1 || in_Folder == L(""), L("Invalid folder (%s)"), in_Folder.GetData());
@@ -89,6 +108,7 @@ Path& Path::SetFolder(const Path& in_Folder)
 	return *this;
 }
 
+//--------------------------------------------------------------------------------
 Path& Path::SetName(const Path& in_Name)
 {
 	AssertMsg(in_Name.m_strPath.find_first_of('/') == std::string::npos, L("Path::SetName : Invalid name (%s)"), in_Name.GetData());
@@ -100,6 +120,7 @@ Path& Path::SetName(const Path& in_Name)
 	return *this;
 }
 
+//--------------------------------------------------------------------------------
 Path& Path::SetExtension(const Path& in_Extension)
 {
 	AssertMsg(in_Extension.m_strPath.find_first_of('/') == std::string::npos, L("Invalid extension (%s)"), in_Extension.GetData());
@@ -112,22 +133,23 @@ Path& Path::SetExtension(const Path& in_Extension)
 	return *this;
 }
 
+//--------------------------------------------------------------------------------
 void Path::BuildPath()
 {
 	m_strPath = m_Folder + m_Name + m_Extension;
 	CleanUpPath();
 }
 
+//--------------------------------------------------------------------------------
 void Path::CleanUpPath()
 {
 	for (unsigned int i = 0; i < static_cast<unsigned int>(m_strPath.size()); i++)
 	{
-		//Clean up the '\\' into './'
+		//Clean up the '\\' into '/'
 		if (m_strPath[i] == '\\')
 			m_strPath[i] = '/';
 	}
-
-
+	
 	std::string::size_type index = 0;
 	std::string::size_type searchOffset = 0;
 
@@ -191,19 +213,14 @@ void Path::CleanUpPath()
 	AssertMsg(m_Folder + m_Name + m_Extension == m_strPath, L("Split Path is different from original path (Full Path = %s, Resulting m_Folder = %s, Resulting m_FileExtension = %s, Resulting m_FileName = %s)"), m_strPath.c_str(), m_Folder.c_str(), m_Extension.c_str(), m_Name.c_str());
 }
 
-// defines
-#define MAX_FILENAME_LEN 512
 
-// The number of characters at the start of an absolute filename.  e.g. in DOS,
-// absolute filenames start with "X:\" so this value should be 3, in UNIX they start
-// with "\" so this value should be 1.
 
 
 
 // Given the absolute current directory and an absolute file name, returns a relative file name.
 // For example, if the current directory is C:\foo\bar and the filename C:\foo\whee\text.txt is given,
 // GetRelativePath will return ..\whee\text.txt.
-
+//--------------------------------------------------------------------------------
 Path Path::GetRelativePath(const Path& in_WorkingDirectory) const
 {
 	if (m_strPath == L(""))

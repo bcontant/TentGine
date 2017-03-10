@@ -2,6 +2,7 @@
 
 #include "BitField.h"
 
+//--------------------------------------------------------------------------------
 BitField::BitField(unsigned char* in_pBitField, unsigned int in_uiElementCount, unsigned int in_uiBitsPerElement, unsigned int in_uiBufferStartOffsetInBits)
 	:m_pBitField(in_pBitField)
 	,m_uiBitsPerElement(in_uiBitsPerElement)
@@ -13,6 +14,7 @@ BitField::BitField(unsigned char* in_pBitField, unsigned int in_uiElementCount, 
 	m_uiBufferSizeInBytes = div_up(m_uiElementCount * m_uiBitsPerElement, 8);
 }
 
+//--------------------------------------------------------------------------------
 unsigned char BitField::GetElement(unsigned int in_uiIndex) const
 {
 	unsigned int bytesIndex = (in_uiIndex * m_uiBitsPerElement) / 8;
@@ -20,7 +22,11 @@ unsigned char BitField::GetElement(unsigned int in_uiIndex) const
 
 	//We need a 16 bit value in case a >1bpp value spans accross 2 bytes.
 	unsigned short v = *(unsigned short*)(&m_pBitField[bytesIndex]);
-	REVERSE_ENDIANNESS(v);
+
+	if (Endian::IsLittleEndian)
+	{
+		REVERSE_ENDIANNESS(v);
+	}
 
 	//What we have so far:
 	// v is a 16 bit value.     Ex:                                    01010101 01010101
@@ -37,6 +43,7 @@ unsigned char BitField::GetElement(unsigned int in_uiIndex) const
 	return static_cast<unsigned char>(v);
 }
 
+//--------------------------------------------------------------------------------
 void BitField::SetElement(unsigned int in_uiIndex, unsigned char in_ucValue)
 {
 	unsigned int bytesIndex = (in_uiIndex * m_uiBitsPerElement) / 8;
@@ -54,8 +61,11 @@ void BitField::SetElement(unsigned int in_uiIndex, unsigned char in_ucValue)
 	value = value << ((16 - bitIndex) - m_uiBitsPerElement);
 	mask = mask << ((16 - bitIndex) - m_uiBitsPerElement);
 
-	REVERSE_ENDIANNESS(value);
-	REVERSE_ENDIANNESS(mask);
+	if (Endian::IsLittleEndian)
+	{
+		REVERSE_ENDIANNESS(value);
+		REVERSE_ENDIANNESS(mask);
+	}
 
 	//Set the region of our pixel value to 0
 	*v = *v & ~mask;

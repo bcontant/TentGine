@@ -35,7 +35,7 @@
 #include <stdint.h>
 #pragma warning(pop)
 
-HRESULT CreateWICTextureFromMemory(_In_ ID3D11Device* d3dDevice,
+HResult CreateWICTextureFromMemory(_In_ ID3D11Device* d3dDevice,
 	_In_opt_ ID3D11DeviceContext* d3dContext,
 	_In_bytecount_(wicDataSize) const uint8_t* wicData,
 	_In_ size_t wicDataSize,
@@ -44,7 +44,7 @@ HRESULT CreateWICTextureFromMemory(_In_ ID3D11Device* d3dDevice,
 	_In_ size_t maxsize = 0
 	);
 
-HRESULT CreateWICTextureFromFile(_In_ ID3D11Device* d3dDevice,
+HResult CreateWICTextureFromFile(_In_ ID3D11Device* d3dDevice,
 	_In_opt_ ID3D11DeviceContext* d3dContext,
 	_In_z_ const StringChar* szFileName,
 	_Out_opt_ ID3D11Texture2D** texture,

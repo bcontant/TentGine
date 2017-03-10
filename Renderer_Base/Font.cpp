@@ -1,5 +1,7 @@
 #include "precompiled.h"
 
+#include "../Base/BitmapData.h"
+
 //--------------------------------------------------------------------------------
 Font::Font(Renderer* pOwner) 
 	:RendererObject(pOwner)
@@ -23,5 +25,7 @@ void Font::Load(const Path& in_filename)
 {
 	m_FontDataFile = new FontDataFile();
 	m_FontDataFile->Load(in_filename);
-	m_pFontTexture = GetOwner()->CreateTexture(m_FontDataFile->GetTextureSize(), m_FontDataFile->GetTextureSize(), m_FontDataFile->GetTextureData());
+
+	const BitmapData* pData = m_FontDataFile->GetTextureData();
+	m_pFontTexture = GetOwner()->CreateTexture(pData);
 }

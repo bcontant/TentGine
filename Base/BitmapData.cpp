@@ -5,11 +5,11 @@
 
 
 //--------------------------------------------------------------------------------
-bool RequiresConversion(BitmapData::EBufferFormat in_eSrcFormat, BitmapData::EBufferFormat in_eDstFormat);
+bool RequiresConversion(BufferFormat in_eSrcFormat, BufferFormat in_eDstFormat);
 
 //Function pointer type to convert one pixel format to another
 using ConvertPixelFunc = void(*)(const unsigned char*, unsigned char*, const unsigned int);
-ConvertPixelFunc GetConvertPixelFunction(BitmapData::EBufferFormat in_eSrcFormat, BitmapData::EBufferFormat in_eDstFormat);
+ConvertPixelFunc GetConvertPixelFunction(BufferFormat in_eSrcFormat, BufferFormat in_eDstFormat);
 
 //--------------------------------------------------------------------------------
 //Static values for 1 to 7 bit pixels which can't return their addresses
@@ -26,7 +26,7 @@ static unsigned char ucPixelValues[128] =
 };
 
 //--------------------------------------------------------------------------------
-BitmapData::BitmapData(unsigned int in_uiWidth, unsigned int in_uiHeight, EBufferFormat in_eFormat)
+BitmapData::BitmapData(unsigned int in_uiWidth, unsigned int in_uiHeight, BufferFormat in_eFormat)
 	: m_uiWidth(in_uiWidth)
 	, m_uiHeight(in_uiHeight)
 	, m_eFormat(in_eFormat)
@@ -35,7 +35,7 @@ BitmapData::BitmapData(unsigned int in_uiWidth, unsigned int in_uiHeight, EBuffe
 }
 
 //--------------------------------------------------------------------------------
-BitmapData::BitmapData(unsigned int in_uiWidth, unsigned int in_uiHeight, void* in_pBuffer, EBufferFormat in_eFormat, unsigned int in_uiBufferPitch)
+BitmapData::BitmapData(unsigned int in_uiWidth, unsigned int in_uiHeight, void* in_pBuffer, BufferFormat in_eFormat, unsigned int in_uiBufferPitch)
 	: BitmapData(in_uiWidth, in_uiHeight, in_eFormat)
 {
 	if (in_uiBufferPitch == 0 || in_uiBufferPitch == m_uiBufferPitch)
@@ -67,7 +67,7 @@ BitmapData::~BitmapData()
 	delete[] m_pBuffer;
 	m_pBuffer = nullptr;
 
-	m_eFormat = eBF_Invalid;
+	m_eFormat = BufferFormat::INVALID_FORMAT;
 }
 
 //--------------------------------------------------------------------------------
@@ -81,7 +81,7 @@ void BitmapData::Initialize()
 }
 
 //--------------------------------------------------------------------------------
-BitmapData* BitmapData::ConvertTo(EBufferFormat in_eFormat)
+BitmapData* BitmapData::ConvertTo(BufferFormat in_eFormat)
 {
 	PROFILE_BLOCK;
 
@@ -93,13 +93,13 @@ BitmapData* BitmapData::ConvertTo(EBufferFormat in_eFormat)
 	{
 		//Slower fallback : m_eFormat -> RGBA32 -> in_eFormat.
 		//Slower, but only requires every format to support to and from RGBA32 to support conversion to anything.
-		if (GetConvertPixelFunction(m_eFormat, eBF_RGBA_U32) == nullptr || GetConvertPixelFunction(eBF_RGBA_U32, in_eFormat) == nullptr)
+		if (GetConvertPixelFunction(m_eFormat, BufferFormat::RGBA_U32) == nullptr || GetConvertPixelFunction(BufferFormat::RGBA_U32, in_eFormat) == nullptr)
 		{
 			AssertMsg(false, L("ConvertTo can't convert from %d to %d."), m_eFormat, in_eFormat);
 			return this;
 		}
 
-		ConvertTo(eBF_RGBA_U32);
+		ConvertTo(BufferFormat::RGBA_U32);
 		ConvertTo(in_eFormat);
 		return this;
 	}
@@ -172,6 +172,8 @@ void BitmapData::Set(int in_x, int in_y, const void* in_pValue)
 //--------------------------------------------------------------------------------
 void BitmapData::Blit(int in_x, int in_y, const BitmapData* in_pData)
 {
+	PROFILE_BLOCK;
+
 	AssertMsg(in_x >= 0 && static_cast<unsigned int>(in_x) < m_uiWidth, L("Invalid x (%d)"), in_x);
 	AssertMsg(in_y >= 0 && static_cast<unsigned int>(in_y) < m_uiHeight, L("Invalid y (%d)"), in_y);
 
@@ -231,10 +233,7 @@ void BitmapData::FlipY()
 //--------------------------------------------------------------------------------
 void BitmapData::UpdateBufferSize()
 {
-	m_uiBufferPitch = (m_uiWidth * m_uiBitsPerPixel) / 8;
-	if((m_uiWidth * m_uiBitsPerPixel) % 8)
-		m_uiBufferPitch++;
-
+	m_uiBufferPitch = div_up((m_uiWidth * m_uiBitsPerPixel), 8);
 	m_uiBufferSize = m_uiHeight * m_uiBufferPitch;
 }
 
@@ -243,39 +242,41 @@ void BitmapData::UpdateBitsPerPixel()
 {
 	switch (m_eFormat)
 	{
-	case eBF_A_U1:			m_uiBitsPerPixel = 1; break;
+	case BufferFormat::A_U1:			m_uiBitsPerPixel = 1; break;
 
-	case eBF_A_U5:			m_uiBitsPerPixel = 5; break;
+	case BufferFormat::A_U5:			m_uiBitsPerPixel = 5; break;
 
-	case eBF_A_U8:
-	case eBF_R_U8:			m_uiBitsPerPixel = 8; break;
+	case BufferFormat::A_U8:
+	case BufferFormat::R_U8:			m_uiBitsPerPixel = 8; break;
 
-	case eBF_X1R5G5B5_U16:
-	case eBF_R5G6B5_U16:
-	case eBF_A1R5G5B5_U16:	m_uiBitsPerPixel = 16; break;
+	case BufferFormat::X1R5G5B5_U16:
+	case BufferFormat::R5G6B5_U16:
+	case BufferFormat::A1R5G5B5_U16:	m_uiBitsPerPixel = 16; break;
 
-	case eBF_BGR_U24:
-	case eBF_RGB_U24:		m_uiBitsPerPixel = 24; break;
+	case BufferFormat::BGR_U24:
+	case BufferFormat::RGB_U24:			m_uiBitsPerPixel = 24; break;
 
-	case eBF_RGBA_U32:
-	case eBF_ABGR_U32:
-	case eBF_ARGB_U32:
-	case eBF_R_F32:			m_uiBitsPerPixel = 32; break;
+	case BufferFormat::RGBA_U32:
+	case BufferFormat::ABGR_U32:
+	case BufferFormat::ARGB_U32:
+	case BufferFormat::R_F32:			m_uiBitsPerPixel = 32; break;
 
-	default:				m_uiBitsPerPixel = 0; break;
+	case BufferFormat::INVALID_FORMAT:	m_uiBitsPerPixel = 0; break;
 	}
+
+	AssertMsg(m_uiBitsPerPixel != 0, "Invalid Buffer Format (%d) led to invalid BPP (0)", m_eFormat);
 }
 
 //--------------------------------------------------------------------------------
-bool RequiresConversion(BitmapData::EBufferFormat in_eSrcFormat, BitmapData::EBufferFormat in_eDstFormat)
+bool RequiresConversion(BufferFormat in_eSrcFormat, BufferFormat in_eDstFormat)
 {
 	if (in_eSrcFormat == in_eDstFormat)
 		return false;
 
-	if (in_eSrcFormat == BitmapData::eBF_A_U8 && in_eDstFormat == BitmapData::eBF_R_U8)
+	if (in_eSrcFormat == BufferFormat::A_U8 && in_eDstFormat == BufferFormat::R_U8)
 		return false;
 
-	if (in_eSrcFormat == BitmapData::eBF_R_U8 && in_eDstFormat == BitmapData::eBF_A_U8)
+	if (in_eSrcFormat == BufferFormat::R_U8 && in_eDstFormat == BufferFormat::A_U8)
 		return false;
 
 	return true;
@@ -808,224 +809,224 @@ void ConvertPixel_RGBA_U32_To_ABGR_U32(const unsigned char* in_pSrc, unsigned ch
 }
 
 //--------------------------------------------------------------------------------
-ConvertPixelFunc GetConvertPixelFunction(BitmapData::EBufferFormat in_eSrcFormat, BitmapData::EBufferFormat in_eDstFormat)
+ConvertPixelFunc GetConvertPixelFunction(BufferFormat in_eSrcFormat, BufferFormat in_eDstFormat)
 {
 	//TODO : Full support
 	switch (in_eSrcFormat)
 	{
-	case BitmapData::eBF_A_U1:
+	case BufferFormat::A_U1:
 		switch (in_eDstFormat)
 		{
-		case BitmapData::eBF_A_U1:			return ConvertPixel_NoOp<1>;
-		case BitmapData::eBF_A_U5:			return ConvertPixel_8BPP<1, 5>; 
-		case BitmapData::eBF_A_U8:			return ConvertPixel_8BPP<1, 8>; 
-		case BitmapData::eBF_R_U8:			return ConvertPixel_8BPP<1, 8>; 
-		case BitmapData::eBF_X1R5G5B5_U16:	return nullptr;
-		case BitmapData::eBF_R5G6B5_U16:	return nullptr;
-		case BitmapData::eBF_A1R5G5B5_U16:	return nullptr;
-		case BitmapData::eBF_RGB_U24:		return nullptr;
-		case BitmapData::eBF_ARGB_U32:		return nullptr;
-		case BitmapData::eBF_RGBA_U32:		return ConvertPixel_A_U1_To_RGBA_U32;
-		case BitmapData::eBF_R_F32:			return nullptr;
+		case BufferFormat::A_U1:			return ConvertPixel_NoOp<1>;
+		case BufferFormat::A_U5:			return ConvertPixel_8BPP<1, 5>; 
+		case BufferFormat::A_U8:			return ConvertPixel_8BPP<1, 8>; 
+		case BufferFormat::R_U8:			return ConvertPixel_8BPP<1, 8>; 
+		case BufferFormat::X1R5G5B5_U16:	return nullptr;
+		case BufferFormat::R5G6B5_U16:		return nullptr;
+		case BufferFormat::A1R5G5B5_U16:	return nullptr;
+		case BufferFormat::RGB_U24:			return nullptr;
+		case BufferFormat::ARGB_U32:		return nullptr;
+		case BufferFormat::RGBA_U32:		return ConvertPixel_A_U1_To_RGBA_U32;
+		case BufferFormat::R_F32:			return nullptr;
 		default:							return nullptr;
 		}
-	case BitmapData::eBF_A_U5:
+	case BufferFormat::A_U5:
 		switch (in_eDstFormat)
 		{
-		case BitmapData::eBF_A_U1:			return ConvertPixel_8BPP<5, 1>;
-		case BitmapData::eBF_A_U5:			return ConvertPixel_NoOp<5>;
-		case BitmapData::eBF_A_U8:			return ConvertPixel_8BPP<5, 8>;
-		case BitmapData::eBF_R_U8:			return ConvertPixel_8BPP<5, 8>;
-		case BitmapData::eBF_X1R5G5B5_U16:	return nullptr;
-		case BitmapData::eBF_R5G6B5_U16:	return nullptr;
-		case BitmapData::eBF_A1R5G5B5_U16:	return nullptr;
-		case BitmapData::eBF_RGB_U24:		return nullptr;
-		case BitmapData::eBF_ARGB_U32:		return nullptr;
-		case BitmapData::eBF_RGBA_U32:		return ConvertPixel_A_U5_To_RGBA_U32;
-		case BitmapData::eBF_R_F32:			return nullptr;
+		case BufferFormat::A_U1:			return ConvertPixel_8BPP<5, 1>;
+		case BufferFormat::A_U5:			return ConvertPixel_NoOp<5>;
+		case BufferFormat::A_U8:			return ConvertPixel_8BPP<5, 8>;
+		case BufferFormat::R_U8:			return ConvertPixel_8BPP<5, 8>;
+		case BufferFormat::X1R5G5B5_U16:	return nullptr;
+		case BufferFormat::R5G6B5_U16:		return nullptr;
+		case BufferFormat::A1R5G5B5_U16:	return nullptr;
+		case BufferFormat::RGB_U24:			return nullptr;
+		case BufferFormat::ARGB_U32:		return nullptr;
+		case BufferFormat::RGBA_U32:		return ConvertPixel_A_U5_To_RGBA_U32;
+		case BufferFormat::R_F32:			return nullptr;
 		default:							return nullptr;
 		}
-	case BitmapData::eBF_A_U8:
+	case BufferFormat::A_U8:
 		switch (in_eDstFormat)
 		{
-		case BitmapData::eBF_A_U1:			return ConvertPixel_8BPP<8, 1>;
-		case BitmapData::eBF_A_U5:			return ConvertPixel_8BPP<8, 5>;
-		case BitmapData::eBF_A_U8:			return ConvertPixel_NoOp<8>;
-		case BitmapData::eBF_R_U8:			return ConvertPixel_NoOp<8>;
-		case BitmapData::eBF_X1R5G5B5_U16:	return ConvertPixel_A_U8_To_R5G5B5_U16;
-		case BitmapData::eBF_R5G6B5_U16:	return ConvertPixel_A_U8_To_R5G6B5_U16;
-		case BitmapData::eBF_A1R5G5B5_U16:	return ConvertPixel_A_U8_To_R5G5B5A1_U16;
-		case BitmapData::eBF_RGB_U24:		return ConvertPixel_A_U8_To_RGB_U24;
-		case BitmapData::eBF_ARGB_U32:		return ConvertPixel_A_U8_To_ARGB_U32;
-		case BitmapData::eBF_RGBA_U32:		return ConvertPixel_A_U8_To_RGBA_U32;
-		case BitmapData::eBF_R_F32:			return nullptr;
+		case BufferFormat::A_U1:			return ConvertPixel_8BPP<8, 1>;
+		case BufferFormat::A_U5:			return ConvertPixel_8BPP<8, 5>;
+		case BufferFormat::A_U8:			return ConvertPixel_NoOp<8>;
+		case BufferFormat::R_U8:			return ConvertPixel_NoOp<8>;
+		case BufferFormat::X1R5G5B5_U16:	return ConvertPixel_A_U8_To_R5G5B5_U16;
+		case BufferFormat::R5G6B5_U16:		return ConvertPixel_A_U8_To_R5G6B5_U16;
+		case BufferFormat::A1R5G5B5_U16:	return ConvertPixel_A_U8_To_R5G5B5A1_U16;
+		case BufferFormat::RGB_U24:			return ConvertPixel_A_U8_To_RGB_U24;
+		case BufferFormat::ARGB_U32:		return ConvertPixel_A_U8_To_ARGB_U32;
+		case BufferFormat::RGBA_U32:		return ConvertPixel_A_U8_To_RGBA_U32;
+		case BufferFormat::R_F32:			return nullptr;
 		default:							return nullptr;
 		}
-	case BitmapData::eBF_R_U8:
+	case BufferFormat::R_U8:
 		switch (in_eDstFormat)
 		{
-		case BitmapData::eBF_A_U1:			return ConvertPixel_8BPP<8, 1>;
-		case BitmapData::eBF_A_U5:			return ConvertPixel_8BPP<8, 5>;
-		case BitmapData::eBF_A_U8:			return ConvertPixel_NoOp<8>;
-		case BitmapData::eBF_R_U8:			return ConvertPixel_NoOp<8>;
-		case BitmapData::eBF_X1R5G5B5_U16:	return nullptr;
-		case BitmapData::eBF_R5G6B5_U16:	return nullptr;
-		case BitmapData::eBF_A1R5G5B5_U16:	return nullptr;
-		case BitmapData::eBF_RGB_U24:		return nullptr;
-		case BitmapData::eBF_ARGB_U32:		return nullptr;
-		case BitmapData::eBF_RGBA_U32:		return ConvertPixel_R_U8_To_RGBA_U32;
-		case BitmapData::eBF_R_F32:			return nullptr;
+		case BufferFormat::A_U1:			return ConvertPixel_8BPP<8, 1>;
+		case BufferFormat::A_U5:			return ConvertPixel_8BPP<8, 5>;
+		case BufferFormat::A_U8:			return ConvertPixel_NoOp<8>;
+		case BufferFormat::R_U8:			return ConvertPixel_NoOp<8>;
+		case BufferFormat::X1R5G5B5_U16:	return nullptr;
+		case BufferFormat::R5G6B5_U16:		return nullptr;
+		case BufferFormat::A1R5G5B5_U16:	return nullptr;
+		case BufferFormat::RGB_U24:			return nullptr;
+		case BufferFormat::ARGB_U32:		return nullptr;
+		case BufferFormat::RGBA_U32:		return ConvertPixel_R_U8_To_RGBA_U32;
+		case BufferFormat::R_F32:			return nullptr;
 		default:							return nullptr;
 		}
-	case BitmapData::eBF_X1R5G5B5_U16:
+	case BufferFormat::X1R5G5B5_U16:
 		switch (in_eDstFormat)
 		{
-		case BitmapData::eBF_A_U1:			return nullptr;
-		case BitmapData::eBF_A_U5:			return nullptr;
-		case BitmapData::eBF_A_U8:			return nullptr;
-		case BitmapData::eBF_R_U8:			return nullptr;
-		case BitmapData::eBF_X1R5G5B5_U16:	return ConvertPixel_NoOp<16>;
-		case BitmapData::eBF_R5G6B5_U16:	return nullptr;
-		case BitmapData::eBF_A1R5G5B5_U16:	return nullptr;
-		case BitmapData::eBF_RGB_U24:		return nullptr;
-		case BitmapData::eBF_ARGB_U32:		return ConvertPixel_X1R5G5B5_U16_To_ARGB_U32;
-		case BitmapData::eBF_RGBA_U32:		return ConvertPixel_X1R5G5B5_U16_To_RGBA_U32;
-		case BitmapData::eBF_R_F32:			return nullptr;
+		case BufferFormat::A_U1:			return nullptr;
+		case BufferFormat::A_U5:			return nullptr;
+		case BufferFormat::A_U8:			return nullptr;
+		case BufferFormat::R_U8:			return nullptr;
+		case BufferFormat::X1R5G5B5_U16:	return ConvertPixel_NoOp<16>;
+		case BufferFormat::R5G6B5_U16:		return nullptr;
+		case BufferFormat::A1R5G5B5_U16:	return nullptr;
+		case BufferFormat::RGB_U24:			return nullptr;
+		case BufferFormat::ARGB_U32:		return ConvertPixel_X1R5G5B5_U16_To_ARGB_U32;
+		case BufferFormat::RGBA_U32:		return ConvertPixel_X1R5G5B5_U16_To_RGBA_U32;
+		case BufferFormat::R_F32:			return nullptr;
 		default:							return nullptr;
 		}
-	case BitmapData::eBF_R5G6B5_U16:
+	case BufferFormat::R5G6B5_U16:
 		switch (in_eDstFormat)
 		{
-		case BitmapData::eBF_A_U1:			return nullptr;
-		case BitmapData::eBF_A_U5:			return nullptr;
-		case BitmapData::eBF_A_U8:			return nullptr;
-		case BitmapData::eBF_R_U8:			return nullptr;
-		case BitmapData::eBF_X1R5G5B5_U16:	return nullptr;
-		case BitmapData::eBF_R5G6B5_U16:	return ConvertPixel_NoOp<16>;
-		case BitmapData::eBF_A1R5G5B5_U16:	return nullptr;
-		case BitmapData::eBF_RGB_U24:		return nullptr;
-		case BitmapData::eBF_ARGB_U32:		return ConvertPixel_R5G6B5_U16_To_ARGB_U32;
-		case BitmapData::eBF_RGBA_U32:		return ConvertPixel_R5G6B5_U16_To_RGBA_U32;
-		case BitmapData::eBF_R_F32:			return nullptr;
+		case BufferFormat::A_U1:			return nullptr;
+		case BufferFormat::A_U5:			return nullptr;
+		case BufferFormat::A_U8:			return nullptr;
+		case BufferFormat::R_U8:			return nullptr;
+		case BufferFormat::X1R5G5B5_U16:	return nullptr;
+		case BufferFormat::R5G6B5_U16:		return ConvertPixel_NoOp<16>;
+		case BufferFormat::A1R5G5B5_U16:	return nullptr;
+		case BufferFormat::RGB_U24:			return nullptr;
+		case BufferFormat::ARGB_U32:		return ConvertPixel_R5G6B5_U16_To_ARGB_U32;
+		case BufferFormat::RGBA_U32:		return ConvertPixel_R5G6B5_U16_To_RGBA_U32;
+		case BufferFormat::R_F32:			return nullptr;
 		default:							return nullptr;
 		}
-	case BitmapData::eBF_A1R5G5B5_U16:
+	case BufferFormat::A1R5G5B5_U16:
 		switch (in_eDstFormat)
 		{
-		case BitmapData::eBF_A_U1:			return nullptr;
-		case BitmapData::eBF_A_U5:			return nullptr;
-		case BitmapData::eBF_A_U8:			return nullptr;
-		case BitmapData::eBF_R_U8:			return nullptr;
-		case BitmapData::eBF_X1R5G5B5_U16:	return nullptr;
-		case BitmapData::eBF_R5G6B5_U16:	return nullptr;
-		case BitmapData::eBF_A1R5G5B5_U16:	return ConvertPixel_NoOp<16>;
-		case BitmapData::eBF_RGB_U24:		return nullptr;
-		case BitmapData::eBF_ARGB_U32:		return ConvertPixel_A1R5G5B5_U16_To_ARGB_U32;
-		case BitmapData::eBF_RGBA_U32:		return ConvertPixel_A1R5G5B5_U16_To_RGBA_U32;
-		case BitmapData::eBF_R_F32:			return nullptr;
+		case BufferFormat::A_U1:			return nullptr;
+		case BufferFormat::A_U5:			return nullptr;
+		case BufferFormat::A_U8:			return nullptr;
+		case BufferFormat::R_U8:			return nullptr;
+		case BufferFormat::X1R5G5B5_U16:	return nullptr;
+		case BufferFormat::R5G6B5_U16:		return nullptr;
+		case BufferFormat::A1R5G5B5_U16:	return ConvertPixel_NoOp<16>;
+		case BufferFormat::RGB_U24:			return nullptr;
+		case BufferFormat::ARGB_U32:		return ConvertPixel_A1R5G5B5_U16_To_ARGB_U32;
+		case BufferFormat::RGBA_U32:		return ConvertPixel_A1R5G5B5_U16_To_RGBA_U32;
+		case BufferFormat::R_F32:			return nullptr;
 		default:							return nullptr;
 		}
-	case BitmapData::eBF_BGR_U24:
+	case BufferFormat::BGR_U24:
 		switch (in_eDstFormat)
 		{
-		case BitmapData::eBF_A_U1:			return nullptr;
-		case BitmapData::eBF_A_U5:			return nullptr;
-		case BitmapData::eBF_A_U8:			return nullptr;
-		case BitmapData::eBF_R_U8:			return nullptr;
-		case BitmapData::eBF_X1R5G5B5_U16:	return nullptr;
-		case BitmapData::eBF_R5G6B5_U16:	return nullptr;
-		case BitmapData::eBF_A1R5G5B5_U16:	return nullptr;
-		case BitmapData::eBF_BGR_U24:		return ConvertPixel_NoOp<24>;
-		case BitmapData::eBF_RGB_U24:		return ConvertPixel_BGR_U24_To_RGB_U24;
-		case BitmapData::eBF_ARGB_U32:		return ConvertPixel_BGR_U24_To_ARGB_U32;
-		case BitmapData::eBF_RGBA_U32:		return ConvertPixel_BGR_U24_To_RGBA_U32;
-		case BitmapData::eBF_R_F32:			return nullptr;
+		case BufferFormat::A_U1:			return nullptr;
+		case BufferFormat::A_U5:			return nullptr;
+		case BufferFormat::A_U8:			return nullptr;
+		case BufferFormat::R_U8:			return nullptr;
+		case BufferFormat::X1R5G5B5_U16:	return nullptr;
+		case BufferFormat::R5G6B5_U16:		return nullptr;
+		case BufferFormat::A1R5G5B5_U16:	return nullptr;
+		case BufferFormat::BGR_U24:			return ConvertPixel_NoOp<24>;
+		case BufferFormat::RGB_U24:			return ConvertPixel_BGR_U24_To_RGB_U24;
+		case BufferFormat::ARGB_U32:		return ConvertPixel_BGR_U24_To_ARGB_U32;
+		case BufferFormat::RGBA_U32:		return ConvertPixel_BGR_U24_To_RGBA_U32;
+		case BufferFormat::R_F32:			return nullptr;
 		default:							return nullptr;
 		}
-	case BitmapData::eBF_RGB_U24:
+	case BufferFormat::RGB_U24:
 		switch (in_eDstFormat)
 		{
-		case BitmapData::eBF_A_U1:			return nullptr;
-		case BitmapData::eBF_A_U5:			return nullptr;
-		case BitmapData::eBF_A_U8:			return nullptr;
-		case BitmapData::eBF_R_U8:			return nullptr;
-		case BitmapData::eBF_X1R5G5B5_U16:	return nullptr;
-		case BitmapData::eBF_R5G6B5_U16:	return nullptr;
-		case BitmapData::eBF_A1R5G5B5_U16:	return nullptr;
-		case BitmapData::eBF_BGR_U24:		return nullptr;
-		case BitmapData::eBF_RGB_U24:		return ConvertPixel_NoOp<24>;
-		case BitmapData::eBF_ARGB_U32:		return nullptr;
-		case BitmapData::eBF_ABGR_U32:		return nullptr;
-		case BitmapData::eBF_RGBA_U32:		return ConvertPixel_RGB_U24_To_RGBA_U32;
-		case BitmapData::eBF_R_F32:			return nullptr;
+		case BufferFormat::A_U1:			return nullptr;
+		case BufferFormat::A_U5:			return nullptr;
+		case BufferFormat::A_U8:			return nullptr;
+		case BufferFormat::R_U8:			return nullptr;
+		case BufferFormat::X1R5G5B5_U16:	return nullptr;
+		case BufferFormat::R5G6B5_U16:		return nullptr;
+		case BufferFormat::A1R5G5B5_U16:	return nullptr;
+		case BufferFormat::BGR_U24:			return nullptr;
+		case BufferFormat::RGB_U24:			return ConvertPixel_NoOp<24>;
+		case BufferFormat::ARGB_U32:		return nullptr;
+		case BufferFormat::ABGR_U32:		return nullptr;
+		case BufferFormat::RGBA_U32:		return ConvertPixel_RGB_U24_To_RGBA_U32;
+		case BufferFormat::R_F32:			return nullptr;
 		default:							return nullptr;
 		}
-	case BitmapData::eBF_ARGB_U32:
+	case BufferFormat::ARGB_U32:
 		switch (in_eDstFormat)
 		{
-		case BitmapData::eBF_A_U1:			return nullptr;
-		case BitmapData::eBF_A_U5:			return nullptr;
-		case BitmapData::eBF_A_U8:			return ConvertPixel_ARGB_U32_To_A_U8;
-		case BitmapData::eBF_R_U8:			return nullptr;
-		case BitmapData::eBF_X1R5G5B5_U16:	return nullptr;
-		case BitmapData::eBF_R5G6B5_U16:	return nullptr;
-		case BitmapData::eBF_A1R5G5B5_U16:	return nullptr;
-		case BitmapData::eBF_RGB_U24:		return nullptr;
-		case BitmapData::eBF_ARGB_U32:		return ConvertPixel_NoOp<32>;
-		case BitmapData::eBF_ABGR_U32:		return ConvertPixel_ARGB_U32_To_ABGR_U32;
-		case BitmapData::eBF_RGBA_U32:		return ConvertPixel_ARGB_U32_To_RGBA_U32;
-		case BitmapData::eBF_R_F32:			return nullptr;
+		case BufferFormat::A_U1:			return nullptr;
+		case BufferFormat::A_U5:			return nullptr;
+		case BufferFormat::A_U8:			return ConvertPixel_ARGB_U32_To_A_U8;
+		case BufferFormat::R_U8:			return nullptr;
+		case BufferFormat::X1R5G5B5_U16:	return nullptr;
+		case BufferFormat::R5G6B5_U16:		return nullptr;
+		case BufferFormat::A1R5G5B5_U16:	return nullptr;
+		case BufferFormat::RGB_U24:			return nullptr;
+		case BufferFormat::ARGB_U32:		return ConvertPixel_NoOp<32>;
+		case BufferFormat::ABGR_U32:		return ConvertPixel_ARGB_U32_To_ABGR_U32;
+		case BufferFormat::RGBA_U32:		return ConvertPixel_ARGB_U32_To_RGBA_U32;
+		case BufferFormat::R_F32:			return nullptr;
 		default:							return nullptr;
 		}
-	case BitmapData::eBF_ABGR_U32:
+	case BufferFormat::ABGR_U32:
 		switch (in_eDstFormat)
 		{
-		case BitmapData::eBF_A_U1:			return nullptr;
-		case BitmapData::eBF_A_U5:			return nullptr;
-		case BitmapData::eBF_A_U8:			return nullptr;
-		case BitmapData::eBF_R_U8:			return nullptr;
-		case BitmapData::eBF_X1R5G5B5_U16:	return nullptr;
-		case BitmapData::eBF_R5G6B5_U16:	return nullptr;
-		case BitmapData::eBF_A1R5G5B5_U16:	return nullptr;
-		case BitmapData::eBF_RGB_U24:		return nullptr;
-		case BitmapData::eBF_ARGB_U32:		return ConvertPixel_ABGR_U32_To_ARGB_U32;
-		case BitmapData::eBF_ABGR_U32:		return ConvertPixel_NoOp<32>;
-		case BitmapData::eBF_RGBA_U32:		return ConvertPixel_ABGR_U32_To_RGBA_U32;
-		case BitmapData::eBF_R_F32:			return nullptr;
+		case BufferFormat::A_U1:			return nullptr;
+		case BufferFormat::A_U5:			return nullptr;
+		case BufferFormat::A_U8:			return nullptr;
+		case BufferFormat::R_U8:			return nullptr;
+		case BufferFormat::X1R5G5B5_U16:	return nullptr;
+		case BufferFormat::R5G6B5_U16:		return nullptr;
+		case BufferFormat::A1R5G5B5_U16:	return nullptr;
+		case BufferFormat::RGB_U24:			return nullptr;
+		case BufferFormat::ARGB_U32:		return ConvertPixel_ABGR_U32_To_ARGB_U32;
+		case BufferFormat::ABGR_U32:		return ConvertPixel_NoOp<32>;
+		case BufferFormat::RGBA_U32:		return ConvertPixel_ABGR_U32_To_RGBA_U32;
+		case BufferFormat::R_F32:			return nullptr;
 		default:							return nullptr;
 		}
 
-	case BitmapData::eBF_RGBA_U32:
+	case BufferFormat::RGBA_U32:
 		switch (in_eDstFormat)
 		{
-		case BitmapData::eBF_A_U1:			return ConvertPixel_RGBA_U32_To_A_U1;
-		case BitmapData::eBF_A_U5:			return ConvertPixel_RGBA_U32_To_A_U5;
-		case BitmapData::eBF_A_U8:			return ConvertPixel_RGBA_U32_To_A_U8;
-		case BitmapData::eBF_R_U8:			return ConvertPixel_RGBA_U32_To_R_U8;
-		case BitmapData::eBF_X1R5G5B5_U16:	return ConvertPixel_RGBA_U32_To_X1R5G5B5_U16;
-		case BitmapData::eBF_R5G6B5_U16:	return ConvertPixel_RGBA_U32_To_R5G6B5_U16;
-		case BitmapData::eBF_A1R5G5B5_U16:	return ConvertPixel_RGBA_U32_To_A1R5G5B5_U16;
-		case BitmapData::eBF_RGB_U24:		return ConvertPixel_RGBA_U32_To_RGB_U24;
-		case BitmapData::eBF_ARGB_U32:		return ConvertPixel_RGBA_U32_To_ARGB_U32;
-		case BitmapData::eBF_ABGR_U32:		return ConvertPixel_RGBA_U32_To_ABGR_U32;
-		case BitmapData::eBF_RGBA_U32:		return ConvertPixel_NoOp<32>;
-		case BitmapData::eBF_R_F32:			return nullptr;
+		case BufferFormat::A_U1:			return ConvertPixel_RGBA_U32_To_A_U1;
+		case BufferFormat::A_U5:			return ConvertPixel_RGBA_U32_To_A_U5;
+		case BufferFormat::A_U8:			return ConvertPixel_RGBA_U32_To_A_U8;
+		case BufferFormat::R_U8:			return ConvertPixel_RGBA_U32_To_R_U8;
+		case BufferFormat::X1R5G5B5_U16:	return ConvertPixel_RGBA_U32_To_X1R5G5B5_U16;
+		case BufferFormat::R5G6B5_U16:		return ConvertPixel_RGBA_U32_To_R5G6B5_U16;
+		case BufferFormat::A1R5G5B5_U16:	return ConvertPixel_RGBA_U32_To_A1R5G5B5_U16;
+		case BufferFormat::RGB_U24:			return ConvertPixel_RGBA_U32_To_RGB_U24;
+		case BufferFormat::ARGB_U32:		return ConvertPixel_RGBA_U32_To_ARGB_U32;
+		case BufferFormat::ABGR_U32:		return ConvertPixel_RGBA_U32_To_ABGR_U32;
+		case BufferFormat::RGBA_U32:		return ConvertPixel_NoOp<32>;
+		case BufferFormat::R_F32:			return nullptr;
 		default:							return nullptr;
 		}
-	case BitmapData::eBF_R_F32:
+	case BufferFormat::R_F32:
 		switch (in_eDstFormat)
 		{
-		case BitmapData::eBF_A_U1:			return nullptr;
-		case BitmapData::eBF_A_U5:			return nullptr;
-		case BitmapData::eBF_A_U8:			return nullptr;
-		case BitmapData::eBF_R_U8:			return nullptr;
-		case BitmapData::eBF_X1R5G5B5_U16:	return nullptr;
-		case BitmapData::eBF_R5G6B5_U16:	return nullptr;
-		case BitmapData::eBF_A1R5G5B5_U16:	return nullptr;
-		case BitmapData::eBF_RGB_U24:		return nullptr;
-		case BitmapData::eBF_ARGB_U32:		return nullptr;
-		case BitmapData::eBF_RGBA_U32:		return nullptr;
-		case BitmapData::eBF_R_F32:			return ConvertPixel_NoOp<32>;
+		case BufferFormat::A_U1:			return nullptr;
+		case BufferFormat::A_U5:			return nullptr;
+		case BufferFormat::A_U8:			return nullptr;
+		case BufferFormat::R_U8:			return nullptr;
+		case BufferFormat::X1R5G5B5_U16:	return nullptr;
+		case BufferFormat::R5G6B5_U16:		return nullptr;
+		case BufferFormat::A1R5G5B5_U16:	return nullptr;
+		case BufferFormat::RGB_U24:			return nullptr;
+		case BufferFormat::ARGB_U32:		return nullptr;
+		case BufferFormat::RGBA_U32:		return nullptr;
+		case BufferFormat::R_F32:			return ConvertPixel_NoOp<32>;
 		default:							return nullptr;
 		}
 	default:

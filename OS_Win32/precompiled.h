@@ -1,3 +1,7 @@
+#pragma once
+
+#pragma warning(default : 4062)
+
 #include <windows.h>
 #include <d2d1.h>
 #include <dwrite.h>

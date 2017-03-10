@@ -3,25 +3,24 @@
 #include "../OS_Base/System.h"
 
 //--------------------------------------------------------------------------------
-const StringChar* kLogCategories[] =
+static const std::map<LogCategory, std::string> kLogCategories
 {
-	L("Init        "),
-	L("Shutdown    "),
-	L("System      "),
-	L("FileSystem  "),
-	L("Profiler    "),
-	L("Assert      "),
-	L("Debug Info  "),
-	L("Input       "),
-	L("Rendering   "),
+	std::make_pair(LogCategory::Init,		("Init        ")),
+	std::make_pair(LogCategory::Shutdown,	("Shutdown    ")),
+	std::make_pair(LogCategory::System,		("System      ")),
+	std::make_pair(LogCategory::FileSystem,	("FileSystem  ")),
+	std::make_pair(LogCategory::Assert,		("Assert      ")),
+	std::make_pair(LogCategory::DebugInfo,	("Debug Info  ")),
+	std::make_pair(LogCategory::Input,		("Input       ")),
+	std::make_pair(LogCategory::Rendering,	("Rendering   ")),
 };
 
 //--------------------------------------------------------------------------------
-const StringChar* kLogSeverities[] =
+static const std::map<LogSeverity, std::string> kLogSeverities =
 {
-	L("Message  "),
-	L("Warning  "),
-	L("Error    ")
+	std::make_pair(LogSeverity::Message,	("Message  ")),
+	std::make_pair(LogSeverity::Warning,	("Warning  ")),
+	std::make_pair(LogSeverity::Error,		("Error    ")),
 };
 
 //--------------------------------------------------------------------------------
@@ -38,13 +37,12 @@ Logger::~Logger()
 //--------------------------------------------------------------------------------
 void Logger::Initialize()
 {
-	m_LogFile.Open(L("log.txt"), File::fmWriteText);
-	Logger::GetInstance()->Log(eLC_Init, eLS_Message, eLT_FileAndDebug, L("LogSystem Initialized"));
-	//Logger::GetInstance()->Log("LogFile created on %02d-%02d-%04d at %02d:%02d:%02d -- Part %d", sysTime.GetMonth(), sysTime.GetDay(), sysTime.GetYear(), sysTime.GetHour(), sysTime.GetMinute(), sysTime.GetSecond(), m_LogFileNumber);
+	m_LogFile.Open(L("log.txt"), FileMode::WriteText);
+	Logger::GetInstance()->Log(LogCategory::Init, LogSeverity::Message, LogType::FileAndDebug, L("LogSystem Initialized"));
 }
 
 //--------------------------------------------------------------------------------
-void Logger::Log(ELogCategory in_eCategory, ELogSeverity in_eSeverity, ELogType in_eLogType, const StringChar* in_pMsg, ...)
+void Logger::Log(LogCategory in_eCategory, LogSeverity in_eSeverity, LogType in_eLogType, const StringChar* in_pMsg, ...)
 {
 	if (this == nullptr)
 		return;
@@ -60,10 +58,10 @@ void Logger::Log(ELogCategory in_eCategory, ELogSeverity in_eSeverity, ELogType 
 }
 
 //--------------------------------------------------------------------------------
-void Logger::LogFormattedMsg(ELogCategory in_eCategory, ELogSeverity in_eSeverity, ELogType in_eLogType, StringChar* in_pMsg)
+void Logger::LogFormattedMsg(LogCategory in_eCategory, LogSeverity in_eSeverity, LogType in_eLogType, StringChar* in_pMsg)
 {
 	//Do the "Debug" part of the logType
-	if (in_eLogType == eLT_FileAndDebug)
+	if (in_eLogType == LogType::FileAndDebug)
 	{
 		OS::DebugOut(in_pMsg);
 		OS::DebugOut(L("\n"));
@@ -98,8 +96,8 @@ void Logger::LogFormattedMsg(ELogCategory in_eCategory, ELogSeverity in_eSeverit
 		//if (TimeManager::GetInstance())
 		//	m_CurrentLogSize += m_pLogFile->Print("[%15.6f\t] ", TimeManager::GetInstance()->GetCurrentTimeInSeconds());
 
-		m_LogFile.Print(L("(%s) "), kLogCategories[in_eCategory]);
-		m_LogFile.Print(L("(%s) "), kLogSeverities[in_eSeverity]);
+		m_LogFile.Print(L("(%s) "), kLogCategories.at(in_eCategory).c_str());
+		m_LogFile.Print(L("(%s) "), kLogSeverities.at(in_eSeverity).c_str());
 		m_LogFile.Print(logMessages[i].c_str());
 		m_LogFile.Print(L("\n"));
 	}

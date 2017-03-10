@@ -1,6 +1,5 @@
 #pragma once
 
-#include "d3d11.h"
 #include "../Renderer_Base/Renderer.h"
 
 //--------------------------------------------------------------------------------
@@ -13,7 +12,7 @@ public:
 	virtual void Initialize(DisplayAdapter* in_pAdapter, Window* in_pWindow);
 
 	virtual Texture* CreateTexture(const Path& filename);
-	virtual Texture* CreateTexture(unsigned int width, unsigned int height, const unsigned char* pBits);
+	virtual Texture* CreateTexture(const BitmapData* in_pData);
 	virtual Quad* CreateQuad(float posX, float posY, Texture* texture);
 
 	virtual void StartFrame();

@@ -40,7 +40,7 @@ int CustomAssertFunction(const StringChar* in_expstr, const StringChar* in_file,
 			strMessage += stackTrace[i] + L("\n");
 		strMessage += L("***************");
 
-		Logger::GetInstance()->Log(eLC_Assert, eLS_Error, eLT_FileAndDebug, strMessage.c_str());
+		Logger::GetInstance()->Log(LogCategory::Assert, LogSeverity::Error, LogType::FileAndDebug, strMessage.c_str());
 	}
 
 	strMessage = Format(L("[%s]\n\n"), in_expstr);

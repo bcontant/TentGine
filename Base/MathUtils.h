@@ -12,9 +12,9 @@ private:
 	static constexpr unsigned char high_byte = (const unsigned char&)number;
 
 public:
-	static constexpr bool little_endian =	(high_byte == 0xDD);
-	static constexpr bool middle_endian =	(high_byte == 0xBB);
-	static constexpr bool big_endian    =	(high_byte == 0xAA);
+	static constexpr bool IsLittleEndian	=	(high_byte == 0xDD);
+	static constexpr bool IsMiddleEndian	=	(high_byte == 0xBB);
+	static constexpr bool IsBigEndian		=	(high_byte == 0xAA);
 
 private:
 	Endian() = delete;

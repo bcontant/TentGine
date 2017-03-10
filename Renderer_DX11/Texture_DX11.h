@@ -1,6 +1,5 @@
 #pragma once
 
-#include "d3d11.h"
 #include "../Renderer_Base/Texture.h"
 
 //--------------------------------------------------------------------------------
@@ -11,7 +10,7 @@ public:
 	virtual ~Texture_DX11();
 
 	virtual void Initialize(const Path& filename);
-	virtual void Initialize(unsigned int width, unsigned int height, const unsigned char* pBits);
+	virtual void Initialize(const BitmapData* in_pData);
 
 	virtual void Bind(unsigned int startSlot);
 

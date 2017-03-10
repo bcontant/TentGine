@@ -4,24 +4,24 @@
 
 class Path;
 
+// File modes supported
+//--------------------------------------------------------------------------------
+enum class FileMode
+{
+	ReadOnly,			// Open a file for reading.
+	WriteOnly,			// Create an empty file for writing.
+	Append,				// Append to an existing (or not) file.
+	ReadWrite,			// Create an empty file for both reading and writing.
+	ReadAppend,			// Open a file for reading and appending.
+	WriteText,			// Open a file for printing text.
+	WriteTextAppend,	// Append to an exisiting (or not) text file.
+	ReadText			// Open a file for reading text
+};
+
 //--------------------------------------------------------------------------------
 class File : public Buffer
 {
 public:
-	// File modes supported
-	enum FileMode
-	{
-		fmReadOnly,			// Open a file for reading.
-		fmWriteOnly,		// Create an empty file for writing.
-		fmAppend,			// Append to an existing (or not) file.
-		fmReadWrite,		// Create an empty file for both reading and writing.
-		fmReadAppend,		// Open a file for reading and appending.
-		fmWriteText,		// Open a file for printing text.
-		fmWriteTextAppend,	// Append to an exisiting (or not) text file.
-		fmReadText,			// Open a file for reading text
-		fmCount
-	};
-
 	// Constructor/Destructor
 	File();
 	virtual ~File();
@@ -56,7 +56,5 @@ public:
 protected:
 	FILE*   m_FileHandle;
 	FileMode m_FileMode;
-
-	static const StringChar* s_FileModes[File::fmCount];
 };
 

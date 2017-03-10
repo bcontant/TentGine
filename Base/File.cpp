@@ -1,21 +1,23 @@
 #include "precompiled.h"
 
-const StringChar* File::s_FileModes[File::fmCount] =
+#include "File.h"
+
+static const std::map<FileMode, StdString> kFileModes =
 {
-	L("rb"),   //osfmReadOnly
-	L("wb"),   //osfmWriteOnly
-	L("ab"),   //osfmAppend
-	L("r+b"),  //osfmReadWrite
-	L("a+b"),  //osfmReadAppend
-	L("w"),    //osfmWriteText
-	L("a"),     //osfmWriteTextAppend
-	L("r"),	//osfmReadText
+	std::make_pair(FileMode::ReadOnly,			L("rb")),
+	std::make_pair(FileMode::WriteOnly,			L("wb")),
+	std::make_pair(FileMode::Append,			L("ab")),
+	std::make_pair(FileMode::ReadWrite,			L("r+b")),
+	std::make_pair(FileMode::ReadAppend,		L("a+b")),
+	std::make_pair(FileMode::WriteText,			L("w")),
+	std::make_pair(FileMode::WriteTextAppend,	L("a")),
+	std::make_pair(FileMode::ReadText,			L("r"))
 };
 
 //--------------------------------------------------------------------------------
 File::File()
 	:m_FileHandle(nullptr)
-	,m_FileMode(fmCount)
+	,m_FileMode(FileMode::ReadOnly)
 {
 }
 
@@ -27,7 +29,7 @@ File::~File()
 }
 
 //--------------------------------------------------------------------------------
-bool File::Open(const Path& path, File::FileMode fileMode)
+bool File::Open(const Path& path, FileMode fileMode)
 {
 	// Make sure it isn't already open
 	if (m_FileHandle)
@@ -37,12 +39,12 @@ bool File::Open(const Path& path, File::FileMode fileMode)
 	m_FileMode = fileMode;
 
 	// Open the file
-	errno_t ret = FOPEN(&m_FileHandle, path.GetData(), s_FileModes[m_FileMode]);
+	errno_t ret = FOPEN(&m_FileHandle, path.GetData(), kFileModes.at(m_FileMode).c_str());
 
 	if (ret != 0)
-		Logger::GetInstance()->Log(eLC_FileSystem, eLS_Warning, eLT_File, L("Failed to open File (%s  :%s)"), path.GetData(), s_FileModes[m_FileMode]);
+		Logger::GetInstance()->Log(LogCategory::FileSystem, LogSeverity::Warning, LogType::File, L("Failed to open File (%s  :%s)"), path.GetData(), kFileModes.at(m_FileMode).c_str());
 	else
-		Logger::GetInstance()->Log(eLC_FileSystem, eLS_Message, eLT_File, L("Opening File (%s : %s)"), path.GetData(), s_FileModes[m_FileMode]);
+		Logger::GetInstance()->Log(LogCategory::FileSystem, LogSeverity::Message, LogType::File, L("Opening File (%s : %s)"), path.GetData(), kFileModes.at(m_FileMode).c_str());
 
 	return ret == 0;
 }
@@ -94,7 +96,7 @@ unsigned long int File::Size() const
 //--------------------------------------------------------------------------------
 unsigned int File::Advance(unsigned int size)
 {
-	AssertMsg(m_FileMode == fmReadOnly || m_FileMode == fmReadWrite || m_FileMode == fmReadAppend, L("Invalid Filemode"));
+	AssertMsg(m_FileMode == FileMode::ReadOnly || m_FileMode == FileMode::ReadWrite || m_FileMode == FileMode::ReadAppend, L("Invalid Filemode"));
 
 	// Make sure we have something to read
 	if (!m_FileHandle)
@@ -109,7 +111,7 @@ unsigned int File::Advance(unsigned int size)
 //--------------------------------------------------------------------------------
 unsigned int File::SeekTo(unsigned int offset)
 {
-	AssertMsg(m_FileMode == fmReadOnly || m_FileMode == fmReadWrite || m_FileMode == fmReadAppend, L("Invalid Filemode"));
+	AssertMsg(m_FileMode == FileMode::ReadOnly || m_FileMode == FileMode::ReadWrite || m_FileMode == FileMode::ReadAppend, L("Invalid Filemode"));
 	
 	// Make sure we have something to read
 	if (!m_FileHandle)
@@ -160,7 +162,7 @@ unsigned int File::Write(Buffer* buffer, unsigned int bufferSize)
 //--------------------------------------------------------------------------------
 unsigned int File::Read(void* buffer, unsigned int bufferSize)
 {
-	AssertMsg(m_FileMode == fmReadOnly || m_FileMode == fmReadWrite || m_FileMode == fmReadAppend, L("Invalid Filemode"));
+	AssertMsg(m_FileMode == FileMode::ReadOnly || m_FileMode == FileMode::ReadWrite || m_FileMode == FileMode::ReadAppend, L("Invalid Filemode"));
 
 	// Make sure we have something to read
 	if (!m_FileHandle)
@@ -174,7 +176,7 @@ unsigned int File::Read(void* buffer, unsigned int bufferSize)
 //--------------------------------------------------------------------------------
 unsigned int File::Write(const void* buffer, unsigned int bufferSize)
 {
-	AssertMsg(m_FileMode == fmWriteOnly || m_FileMode == fmAppend || m_FileMode == fmReadAppend, L("Invalid Filemode"));
+	AssertMsg(m_FileMode == FileMode::WriteOnly || m_FileMode == FileMode::Append || m_FileMode == FileMode::ReadAppend, L("Invalid Filemode"));
 
 	// Make sure we have somewhere to write
 	if (!m_FileHandle)
@@ -187,7 +189,7 @@ unsigned int File::Write(const void* buffer, unsigned int bufferSize)
 //--------------------------------------------------------------------------------
 unsigned int File::Read(StdString& in_string)
 {
-	AssertMsg(m_FileMode == fmReadOnly || m_FileMode == fmReadWrite || m_FileMode == fmReadAppend, L("Invalid Filemode"));
+	AssertMsg(m_FileMode == FileMode::ReadOnly || m_FileMode == FileMode::ReadWrite || m_FileMode == FileMode::ReadAppend, L("Invalid Filemode"));
 
 	// Make sure we have somewhere to write
 	if (!m_FileHandle)
@@ -211,7 +213,7 @@ unsigned int File::Read(StdString& in_string)
 //--------------------------------------------------------------------------------
 unsigned int File::Write(const StdString& in_string)
 {
-	AssertMsg(m_FileMode == fmWriteOnly || m_FileMode == fmAppend || m_FileMode == fmReadAppend, L("Invalid Filemode"));
+	AssertMsg(m_FileMode == FileMode::WriteOnly || m_FileMode == FileMode::Append || m_FileMode == FileMode::ReadAppend, L("Invalid Filemode"));
 
 	// Make sure we have somewhere to write
 	if (!m_FileHandle)
@@ -230,7 +232,7 @@ unsigned int File::Write(const StdString& in_string)
 //--------------------------------------------------------------------------------
 unsigned int File::Print(const StringChar* format, ...)
 {
-	AssertMsg(m_FileMode == fmWriteText || m_FileMode == fmWriteTextAppend, L("Invalid Filemode"));
+	AssertMsg(m_FileMode == FileMode::WriteText || m_FileMode == FileMode::WriteTextAppend, L("Invalid Filemode"));
 
 	va_list args;
 	va_start(args, format);

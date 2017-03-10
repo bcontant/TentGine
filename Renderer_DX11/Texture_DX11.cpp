@@ -1,5 +1,8 @@
 #include "precompiled.h"
 
+#include "DXUtils.h"
+#include "../Base/BitmapData.h"
+
 //--------------------------------------------------------------------------------
 Texture_DX11::~Texture_DX11()
 {
@@ -11,23 +14,26 @@ Texture_DX11::~Texture_DX11()
 void Texture_DX11::Initialize(const Path& filename)
 {
 	Renderer_DX11* pOwner = (Renderer_DX11*)GetOwner();
-	/*HRESULT hr = */CreateWICTextureFromFile(pOwner->GetDevice(), pOwner->GetContext(), filename.GetData(), &pTexture, &pShaderResourceView, 0);
+	HResult hr = CreateWICTextureFromFile(pOwner->GetDevice(), pOwner->GetContext(), filename.GetData(), &pTexture, &pShaderResourceView, 0);
 }
 
 //--------------------------------------------------------------------------------
-void Texture_DX11::Initialize(unsigned int width, unsigned int height, const unsigned char* pBits)
+void Texture_DX11::Initialize(const BitmapData* in_pData)
 {
 	Renderer_DX11* pOwner = (Renderer_DX11*)GetOwner();
 
 	// Create texture
 	D3D11_TEXTURE2D_DESC desc = {};
-	desc.Width = width;
-	desc.Height = height;
+	desc.Width = in_pData->GetWidth();
+	desc.Height = in_pData->GetHeight();
 	desc.MipLevels = 1;
 	desc.ArraySize = 1;
+
 	//desc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
-	desc.Format = DXGI_FORMAT_R8_UNORM;
-	//desc.Format = DXGI_FORMAT_A8_UNORM;
+	//desc.Format = DXGI_FORMAT_R8_UNORM;
+	//desc.Format = DXGI_FORMAT_A8_UNORM; 
+
+	desc.Format = GetDXGIFormat(in_pData->GetFormat());
 	desc.SampleDesc.Count = 1;
 	desc.SampleDesc.Quality = 0;
 	desc.Usage = D3D11_USAGE_DEFAULT;
@@ -35,12 +41,12 @@ void Texture_DX11::Initialize(unsigned int width, unsigned int height, const uns
 	desc.CPUAccessFlags = 0;
 
 	D3D11_SUBRESOURCE_DATA initData;
-	initData.pSysMem = pBits;
-	initData.SysMemPitch = width;
-	initData.SysMemSlicePitch = width * height;
+	initData.pSysMem = in_pData->GetBuffer();
+	initData.SysMemPitch = in_pData->GetBufferPitch();;
+	initData.SysMemSlicePitch = in_pData->GetBufferSize();
 
-	HRESULT hr = pOwner->GetDevice()->CreateTexture2D(&desc, &initData, &pTexture);
-
+	HResult hr = pOwner->GetDevice()->CreateTexture2D(&desc, &initData, &pTexture);
+	
 	D3D11_SHADER_RESOURCE_VIEW_DESC SRVDesc;
 	memset(&SRVDesc, 0, sizeof(SRVDesc));
 	SRVDesc.Format = desc.Format;

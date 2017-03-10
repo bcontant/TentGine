@@ -1,3 +1,7 @@
+#pragma once
+
+#pragma warning(default : 4062)
+
 #include <string>
 #include <vector>
 #include <map>

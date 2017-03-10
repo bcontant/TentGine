@@ -197,7 +197,7 @@ static IWICImagingFactory* _GetWIC()
 	if (s_Factory)
 		return s_Factory;
 
-	HRESULT hr = CoCreateInstance(
+	HResult hr = CoCreateInstance(
 		CLSID_WICImagingFactory,
 		nullptr,
 		CLSCTX_INPROC_SERVER,
@@ -256,7 +256,7 @@ static size_t _WICBitsPerPixel(REFGUID targetGuid)
 }
 
 //---------------------------------------------------------------------------------
-static HRESULT CreateTextureFromWIC(_In_ ID3D11Device* d3dDevice,
+static HResult CreateTextureFromWIC(_In_ ID3D11Device* d3dDevice,
 	_In_opt_ ID3D11DeviceContext* d3dContext,
 	_In_ IWICBitmapFrameDecode *frame,
 	_Out_opt_ ID3D11Texture2D** texture,
@@ -264,7 +264,7 @@ static HRESULT CreateTextureFromWIC(_In_ ID3D11Device* d3dDevice,
 	_In_ size_t maxsize)
 {
 	UINT width, height;
-	HRESULT hr = frame->GetSize(&width, &height);
+	HResult hr = frame->GetSize(&width, &height);
 	if (FAILED(hr))
 		return hr;
 
@@ -531,7 +531,7 @@ static HRESULT CreateTextureFromWIC(_In_ ID3D11Device* d3dDevice,
 }
 
 //--------------------------------------------------------------------------------------
-HRESULT CreateWICTextureFromMemory(_In_ ID3D11Device* d3dDevice,
+HResult CreateWICTextureFromMemory(_In_ ID3D11Device* d3dDevice,
 	_In_opt_ ID3D11DeviceContext* d3dContext,
 	_In_bytecount_(wicDataSize) const uint8_t* wicData,
 	_In_ size_t wicDataSize,
@@ -561,7 +561,7 @@ HRESULT CreateWICTextureFromMemory(_In_ ID3D11Device* d3dDevice,
 
 	// Create input stream for memory
 	ScopedObject<IWICStream> stream;
-	HRESULT hr = pWIC->CreateStream(&stream);
+	HResult hr = pWIC->CreateStream(&stream);
 	if (FAILED(hr))
 		return hr;
 
@@ -606,7 +606,7 @@ HRESULT CreateWICTextureFromMemory(_In_ ID3D11Device* d3dDevice,
 }
 
 //--------------------------------------------------------------------------------------
-HRESULT CreateWICTextureFromFile(_In_ ID3D11Device* d3dDevice,
+HResult CreateWICTextureFromFile(_In_ ID3D11Device* d3dDevice,
 	_In_opt_ ID3D11DeviceContext* d3dContext,
 	_In_z_ const StringChar* fileName,
 	_Out_opt_ ID3D11Texture2D** texture,
@@ -624,7 +624,7 @@ HRESULT CreateWICTextureFromFile(_In_ ID3D11Device* d3dDevice,
 
 	// Initialize WIC
 	ScopedObject<IWICBitmapDecoder> decoder;
-	HRESULT hr = pWIC->CreateDecoderFromFilename(TO_WSTRING(fileName).c_str(), 0, GENERIC_READ, WICDecodeMetadataCacheOnDemand, &decoder);
+	HResult hr = pWIC->CreateDecoderFromFilename(TO_WSTRING(fileName).c_str(), 0, GENERIC_READ, WICDecodeMetadataCacheOnDemand, &decoder);
 	if (FAILED(hr))
 		return hr;
 

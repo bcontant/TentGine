@@ -50,6 +50,8 @@ enum ETGAImageOrigin
 //--------------------------------------------------------------------------------
 bool SaveTGA(const Path& in_file, BitmapData* in_pData, bool in_bCompress)
 {
+	PROFILE_BLOCK;
+
 	if (in_pData == nullptr)
 		return false;
 
@@ -59,34 +61,34 @@ bool SaveTGA(const Path& in_file, BitmapData* in_pData, bool in_bCompress)
 	hdr.ColorMapType = 0;
 
 	//Like most files, TGA has a BGRA (byte-order) format on disk (which becomes ARGB (word-order) in memory on little-endian)
-	BitmapData::EBufferFormat convertTo = BitmapData::eBF_Invalid;
+	BufferFormat convertTo = BufferFormat::INVALID_FORMAT;
 	switch (in_pData->GetFormat())
 	{
-	case BitmapData::eBF_A_U1:
-	case BitmapData::eBF_A_U5:
-		convertTo = BitmapData::eBF_A_U8;
-	case BitmapData::eBF_A_U8:		
+	case BufferFormat::A_U1:
+	case BufferFormat::A_U5:
+		convertTo = BufferFormat::A_U8;
+	case BufferFormat::A_U8:
 		hdr.ImageType = eTGA_Grayscale;	hdr.ImageDescriptor = 0;  break;
 
-	case BitmapData::eBF_R5G6B5_U16:
-		convertTo = BitmapData::eBF_X1R5G5B5_U16;
-	case BitmapData::eBF_X1R5G5B5_U16:
+	case BufferFormat::R5G6B5_U16:
+		convertTo = BufferFormat::X1R5G5B5_U16;
+	case BufferFormat::X1R5G5B5_U16:
 		hdr.ImageType = eTGA_TrueColor; hdr.ImageDescriptor = 0; break;
 
-	case BitmapData::eBF_A1R5G5B5_U16:
+	case BufferFormat::A1R5G5B5_U16:
 		hdr.ImageType = eTGA_TrueColor; hdr.ImageDescriptor = 1; break;
 
-	case BitmapData::eBF_R_U8:
-	case BitmapData::eBF_BGR_U24:
-	case BitmapData::eBF_R_F32:
-		convertTo = BitmapData::eBF_RGB_U24;
-	case BitmapData::eBF_RGB_U24:
+	case BufferFormat::R_U8:
+	case BufferFormat::BGR_U24:
+	case BufferFormat::R_F32:
+		convertTo = BufferFormat::RGB_U24;
+	case BufferFormat::RGB_U24:
 		hdr.ImageType = eTGA_TrueColor; hdr.ImageDescriptor = 0; break;
 
-	case BitmapData::eBF_RGBA_U32:
-	case BitmapData::eBF_ABGR_U32:
-		convertTo = BitmapData::eBF_ARGB_U32;
-	case BitmapData::eBF_ARGB_U32:
+	case BufferFormat::RGBA_U32:
+	case BufferFormat::ABGR_U32:
+		convertTo = BufferFormat::ARGB_U32;
+	case BufferFormat::ARGB_U32:
 		hdr.ImageType = eTGA_TrueColor; hdr.ImageDescriptor = 8; break;
 
 	default:	
@@ -95,10 +97,10 @@ bool SaveTGA(const Path& in_file, BitmapData* in_pData, bool in_bCompress)
 	}
 
 	File TGAFile;
-	if (!TGAFile.Open(in_file, File::fmWriteOnly))
+	if (!TGAFile.Open(in_file, FileMode::WriteOnly))
 		return false;
 
-	if (convertTo != BitmapData::eBF_Invalid)
+	if (convertTo != BufferFormat::INVALID_FORMAT)
 	{
 		in_pData = new BitmapData(*in_pData);
 		in_pData->ConvertTo(convertTo);
@@ -134,7 +136,7 @@ bool SaveTGA(const Path& in_file, BitmapData* in_pData, bool in_bCompress)
 
 	TGAFile.Close();
 
-	if (convertTo != BitmapData::eBF_Invalid)
+	if (convertTo != BufferFormat::INVALID_FORMAT)
 	{
 		delete in_pData;
 	}
@@ -145,8 +147,10 @@ bool SaveTGA(const Path& in_file, BitmapData* in_pData, bool in_bCompress)
 //--------------------------------------------------------------------------------
 BitmapData* LoadTGA(const Path& in_file)
 {
+	PROFILE_BLOCK;
+
 	File TGAFile;
-	if (!TGAFile.Open(in_file, File::fmReadOnly))
+	if (!TGAFile.Open(in_file, FileMode::ReadOnly))
 		return nullptr;
 
 	TGA_Header hdr;
@@ -162,16 +166,16 @@ BitmapData* LoadTGA(const Path& in_file)
 	Assert(hdr.ColorMapLength == 0);
 	Assert(hdr.ColorMapBPP == 0);
 
-	BitmapData::EBufferFormat eFormat;
+	BufferFormat eFormat;
 	switch (hdr.ImageType & 0x3)
 	{
 	case eTGA_TrueColor:
 		switch (hdr.BPP)
 		{
-		case 15: eFormat = BitmapData::eBF_X1R5G5B5_U16; break;
-		case 16: eFormat = BitmapData::eBF_A1R5G5B5_U16; break;
-		case 24: eFormat = BitmapData::eBF_RGB_U24; break;
-		case 32: eFormat = BitmapData::eBF_ARGB_U32; break;
+		case 15: eFormat = BufferFormat::X1R5G5B5_U16; break;
+		case 16: eFormat = BufferFormat::A1R5G5B5_U16; break;
+		case 24: eFormat = BufferFormat::RGB_U24; break;
+		case 32: eFormat = BufferFormat::ARGB_U32; break;
 		default:
 			Assert(false);
 			return nullptr;
@@ -181,7 +185,7 @@ BitmapData* LoadTGA(const Path& in_file)
 	case eTGA_Grayscale:
 		switch (hdr.BPP)
 		{
-		case 8: eFormat = BitmapData::eBF_A_U8; break;
+		case 8: eFormat = BufferFormat::A_U8; break;
 		default:
 			Assert(false);
 			return nullptr;

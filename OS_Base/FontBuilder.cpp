@@ -11,11 +11,21 @@
 #include "ft2build.h"
 #include FT_FREETYPE_H
 
-#define GLYPH_TEXTURE_PADDING 2
+#define GLYPH_TEXTURE_PADDING 1
+
+struct Glyph
+{
+	~Glyph() { delete m_pData; }
+
+	FontDataFile::GlyphInfo m_Info;
+	BitmapData* m_pData;
+};
 
 //--------------------------------------------------------------------------------
-void OS::BuildFont(const Path& in_FontFile, unsigned int in_uiFontSize, unsigned int in_uiTextureSize, unsigned int in_uiFlags, const Path& in_FontDataFileName)
+bool OS::BuildFont(const Path& in_FontFile, unsigned int in_uiFontSize, unsigned int in_uiTextureSize, unsigned int in_uiFlags, const Path& in_FontDataFileName)
 {
+	PROFILE_BLOCK;
+
 	//Init the string we'll use for creating the FontFileTexture
 	//TODO : Parametrize
 	wchar_t wszTextureText[512] = {};
@@ -31,19 +41,6 @@ void OS::BuildFont(const Path& in_FontFile, unsigned int in_uiFontSize, unsigned
 	error = FT_New_Face(library, TO_STRING(in_FontFile.GetData()).c_str(), 0, &face);
 	error = FT_Set_Char_Size(face, 0, in_uiFontSize * 64, 96, 96);  //This is correct on my (96DPI) display.  Glyph are the proper size (compared with MS Word)
 
-	struct Glyph
-	{
-		~Glyph() { delete m_pData; }
-
-		FontDataFile::GlyphInfo m_Info;
-		BitmapData* m_pData;
-	};
-
-	std::map<unsigned int, Glyph> mGlyphs;
-	std::map<wchar_t, Glyph*> mCharacters;
-	std::vector<PackRect> vUnpackRects;
-
-
 	unsigned int uiLoadFlags = FT_LOAD_DEFAULT;
 	if (in_uiFlags & eFF_Mono)			
 		uiLoadFlags |= FT_LOAD_TARGET_MONO;
@@ -54,9 +51,13 @@ void OS::BuildFont(const Path& in_FontFile, unsigned int in_uiFontSize, unsigned
 	if (in_uiFlags & eFF_Mono)			
 		eRenderMode = FT_RENDER_MODE_MONO;
 
-	BitmapData::EBufferFormat eBufferFormat = BitmapData::eBF_A_U8;
+	BufferFormat eBufferFormat = BufferFormat::A_U8;
 	if (in_uiFlags & eFF_Mono)			
-		eBufferFormat = BitmapData::eBF_A_U1;
+		eBufferFormat = BufferFormat::A_U1;
+
+	std::map<unsigned int, Glyph> mGlyphs;
+	std::map<wchar_t, Glyph*> mCharacters;
+	std::vector<PackRect> vUnpackRects;
 
 	for (unsigned int i = 0; i < cTextureTextLength; i++)
 	{
@@ -80,45 +81,77 @@ void OS::BuildFont(const Path& in_FontFile, unsigned int in_uiFontSize, unsigned
 			mCharacters[wszTextureText[i]] = &mGlyphs[glyphIndex];
 		}
 	}
-
+	
 	auto vPackRects = PackTexture(vUnpackRects, in_uiTextureSize, in_uiTextureSize, GLYPH_TEXTURE_PADDING);
 	Assert(vUnpackRects.size() == 0);
 
-	BitmapData* pRects = new BitmapData(in_uiTextureSize, in_uiTextureSize, eBufferFormat);
+	BitmapData* pFontTexture = new BitmapData(in_uiTextureSize, in_uiTextureSize, eBufferFormat);
 	for (size_t i = 0; i < vPackRects.size(); i++)
 	{
-		pRects->Blit(vPackRects[i].x, vPackRects[i].y, ((Glyph*)vPackRects[i].user_data)->m_pData);
+		pFontTexture->Blit(vPackRects[i].x, vPackRects[i].y, ((Glyph*)vPackRects[i].user_data)->m_pData);
 	}
 
-	std::map<wchar_t, FontDataFile::GlyphInfo> mFinalGlyphs;
-	for (auto charIt = mCharacters.begin(); charIt != mCharacters.end(); charIt++)
+	std::vector<FontDataFile::GlyphInfo*> vGlyphs;
+	std::map<wchar_t, FontDataFile::GlyphInfo*> mCharacterMap;
+
+	for (auto glyphIt = mGlyphs.begin(); glyphIt != mGlyphs.end(); glyphIt++)
 	{
-		Glyph* pCurrentGlyph = charIt->second;
-		auto it = std::find_if(vPackRects.begin(), vPackRects.end(), [pCurrentGlyph](const PackRect& a) { return a.user_data == pCurrentGlyph; });
-		if (it == vPackRects.end())
+		Glyph* pCurrentGlyph = &glyphIt->second;
+		auto packRectIt = std::find_if(vPackRects.begin(), vPackRects.end(), [pCurrentGlyph](const PackRect& a) { return a.user_data == pCurrentGlyph; });
+		if (packRectIt == vPackRects.end())
+		{
+			Assert(false);
+			return false;
 			continue;
+		}
 
-		//UVs
-		pCurrentGlyph->m_Info.boxX = float(it->x) / in_uiTextureSize;
-		pCurrentGlyph->m_Info.boxY = float(it->y) / in_uiTextureSize;
-		pCurrentGlyph->m_Info.boxWidth = float(it->size_x) / in_uiTextureSize;
-		pCurrentGlyph->m_Info.boxHeight = float(it->size_y) / in_uiTextureSize;
+		FontDataFile::GlyphInfo* pNewInfo = new FontDataFile::GlyphInfo;
+		pNewInfo->left = pCurrentGlyph->m_Info.left;
+		pNewInfo->top = pCurrentGlyph->m_Info.top;
+		pNewInfo->advance = pCurrentGlyph->m_Info.advance;
 
-		mFinalGlyphs[charIt->first] = pCurrentGlyph->m_Info;
+		pNewInfo->boxX = float(packRectIt->x) / in_uiTextureSize;
+		pNewInfo->boxY = float(packRectIt->y) / in_uiTextureSize;
+		pNewInfo->boxWidth = float(packRectIt->size_x) / in_uiTextureSize;
+		pNewInfo->boxHeight = float(packRectIt->size_y) / in_uiTextureSize;
+
+		vGlyphs.push_back(pNewInfo);
+
+		auto charIt = mCharacters.begin();
+		for(;;)
+		{
+			charIt = std::find_if(charIt, mCharacters.end(), [pCurrentGlyph](const auto& a) { return a.second == pCurrentGlyph; });
+			if (charIt == mCharacters.end())
+				break;
+
+			mCharacterMap[charIt->first] = pNewInfo;
+			charIt++;
+		}
 	}
 
-	pRects->ConvertTo(BitmapData::eBF_A_U8);
-	
 	StdString fontName = Format(L("%s %s %dpt%s"), FROM_STRING(face->family_name).c_str(), FROM_STRING(face->style_name).c_str(), in_uiFontSize, in_uiFlags & eFF_Mono ? L(" Mono") : L(""));
-	
-	FontDataFile* newFont = new FontDataFile(fontName, in_uiFontSize, in_uiTextureSize, mFinalGlyphs, (const unsigned char*)pRects->GetBuffer());
 
 	Path fontDataFile = in_FontDataFileName;
 	if (fontDataFile == L(""))
 		fontDataFile = fontName + L(".font");
+	
+	FontDataFile* newFont = new FontDataFile;
+	newFont->m_FontName = fontName;
+	newFont->m_FontSize = in_uiFontSize;
+
+	newFont->m_vGlyphs = vGlyphs;
+	newFont->m_mCharacterMap = mCharacterMap;
+
+	newFont->m_FontTextureFilename = fontDataFile;
+	newFont->m_FontTextureFilename.SetExtension(L(".png"));
+
+	pFontTexture->ConvertTo(BufferFormat::A_U8);
+	newFont->m_pFontTextureData = pFontTexture;
 
 	newFont->Save(fontDataFile);
 	delete newFont;
 
 	error = FT_Done_FreeType(library);
+
+	return true;
 }

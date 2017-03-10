@@ -4,41 +4,31 @@
 #include "File.h"
 
 //--------------------------------------------------------------------------------
-enum ELogCategory
+enum class LogCategory
 {
-	eLC_Init,
-	eLC_Shutdown,
-
-	eLC_System,
-	eLC_FileSystem,
-
-	eLC_Profiler,
-	eLC_Assert,
-	eLC_DebugInfo,
-
-	eLC_Input,
-	eLC_Rendering,
-
-	eLogCategory_Count
+	Init,
+	Shutdown,
+	System,
+	FileSystem,
+	Assert,
+	DebugInfo,
+	Input,
+	Rendering
 };
-extern const StringChar* kLogCategories[];
 
 //--------------------------------------------------------------------------------
-enum ELogSeverity
+enum class LogSeverity
 {
-	eLS_Message,
-	eLS_Warning,
-	eLS_Error,
-	eLogSeverity_Count
+	Message,
+	Warning,
+	Error
 };
-extern const StringChar* kLogSeverities[];
 
 //--------------------------------------------------------------------------------
-enum ELogType
+enum class LogType
 {
-	eLT_File,
-	eLT_FileAndDebug,
-	eLogType_Count
+	File,
+	FileAndDebug
 };
 
 //--------------------------------------------------------------------------------
@@ -47,7 +37,7 @@ class Logger : public Singleton<Logger>
 	MAKE_SINGLETON(Logger);
 
 public:
-	void Log(ELogCategory in_eCategory, ELogSeverity in_eSeverity, ELogType in_eLogType, const StringChar* in_pMsg, ...);
+	void Log(LogCategory in_eCategory, LogSeverity in_eSeverity, LogType in_eLogType, const StringChar* in_pMsg, ...);
 
 protected:
 	virtual void Initialize();
@@ -56,7 +46,7 @@ private:
 	Logger();
 	virtual ~Logger();
 
-	void LogFormattedMsg(ELogCategory in_eCategory, ELogSeverity in_eSeverity, ELogType in_eLogType, StringChar* in_pMsg);
+	void LogFormattedMsg(LogCategory in_eCategory, LogSeverity in_eSeverity, LogType in_eLogType, StringChar* in_pMsg);
 
 	File m_LogFile;
 };

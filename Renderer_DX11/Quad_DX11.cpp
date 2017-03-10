@@ -20,6 +20,7 @@ struct SimpleVertex
 /*
 Explanation for why seemingly CCW triangles in a triangle strip work out to be CW :
 Source : https://en.wikipedia.org/wiki/Triangle_strip
+
 It follows from definition that a subsequence of vertices of a triangle strip also represents a triangle strip.
 However, if this substrip starts at an even(with 1 - based counting) vertex, then the resulting triangles will change their orientation.
 For example a substrip BCDEF would represent triangles : BCD, CED, DEF.
@@ -60,7 +61,7 @@ Quad_DX11::Quad_DX11(Renderer* pOwner) : Quad(pOwner)
 	vertexBufferInitData.SysMemPitch = 0;
 	vertexBufferInitData.SysMemSlicePitch = 0;
 
-	HRESULT hr = pDX11Renderer->GetDevice()->CreateBuffer(&vertexBufferDesc, &vertexBufferInitData, &pVertexBuffer);
+	HResult hr = pDX11Renderer->GetDevice()->CreateBuffer(&vertexBufferDesc, &vertexBufferInitData, &pVertexBuffer);
 
 	CBStruct WVP;
 
@@ -119,7 +120,7 @@ void Quad_DX11::Draw()
 	Renderer_DX11* pDX11Renderer = (Renderer_DX11*)GetOwner();
 
 	D3D11_MAPPED_SUBRESOURCE mappedResource;
-	/*HRESULT hr = */pDX11Renderer->GetContext()->Map(pConstantBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedResource);
+	HResult hr = pDX11Renderer->GetContext()->Map(pConstantBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedResource);
 
 	CBStruct* dataPtr = (CBStruct*)mappedResource.pData;
 

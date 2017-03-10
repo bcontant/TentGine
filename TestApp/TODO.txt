@@ -1,0 +1,43 @@
+TODO
+====
+
+- Text implementation
+  - Try multiple approaches (static not moving / static moving / changing text may yield different results) : 
+    * indexed quad + x/y translate per quad
+	* simple list of non-indexed
+	* DrawInstanced
+  - Implement SDF Generation
+  - Implement SDF Rendering
+
+- Remove the WIC Stuff
+
+- BitmapData : Threaded conversion?
+
+- BMP loader / saver
+- JPG loader / saver
+- GIF?  TIFF?  PBM?  DDS?
+
+- XML Parser
+
+- Profile viewer
+  - Make it realtime
+  - Bunch of features (grouping blocks, etc)
+
+- Visual Graphical Debug Tool
+  - Wireframe / Flat mode
+  - Arrows
+  - Lines
+  - Spheres
+  - etc.
+    
+- GetDeviceList
+- GetDeviceCaps
+
+
+DONE 
+====
+
+- Texture should init from a BitmapData (remove simple unsigned char* buffers)
+
+- FontDataFile should use BitmapImage
+- FontDataFile should have a std::vector<GlyphInfo> and a std::map<wchar_t, GlyphInfo*>

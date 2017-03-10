@@ -4,6 +4,8 @@
 #include "RendererObject.h"
 #include "../Base/Path.h"
 
+class BitmapData;
+
 //--------------------------------------------------------------------------------
 class Texture : public RendererObject
 {
@@ -12,7 +14,7 @@ public:
 	virtual ~Texture() {};
 
 	virtual void Initialize(const Path& filename) = 0;
-	virtual void Initialize(unsigned int width, unsigned int height, const unsigned char* pBits) = 0;
+	virtual void Initialize(const BitmapData* in_pData) = 0;
 
 	virtual void Bind(unsigned int startSlot) = 0;
 

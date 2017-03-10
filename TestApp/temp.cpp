@@ -9,7 +9,7 @@ std::vector<DisplayAdapter*> GetDisplayAdapters()
 	std::vector <IDXGIAdapter*> vDXAdapters;
 	IDXGIFactory* pFactory = NULL;
 
-	HRESULT hr = CreateDXGIFactory(__uuidof(IDXGIFactory), (void**)&pFactory);
+	HResult hr = CreateDXGIFactory(__uuidof(IDXGIFactory), (void**)&pFactory);
 
 	for (int i = 0; pFactory->EnumAdapters(i, &pAdapter) != DXGI_ERROR_NOT_FOUND; i++)
 	{
@@ -18,7 +18,7 @@ std::vector<DisplayAdapter*> GetDisplayAdapters()
 
 		IDXGIOutput * pOutput;
 		std::vector<IDXGIOutput*> vOutputs;
-		for (int i = 0; pAdapter->EnumOutputs(i, &pOutput) != DXGI_ERROR_NOT_FOUND; i++)
+		for (int j = 0; pAdapter->EnumOutputs(j, &pOutput) != DXGI_ERROR_NOT_FOUND; j++)
 		{
 			DXGI_OUTPUT_DESC outputDesc;
 			pOutput->GetDesc(&outputDesc);
@@ -30,7 +30,7 @@ std::vector<DisplayAdapter*> GetDisplayAdapters()
 			pOutput->GetDisplayModeList(DXGI_FORMAT_R8G8B8A8_UNORM, 0, &modeCount, modeDesc);
 
 			vOutputs.push_back(pOutput);
-			++i;
+			++j;
 		}
 
 		vDXAdapters.push_back(pAdapter);

@@ -2,10 +2,15 @@
 
 #include "StringUtils.h"
 #include "Path.h"
-#include <map>
+
+#include "../OS_Base/FontBuilder.h"
+
+class BitmapData;
 
 class FontDataFile
 {
+	friend bool OS::BuildFont(const Path&, unsigned int, unsigned int, unsigned int, const Path&);
+
 public:
 	struct GlyphInfo
 	{
@@ -20,8 +25,6 @@ public:
 	};
 
 	FontDataFile();
-	FontDataFile(const StdString& in_FontName, unsigned int in_uiFontSize, unsigned int in_TextureSize, std::map<wchar_t, GlyphInfo> in_mGlyphs, const unsigned char* in_pData);
-
 	virtual ~FontDataFile();
 
 	void Load(const Path& in_filename);
@@ -30,15 +33,15 @@ public:
 	const StdString& GetFontName() const { return m_FontName; }
 	unsigned int GetFontSize() const { return m_FontSize; }
 
-	unsigned int GetTextureSize() const { return m_TextureSize; }
-	const unsigned char* const GetTextureData() const { return m_pFontTextureData; }
+	const BitmapData* const GetTextureData() const { return m_pFontTextureData; }
 		
 private:
 	StdString m_FontName;
 	unsigned int m_FontSize;
 
-	std::map<wchar_t, GlyphInfo> m_mGlyphs;
+	std::vector<FontDataFile::GlyphInfo*> m_vGlyphs;
+	std::map<wchar_t, FontDataFile::GlyphInfo*> m_mCharacterMap;
 
-	int m_TextureSize;
-	unsigned char* m_pFontTextureData;
+	Path m_FontTextureFilename;
+	BitmapData* m_pFontTextureData;
 };

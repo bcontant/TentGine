@@ -5,7 +5,6 @@
 
 #include "../OS_Base/System.h"
 
-#include <unordered_map>
 #include <map>
 #include <thread>
 
@@ -22,13 +21,12 @@ public:
 private:
 	void Stop();
 
-	__int64 m_i64StartTime = 0;
-	__int64 m_i64StopTime = 0;
-
 	double m_fBlockTimeMs = 0.f;
-
 	char* m_SectionID = nullptr;
 
+	__int64 m_i64StartTime = 0;
+	__int64 m_i64StopTime = 0;
+	
 	std::vector<ProfileBlock*> m_vChildren;
 	ProfileBlock* m_pActiveChild = nullptr;
 };
@@ -58,7 +56,7 @@ private:
 class AutoProfileBlock
 {
 public:
-	AutoProfileBlock(void* in_sectionID)
+	AutoProfileBlock(char* in_sectionID)
 	{
 		Profiler::GetInstance()->StartBlock(in_sectionID, std::this_thread::get_id());
 	}

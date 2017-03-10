@@ -31,10 +31,10 @@ Texture* Renderer_DX11::CreateTexture(const Path& filename)
 }
 
 //--------------------------------------------------------------------------------
-Texture* Renderer_DX11::CreateTexture(unsigned int width, unsigned int height, const unsigned char* pBits)
+Texture* Renderer_DX11::CreateTexture(const BitmapData* in_pData)
 {
 	Texture* pTexture = new Texture_DX11(this);
-	pTexture->Initialize(width, height, pBits);
+	pTexture->Initialize(in_pData);
 	return pTexture;
 }
 
@@ -53,12 +53,12 @@ void Renderer_DX11::StartFrame()
 {
 	if (GetBackBufferWidth() != m_pWindow->GetWidth() || GetBackBufferHeight() != m_pWindow->GetHeight())
 	{
-		Logger::GetInstance()->Log(eLC_Rendering, eLS_Message, eLT_FileAndDebug, L("Resizing. [Backbuffer : %d x %d] [ClientRect : %d x %d]"), GetBackBufferWidth(), GetBackBufferHeight(), m_pWindow->GetWidth(), m_pWindow->GetHeight());
+		Logger::GetInstance()->Log(LogCategory::Rendering, LogSeverity::Message, LogType::FileAndDebug, L("Resizing. [Backbuffer : %d x %d] [ClientRect : %d x %d]"), GetBackBufferWidth(), GetBackBufferHeight(), m_pWindow->GetWidth(), m_pWindow->GetHeight());
 
 		pBackBufferView->Release();
 		pBackBuffer->Release();
 
-		HRESULT hr = S_OK;
+		HResult hr = S_OK;
 		hr = pSwapChain->ResizeBuffers(1, m_pWindow->GetWidth(), m_pWindow->GetHeight(), DXGI_FORMAT_R8G8B8A8_UNORM, 0);
 		hr = pSwapChain->GetBuffer(0, __uuidof(ID3D11Texture2D), (void**)&pBackBuffer);
 		hr = pD3D11Device->CreateRenderTargetView(pBackBuffer, nullptr, &pBackBufferView);
@@ -81,7 +81,7 @@ void Renderer_DX11::StartFrame()
 //--------------------------------------------------------------------------------
 void Renderer_DX11::EndFrame()
 {
-	/*HRESULT hr = */pSwapChain->Present(0, 0);
+	HResult hr = pSwapChain->Present(0, 0);
 }
 
 //--------------------------------------------------------------------------------
@@ -118,7 +118,7 @@ void Renderer_DX11::Initialize(DisplayAdapter* /*in_pAdapter*/, Window* in_pWind
 	swapChainDesc.SwapEffect = DXGI_SWAP_EFFECT_DISCARD;
 	//swapChainDesc.SwapEffect = DXGI_SWAP_EFFECT_SEQUENTIAL;
 
-	HRESULT hr = D3D11CreateDeviceAndSwapChain(nullptr, D3D_DRIVER_TYPE_HARDWARE, nullptr, D3D11_CREATE_DEVICE_DEBUG, nullptr, 0, D3D11_SDK_VERSION, &swapChainDesc, &pSwapChain, &pD3D11Device, nullptr, &pD3D11DeviceContext);
+	HResult hr = D3D11CreateDeviceAndSwapChain(nullptr, D3D_DRIVER_TYPE_HARDWARE, nullptr, D3D11_CREATE_DEVICE_DEBUG, nullptr, 0, D3D11_SDK_VERSION, &swapChainDesc, &pSwapChain, &pD3D11Device, nullptr, &pD3D11DeviceContext);
 	//pRenderer->pSwapChain->SetFullscreenState(TRUE, nullptr);
 
 	hr = pSwapChain->GetBuffer(0, __uuidof(ID3D11Texture2D), (void**)&pBackBuffer);
