@@ -1,11 +1,26 @@
 TODO
 ====
+- Vertex Buffers implementation
+- Static / Dynamic VBs
+
+- Material implementation
+  - Diffuse Color
+  - Texture
+    - Texture hold its sampling state?  Or material?
 
 - Text implementation
+  - Support Tabs
+  - Support Linebreaks
+  - Support Regions
+  - Support Color
+  - Support Drop Shadow
+  - Support Outlines
+  
   - Try multiple approaches (static not moving / static moving / changing text may yield different results) : 
     * indexed quad + x/y translate per quad
 	* simple list of non-indexed
 	* DrawInstanced
+
   - Implement SDF Generation
   - Implement SDF Rendering
 
@@ -43,3 +58,5 @@ DONE
 
 - FontDataFile should use BitmapImage
 - FontDataFile should have a std::vector<GlyphInfo> and a std::map<wchar_t, GlyphInfo*>
+
+- Simple Text implementation

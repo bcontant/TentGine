@@ -125,50 +125,50 @@
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <LinkIncremental>true</LinkIncremental>
-    <IntDir>$(SolutionDir)Temp\$(Configuration)_$(PlatformTarget)\$(ProjectName)\</IntDir>
+    <IntDir>$(SolutionDir)temp\$(Configuration)_$(PlatformTarget)\$(ProjectName)\</IntDir>
     <OutDir>$(SolutionDir)bin\$(Configuration)_$(PlatformTarget)\</OutDir>
     <TargetName>$(ProjectName)</TargetName>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug - Unicode|Win32'">
     <LinkIncremental>true</LinkIncremental>
-    <IntDir>$(SolutionDir)Temp\$(Configuration)_$(PlatformTarget)\$(ProjectName)\</IntDir>
+    <IntDir>$(SolutionDir)temp\$(Configuration)_$(PlatformTarget)\$(ProjectName)\</IntDir>
     <OutDir>$(SolutionDir)bin\$(Configuration)_$(PlatformTarget)\</OutDir>
     <TargetName>$(ProjectName)</TargetName>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <LinkIncremental>true</LinkIncremental>
     <OutDir>$(SolutionDir)bin\$(Configuration)_$(PlatformTarget)\</OutDir>
-    <IntDir>$(SolutionDir)Temp\$(Configuration)_$(PlatformTarget)\$(ProjectName)\</IntDir>
+    <IntDir>$(SolutionDir)temp\$(Configuration)_$(PlatformTarget)\$(ProjectName)\</IntDir>
     <TargetName>$(ProjectName)</TargetName>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug - Unicode|x64'">
     <LinkIncremental>true</LinkIncremental>
     <OutDir>$(SolutionDir)bin\$(Configuration)_$(PlatformTarget)\</OutDir>
-    <IntDir>$(SolutionDir)Temp\$(Configuration)_$(PlatformTarget)\$(ProjectName)\</IntDir>
+    <IntDir>$(SolutionDir)temp\$(Configuration)_$(PlatformTarget)\$(ProjectName)\</IntDir>
     <TargetName>$(ProjectName)</TargetName>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <LinkIncremental>false</LinkIncremental>
-    <IntDir>$(SolutionDir)Temp\$(Configuration)_$(PlatformTarget)\$(ProjectName)\</IntDir>
+    <IntDir>$(SolutionDir)temp\$(Configuration)_$(PlatformTarget)\$(ProjectName)\</IntDir>
     <OutDir>$(SolutionDir)bin\$(Configuration)_$(PlatformTarget)\</OutDir>
     <TargetName>$(ProjectName)</TargetName>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release - Unicode|Win32'">
     <LinkIncremental>false</LinkIncremental>
-    <IntDir>$(SolutionDir)Temp\$(Configuration)_$(PlatformTarget)\$(ProjectName)\</IntDir>
+    <IntDir>$(SolutionDir)temp\$(Configuration)_$(PlatformTarget)\$(ProjectName)\</IntDir>
     <OutDir>$(SolutionDir)bin\$(Configuration)_$(PlatformTarget)\</OutDir>
     <TargetName>$(ProjectName)</TargetName>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <LinkIncremental>false</LinkIncremental>
     <OutDir>$(SolutionDir)bin\$(Configuration)_$(PlatformTarget)\</OutDir>
-    <IntDir>$(SolutionDir)Temp\$(Configuration)_$(PlatformTarget)\$(ProjectName)\</IntDir>
+    <IntDir>$(SolutionDir)temp\$(Configuration)_$(PlatformTarget)\$(ProjectName)\</IntDir>
     <TargetName>$(ProjectName)</TargetName>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release - Unicode|x64'">
     <LinkIncremental>false</LinkIncremental>
     <OutDir>$(SolutionDir)bin\$(Configuration)_$(PlatformTarget)\</OutDir>
-    <IntDir>$(SolutionDir)Temp\$(Configuration)_$(PlatformTarget)\$(ProjectName)\</IntDir>
+    <IntDir>$(SolutionDir)temp\$(Configuration)_$(PlatformTarget)\$(ProjectName)\</IntDir>
     <TargetName>$(ProjectName)</TargetName>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">

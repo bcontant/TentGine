@@ -125,35 +125,35 @@
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <OutDir>$(SolutionDir)lib\$(Configuration)_$(PlatformTarget)\</OutDir>
-    <IntDir>$(SolutionDir)Temp\$(Configuration)_$(PlatformTarget)\$(ProjectName)\</IntDir>
+    <IntDir>$(SolutionDir)temp\$(Configuration)_$(PlatformTarget)\$(ProjectName)\</IntDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug - Unicode|Win32'">
     <OutDir>$(SolutionDir)lib\$(Configuration)_$(PlatformTarget)\</OutDir>
-    <IntDir>$(SolutionDir)Temp\$(Configuration)_$(PlatformTarget)\$(ProjectName)\</IntDir>
+    <IntDir>$(SolutionDir)temp\$(Configuration)_$(PlatformTarget)\$(ProjectName)\</IntDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <OutDir>$(SolutionDir)lib\$(Configuration)_$(PlatformTarget)\</OutDir>
-    <IntDir>$(SolutionDir)Temp\$(Configuration)_$(PlatformTarget)\$(ProjectName)\</IntDir>
+    <IntDir>$(SolutionDir)temp\$(Configuration)_$(PlatformTarget)\$(ProjectName)\</IntDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release - Unicode|Win32'">
     <OutDir>$(SolutionDir)lib\$(Configuration)_$(PlatformTarget)\</OutDir>
-    <IntDir>$(SolutionDir)Temp\$(Configuration)_$(PlatformTarget)\$(ProjectName)\</IntDir>
+    <IntDir>$(SolutionDir)temp\$(Configuration)_$(PlatformTarget)\$(ProjectName)\</IntDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <OutDir>$(SolutionDir)lib\$(Configuration)_$(PlatformTarget)\</OutDir>
-    <IntDir>$(SolutionDir)Temp\$(Configuration)_$(PlatformTarget)\$(ProjectName)\</IntDir>
+    <IntDir>$(SolutionDir)temp\$(Configuration)_$(PlatformTarget)\$(ProjectName)\</IntDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug - Unicode|x64'">
     <OutDir>$(SolutionDir)lib\$(Configuration)_$(PlatformTarget)\</OutDir>
-    <IntDir>$(SolutionDir)Temp\$(Configuration)_$(PlatformTarget)\$(ProjectName)\</IntDir>
+    <IntDir>$(SolutionDir)temp\$(Configuration)_$(PlatformTarget)\$(ProjectName)\</IntDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <OutDir>$(SolutionDir)lib\$(Configuration)_$(PlatformTarget)\</OutDir>
-    <IntDir>$(SolutionDir)Temp\$(Configuration)_$(PlatformTarget)\$(ProjectName)\</IntDir>
+    <IntDir>$(SolutionDir)temp\$(Configuration)_$(PlatformTarget)\$(ProjectName)\</IntDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release - Unicode|x64'">
     <OutDir>$(SolutionDir)lib\$(Configuration)_$(PlatformTarget)\</OutDir>
-    <IntDir>$(SolutionDir)Temp\$(Configuration)_$(PlatformTarget)\$(ProjectName)\</IntDir>
+    <IntDir>$(SolutionDir)temp\$(Configuration)_$(PlatformTarget)\$(ProjectName)\</IntDir>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
@@ -163,6 +163,7 @@
       <PreprocessorDefinitions>WIN32;_DEBUG;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <PrecompiledHeaderFile>precompiled.h</PrecompiledHeaderFile>
       <AdditionalIncludeDirectories>$(SolutionDir)sdks\libpng-1.6.28\include</AdditionalIncludeDirectories>
+      <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -176,6 +177,7 @@
       <PreprocessorDefinitions>WIN32;_DEBUG;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <PrecompiledHeaderFile>precompiled.h</PrecompiledHeaderFile>
       <AdditionalIncludeDirectories>$(SolutionDir)sdks\libpng-1.6.28\include</AdditionalIncludeDirectories>
+      <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -190,6 +192,7 @@
       <PrecompiledHeaderFile>precompiled.h</PrecompiledHeaderFile>
       <AdditionalIncludeDirectories>$(SolutionDir)sdks\libpng-1.6.28\include</AdditionalIncludeDirectories>
       <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
+      <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -203,6 +206,7 @@
       <PreprocessorDefinitions>_DEBUG;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <PrecompiledHeaderFile>precompiled.h</PrecompiledHeaderFile>
       <AdditionalIncludeDirectories>$(SolutionDir)sdks\libpng-1.6.28\include</AdditionalIncludeDirectories>
+      <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
