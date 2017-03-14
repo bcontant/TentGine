@@ -27,11 +27,11 @@ int CALLBACK WinMain(HINSTANCE hInstance, HINSTANCE, LPSTR, int)
 
 	CoInitialize(nullptr);
 
-	//OS::BuildFont(L("../../data/Comic.ttf"), 36, 1024, OS::eFF_ForceAutoHint /*| OS::eFF_Mono*/, "../../data/");
-	//OS::BuildFont(L("../../data/FFF_Tusj.ttf"), 72, 1024, OS::eFF_ForceAutoHint/* | OS::eFF_Mono*/, "../../data/");
-	OS::BuildFont(L("../../data/COURBD.TTF"), 24, 1024, OS::eFF_ForceAutoHint/* | OS::eFF_Mono*/, "../../data/");
-	//OS::BuildFont(L("../../data/COUR.TTF"), 24, 1024, OS::eFF_ForceAutoHint/* | OS::eFF_Mono*/, "../../data/");
-	OS::BuildFont(L("../../data/HyliaSerifBeta-Regular.otf"), 48, 1024, OS::eFF_ForceAutoHint/* | OS::eFF_Mono*/, "../../data/");
+	//OS::BuildFont(L("../../data/Comic.ttf"), 36, 1024, OS::eFF_ForceAutoHint /*| OS::eFF_Mono*/, L("../../data/"));
+	//OS::BuildFont(L("../../data/FFF_Tusj.ttf"), 72, 1024, OS::eFF_ForceAutoHint/* | OS::eFF_Mono*/, L("../../data/"));
+	OS::BuildFont(L("../../data/COURBD.TTF"), 24, 1024, OS::eFF_ForceAutoHint/* | OS::eFF_Mono*/, L("../../data/"));
+	//OS::BuildFont(L("../../data/COUR.TTF"), 24, 1024, OS::eFF_ForceAutoHint/* | OS::eFF_Mono*/, L("../../data/"));
+	OS::BuildFont(L("../../data/HyliaSerifBeta-Regular.otf"), 48, 1024, OS::eFF_ForceAutoHint/* | OS::eFF_Mono*/, L("../../data/"));
 						
 	Window* pWindow = Window::Create(1024, 1024, false, hInstance);
 
@@ -51,8 +51,8 @@ int CALLBACK WinMain(HINSTANCE hInstance, HINSTANCE, LPSTR, int)
 
 	//Quad* pQuad2 = pRenderer->CreateQuad(0.f, 0.f, pFont->m_pFontTexture);
 
-	Text* pText = pRenderer->CreateText(0.0f, 0.0f, pFont, "XXXXX.XX FPS");
-	Text* pText2 = pRenderer->CreateText(0.2f, 0.2f, pFont2, "ZELDA Breath of the Wild");
+	Text* pText = pRenderer->CreateText(0.0f, 0.0f, pFont, L("XXXXX.XX FPS"));
+	Text* pText2 = pRenderer->CreateText(0.2f, 0.2f, pFont2, L("ZELDA Breath of the Wild"));
 
 
 	__int64 lastTime = OS::GetTickCount();

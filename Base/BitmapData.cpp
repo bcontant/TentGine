@@ -264,7 +264,7 @@ void BitmapData::UpdateBitsPerPixel()
 	case BufferFormat::INVALID_FORMAT:	m_uiBitsPerPixel = 0; break;
 	}
 
-	AssertMsg(m_uiBitsPerPixel != 0, "Invalid Buffer Format (%d) led to invalid BPP (0)", m_eFormat);
+	AssertMsg(m_uiBitsPerPixel != 0, L("Invalid Buffer Format (%d) led to invalid BPP (0)"), m_eFormat);
 }
 
 //--------------------------------------------------------------------------------
@@ -478,18 +478,6 @@ void ConvertPixel_X1R5G5B5_U16_To_ARGB_U32(const unsigned char* in_pSrc, unsigne
 	{
 		unsigned short pSrc = (*(unsigned short*)in_pSrc);
 
-		/*
-		int r = ((pSrc & 0x7C00) >> 10);
-		int g = ((pSrc & 0x03E0) >> 5);
-		int b = ((pSrc & 0x001F) >> 0);
-
-		r = ((r * 0xFF) / 0x1F);
-		g = ((g * 0xFF) / 0x1F);
-		b = ((b * 0xFF) / 0x1F);
-
-		(*(unsigned int*)in_pDst) = (0xFF << 24) + (r << 16) + (g << 8) + (b << 0);
-		*/
-
 		(*(unsigned int*)in_pDst) = (0xFF << 24) + (((((pSrc & 0x7C00) >> 10) * 0xFF) / 0x1F) << 16) + (((((pSrc & 0x03E0) >> 5) * 0xFF) / 0x1F) << 8) + (((((pSrc & 0x001F) >> 0) * 0xFF) / 0x1F) << 0);
 	}
 }
@@ -513,20 +501,6 @@ void ConvertPixel_X1R5G5B5_U16_To_RGBA_U32(const unsigned char* in_pSrc, unsigne
 //--------------------------------------------------------------------------------
 void ConvertPixel_R5G6B5_U16_To_ARGB_U32(const unsigned char* in_pSrc, unsigned char* in_pDst, const unsigned int in_uiPixelCount)
 {
-	/*
-	unsigned short pSrc = (*(unsigned short*)in_pSrc);
-
-	int r = ((pSrc & 0xF800) >> 11);
-	int g = ((pSrc & 0x07E0) >> 5);
-	int b = ((pSrc & 0x001F) >> 0);
-
-	r = ((r * 0xFF) / 0x1F);
-	g = ((g * 0xFF) / 0x3F);
-	b = ((b * 0xFF) / 0x1F);
-
-	(*(unsigned int*)in_pDst) = (0xFF << 24) + (r << 16) + (g << 8) + (b << 0);
-	*/
-
 	for (unsigned int i = 0; i < in_uiPixelCount; i++, in_pSrc += 2, in_pDst += 4)
 	{
 		unsigned short pSrc = (*(unsigned short*)in_pSrc);
@@ -553,20 +527,6 @@ void ConvertPixel_R5G6B5_U16_To_RGBA_U32(const unsigned char* in_pSrc, unsigned 
 //--------------------------------------------------------------------------------
 void ConvertPixel_A1R5G5B5_U16_To_ARGB_U32(const unsigned char* in_pSrc, unsigned char* in_pDst, const unsigned int in_uiPixelCount)
 {
-	/*
-	int a = ((pSrc & 0x8000) >> 15);
-	int r = ((pSrc & 0x7C00) >> 10);
-	int g = ((pSrc & 0x03E0) >> 5);
-	int b = ((pSrc & 0x001F) >> 0);
-
-	a = a * 0xFF);
-	r = ((r * 0xFF) / 0x1F);
-	g = ((g * 0xFF) / 0x1F);
-	b = ((b * 0xFF) / 0x1F);
-
-	(*(unsigned int*)in_pDst) = (0xFF << 24) + (r << 16) + (g << 8) + (b << 0);
-	*/
-
 	for (unsigned int i = 0; i < in_uiPixelCount; i++, in_pSrc += 2, in_pDst += 4)
 	{
 		unsigned short pSrc = (*(unsigned short*)in_pSrc);

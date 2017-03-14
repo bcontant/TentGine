@@ -6,7 +6,7 @@
 
 //--------------------------------------------------------------------------------
 FontDataFile::FontDataFile()
-	: m_FontName("")
+	: m_FontName(L(""))
 	, m_FontSize(0)
 	, m_LineHeight(0)
 	, m_MaxAscender(0)

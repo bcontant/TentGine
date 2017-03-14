@@ -21,18 +21,6 @@ public:
 protected:
 	struct Character
 	{
-		//position (pixels)
-		/*int left;
-		int right;
-		int top;
-		int bottom;
-
-		//texcoords (0..1)
-		float left_uv;
-		float right_uv;
-		float top_uv;
-		float bottom_uv;*/
-
 		Rect<int> m_Position;
 		Rect<float> m_UVs;
 	};
@@ -41,7 +29,7 @@ protected:
 protected:
 	const Font* m_pFont = nullptr;
 
-	StdString m_strText = "";
+	StdString m_strText = L("");
 
 	float m_xPos;
 	float m_yPos;

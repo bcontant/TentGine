@@ -19,16 +19,6 @@ public:
 		int advance;
 
 		Rect<float> m_UVs;
-		/*int left;
-		int right;
-		int top;
-		int bottom;
-		int advance;
-		
-		float boxX;
-		float boxY;
-		float boxWidth;
-		float boxHeight;*/
 	};
 
 	FontDataFile();

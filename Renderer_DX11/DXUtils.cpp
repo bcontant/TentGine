@@ -52,7 +52,7 @@ HResult::HResult(HRESULT in_hr)
 	if (FAILED(m_hr))
 	{
 		StringChar* strDXError = GetDXErrorString(m_hr);
-		Logger::GetInstance()->Log(LogCategory::System, LogSeverity::Error, LogType::FileAndDebug, "DirectX Call Failed with this error : %s (%d)", strDXError, m_hr);
+		Logger::GetInstance()->Log(LogCategory::System, LogSeverity::Error, LogType::FileAndDebug, L("DirectX Call Failed with this error : %s (%d)"), strDXError, m_hr);
 	}
 #endif
 }

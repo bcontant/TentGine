@@ -13,8 +13,6 @@ DXGI_FORMAT GetDXGIFormat(BufferFormat in_eFormat);
 	ptr = 0; \
 } 
 
-//#ifdef _DEBUG
-
 class HResult
 {
 public:
@@ -25,8 +23,3 @@ public:
 	HRESULT m_hr;
 };
 
-/*#else //#ifdef _DEBUG
-
-using HResult = HRESULT;
-
-#endif //#ifdef _DEBUG*/

@@ -82,7 +82,6 @@ bool SavePNG(const Path& in_file, BitmapData* in_pData)
 
 	png_write_info(png_ptr, info_ptr);
 
-	/* write bytes */
 	if (setjmp(png_jmpbuf(png_ptr)))
 		AssertMsg(false, L("Error during writing bytes"));
 
@@ -96,7 +95,6 @@ bool SavePNG(const Path& in_file, BitmapData* in_pData)
 
 	png_write_image(png_ptr, row_pointers);
 
-	/* end write */
 	if (setjmp(png_jmpbuf(png_ptr)))
 	{
 		delete[] row_pointers;

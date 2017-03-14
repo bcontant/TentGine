@@ -92,22 +92,22 @@ void Text_DX11::UpdateText()
 		SimpleVertex* pVB = &pVBData[i * 6];
 
 		//Top Left
-		pVB->Pos.x = currentChar.m_Position.m_left; pVB->Pos.y = currentChar.m_Position.m_top; pVB->Pos.z = 1.f; pVB->UV.x = currentChar.m_UVs.m_left; pVB->UV.y = currentChar.m_UVs.m_top; pVB++;
+		pVB->Pos.x = (float)currentChar.m_Position.m_left; pVB->Pos.y = (float)currentChar.m_Position.m_top; pVB->Pos.z = 1.f; pVB->UV.x = currentChar.m_UVs.m_left; pVB->UV.y = currentChar.m_UVs.m_top; pVB++;
 
 		//Top Right
-		pVB->Pos.x = currentChar.m_Position.m_right; pVB->Pos.y = currentChar.m_Position.m_top; pVB->Pos.z = 1.f; pVB->UV.x = currentChar.m_UVs.m_right; pVB->UV.y = currentChar.m_UVs.m_top; pVB++;
+		pVB->Pos.x = (float)currentChar.m_Position.m_right; pVB->Pos.y = (float)currentChar.m_Position.m_top; pVB->Pos.z = 1.f; pVB->UV.x = currentChar.m_UVs.m_right; pVB->UV.y = currentChar.m_UVs.m_top; pVB++;
 
 		//Bottom Right
-		pVB->Pos.x = currentChar.m_Position.m_right; pVB->Pos.y = currentChar.m_Position.m_bottom; pVB->Pos.z = 1.f; pVB->UV.x = currentChar.m_UVs.m_right; pVB->UV.y = currentChar.m_UVs.m_bottom; pVB++;
+		pVB->Pos.x = (float)currentChar.m_Position.m_right; pVB->Pos.y = (float)currentChar.m_Position.m_bottom; pVB->Pos.z = 1.f; pVB->UV.x = currentChar.m_UVs.m_right; pVB->UV.y = currentChar.m_UVs.m_bottom; pVB++;
 
 		//Bottom Right
-		pVB->Pos.x = currentChar.m_Position.m_right; pVB->Pos.y = currentChar.m_Position.m_bottom; pVB->Pos.z = 1.f; pVB->UV.x = currentChar.m_UVs.m_right; pVB->UV.y = currentChar.m_UVs.m_bottom; pVB++;
+		pVB->Pos.x = (float)currentChar.m_Position.m_right; pVB->Pos.y = (float)currentChar.m_Position.m_bottom; pVB->Pos.z = 1.f; pVB->UV.x = currentChar.m_UVs.m_right; pVB->UV.y = currentChar.m_UVs.m_bottom; pVB++;
 
 		//Bottom Left
-		pVB->Pos.x = currentChar.m_Position.m_left; pVB->Pos.y = currentChar.m_Position.m_bottom; pVB->Pos.z = 1.f; pVB->UV.x = currentChar.m_UVs.m_left; pVB->UV.y = currentChar.m_UVs.m_bottom; pVB++;
+		pVB->Pos.x = (float)currentChar.m_Position.m_left; pVB->Pos.y = (float)currentChar.m_Position.m_bottom; pVB->Pos.z = 1.f; pVB->UV.x = currentChar.m_UVs.m_left; pVB->UV.y = currentChar.m_UVs.m_bottom; pVB++;
 
 		//Top Left
-		pVB->Pos.x = currentChar.m_Position.m_left; pVB->Pos.y = currentChar.m_Position.m_top; pVB->Pos.z = 1.f; pVB->UV.x = currentChar.m_UVs.m_left; pVB->UV.y = currentChar.m_UVs.m_top; pVB++;
+		pVB->Pos.x = (float)currentChar.m_Position.m_left; pVB->Pos.y = (float)currentChar.m_Position.m_top; pVB->Pos.z = 1.f; pVB->UV.x = currentChar.m_UVs.m_left; pVB->UV.y = currentChar.m_UVs.m_top; pVB++;
 	}
 
 
