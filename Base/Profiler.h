@@ -13,7 +13,7 @@ class ProfileBlock
 {
 public:
 	ProfileBlock(void* in_sectionID) : m_SectionID((char*)in_sectionID) { m_i64StartTime = OS::GetTickCount(); }
-	~ProfileBlock() {};
+	~ProfileBlock();
 
 	void StartBlock(ProfileBlock* in_pChild);
 	bool StopBlock();
@@ -45,8 +45,8 @@ protected:
 
 private:
 
-	Profiler() {};
-	virtual ~Profiler() {};
+	Profiler();
+	virtual ~Profiler();
 
 	std::map<std::thread::id, std::vector<ProfileBlock*>> m_vBlocks;
 	std::map<std::thread::id, ProfileBlock*> m_vActiveBlocks;

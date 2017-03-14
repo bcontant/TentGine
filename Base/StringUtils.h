@@ -10,6 +10,7 @@
 
 typedef std::wstring StdString;
 typedef wchar_t StringChar;
+typedef unsigned wchar_t UStringChar;
 
 #define VSPRINTF vswprintf
 #define VFPRINTF vfwprintf_s
@@ -30,6 +31,7 @@ typedef wchar_t StringChar;
 
 typedef std::string StdString;
 typedef char StringChar;
+typedef unsigned char UStringChar;
 
 #define VSPRINTF vsnprintf
 #define VFPRINTF vfprintf_s

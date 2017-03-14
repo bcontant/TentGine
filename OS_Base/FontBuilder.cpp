@@ -11,7 +11,7 @@
 #include "ft2build.h"
 #include FT_FREETYPE_H
 
-#define GLYPH_TEXTURE_PADDING 1
+#define GLYPH_TEXTURE_PADDING 0
 
 struct Glyph
 {
@@ -29,7 +29,7 @@ bool OS::BuildFont(const Path& in_FontFile, unsigned int in_uiFontSize, unsigned
 	//Init the string we'll use for creating the FontFileTexture
 	//TODO : Parametrize
 	wchar_t wszTextureText[512] = {};
-	for (wchar_t i = 1; i <= 255; i++)
+	for (wchar_t i = 1; i < 256; i++)
 		wszTextureText[i - 1] = i;
 	unsigned int cTextureTextLength = (unsigned int)wcslen(wszTextureText);
 
@@ -40,6 +40,7 @@ bool OS::BuildFont(const Path& in_FontFile, unsigned int in_uiFontSize, unsigned
 	FT_Face face;
 	error = FT_New_Face(library, TO_STRING(in_FontFile.GetData()).c_str(), 0, &face);
 	error = FT_Set_Char_Size(face, 0, in_uiFontSize * 64, 96, 96);  //This is correct on my (96DPI) display.  Glyph are the proper size (compared with MS Word)
+
 
 	unsigned int uiLoadFlags = FT_LOAD_DEFAULT;
 	if (in_uiFlags & eFF_Mono)			
@@ -66,13 +67,17 @@ bool OS::BuildFont(const Path& in_FontFile, unsigned int in_uiFontSize, unsigned
 		error = FT_Load_Glyph(face, glyphIndex, uiLoadFlags);
 		error = FT_Render_Glyph(face->glyph, eRenderMode);
 
-		if (error == 0 && face->glyph->bitmap.width != 0 && face->glyph->bitmap.rows != 0)
+		Assert(error == 0);
+		if (error == 0)
 		{
 			if (mGlyphs.find(glyphIndex) == mGlyphs.end())
 			{
-				mGlyphs[glyphIndex].m_Info.left = face->glyph->bitmap_left;
-				mGlyphs[glyphIndex].m_Info.top = face->glyph->bitmap_top;
+				mGlyphs[glyphIndex].m_Info.m_GlyphBox.m_left = face->glyph->bitmap_left;
+				mGlyphs[glyphIndex].m_Info.m_GlyphBox.m_right = face->glyph->bitmap_left + face->glyph->bitmap.width;
+				mGlyphs[glyphIndex].m_Info.m_GlyphBox.m_top = face->glyph->bitmap_top;
+				mGlyphs[glyphIndex].m_Info.m_GlyphBox.m_bottom = face->glyph->bitmap_top - face->glyph->bitmap.rows;
 				mGlyphs[glyphIndex].m_Info.advance = face->glyph->advance.x / 64;
+
 				mGlyphs[glyphIndex].m_pData = new BitmapData(face->glyph->bitmap.width, face->glyph->bitmap.rows, face->glyph->bitmap.buffer, eBufferFormat, face->glyph->bitmap.pitch);
 
 				PackRect rc = { 0, 0, mGlyphs[glyphIndex].m_pData->GetWidth(), mGlyphs[glyphIndex].m_pData->GetHeight(), &mGlyphs[glyphIndex] };
@@ -106,14 +111,13 @@ bool OS::BuildFont(const Path& in_FontFile, unsigned int in_uiFontSize, unsigned
 		}
 
 		FontDataFile::GlyphInfo* pNewInfo = new FontDataFile::GlyphInfo;
-		pNewInfo->left = pCurrentGlyph->m_Info.left;
-		pNewInfo->top = pCurrentGlyph->m_Info.top;
+		pNewInfo->m_GlyphBox = pCurrentGlyph->m_Info.m_GlyphBox;
 		pNewInfo->advance = pCurrentGlyph->m_Info.advance;
 
-		pNewInfo->boxX = float(packRectIt->x) / in_uiTextureSize;
-		pNewInfo->boxY = float(packRectIt->y) / in_uiTextureSize;
-		pNewInfo->boxWidth = float(packRectIt->size_x) / in_uiTextureSize;
-		pNewInfo->boxHeight = float(packRectIt->size_y) / in_uiTextureSize;
+		pNewInfo->m_UVs.m_left = float(packRectIt->x) / in_uiTextureSize;
+		pNewInfo->m_UVs.m_right = float(packRectIt->x + packRectIt->size_x) / in_uiTextureSize;
+		pNewInfo->m_UVs.m_top = float(packRectIt->y) / in_uiTextureSize;
+		pNewInfo->m_UVs.m_bottom = float(packRectIt->y + packRectIt->size_y) / in_uiTextureSize;
 
 		vGlyphs.push_back(pNewInfo);
 
@@ -132,12 +136,16 @@ bool OS::BuildFont(const Path& in_FontFile, unsigned int in_uiFontSize, unsigned
 	StdString fontName = Format(L("%s %s %dpt%s"), FROM_STRING(face->family_name).c_str(), FROM_STRING(face->style_name).c_str(), in_uiFontSize, in_uiFlags & eFF_Mono ? L(" Mono") : L(""));
 
 	Path fontDataFile = in_FontDataFileName;
-	if (fontDataFile == L(""))
-		fontDataFile = fontName + L(".font");
+	if (fontDataFile.GetFileName() == L(""))
+	{
+		fontDataFile = fontDataFile.GetFolder() + fontName + L(".font");
+	}
 	
 	FontDataFile* newFont = new FontDataFile;
 	newFont->m_FontName = fontName;
 	newFont->m_FontSize = in_uiFontSize;
+	newFont->m_LineHeight = face->size->metrics.height / 64;
+	newFont->m_MaxAscender = face->size->metrics.ascender / 64;
 
 	newFont->m_vGlyphs = vGlyphs;
 	newFont->m_mCharacterMap = mCharacterMap;

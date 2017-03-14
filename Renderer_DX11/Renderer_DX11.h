@@ -14,6 +14,7 @@ public:
 	virtual Texture* CreateTexture(const Path& filename);
 	virtual Texture* CreateTexture(const BitmapData* in_pData);
 	virtual Quad* CreateQuad(float posX, float posY, Texture* texture);
+	virtual Text* CreateText(float poxX, float posY, Font* in_pFont, const StdString& in_strText);
 
 	virtual void StartFrame();
 	virtual void EndFrame();

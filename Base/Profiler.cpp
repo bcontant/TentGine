@@ -4,6 +4,17 @@
 #include "../OS_Base/System.h"
 
 //--------------------------------------------------------------------------------
+ProfileBlock::~ProfileBlock() 
+{
+	for (auto i : m_vChildren)
+		delete i;
+	m_vChildren.clear();
+
+	delete m_pActiveChild;
+	m_pActiveChild = nullptr;
+}
+
+//--------------------------------------------------------------------------------
 void ProfileBlock::StartBlock(ProfileBlock* in_pChild)
 {
 	if (m_pActiveChild)
@@ -37,6 +48,23 @@ void ProfileBlock::Stop()
 	m_i64StopTime = OS::GetTickCount(); 
 
 	m_fBlockTimeMs = (double(m_i64StopTime - m_i64StartTime) / OS::GetTickFrequency()) * 1000.f;
+}
+
+//--------------------------------------------------------------------------------
+Profiler::Profiler()
+{
+
+}
+
+//--------------------------------------------------------------------------------
+Profiler::~Profiler()
+{
+	for (auto it : m_vBlocks)
+		for (auto blockIt : it.second)
+			delete blockIt;
+
+	for (auto it : m_vActiveBlocks)
+		delete it.second;
 }
 
 //--------------------------------------------------------------------------------

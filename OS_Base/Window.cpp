@@ -24,7 +24,7 @@ void Window::RegisterMessageCallback(IWindowMessageCallback* pCallback)
 
 //--------------------------------------------------------------------------------
 Window::Window() 
-	:IWindowMessageCallback(0)
+	:IWindowMessageCallback(nullptr)
 {
 	m_pWindow = this;
 	m_pWindow->RegisterMessageCallback(this);

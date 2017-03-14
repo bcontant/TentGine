@@ -18,6 +18,8 @@ enum class BufferFormat
 
 	ARGB_U32,
 	ABGR_U32,
+
+	//TODO : This is a useless format I think.. remove (and change 'universal conversion' to use another one)
 	RGBA_U32,
 
 	R_F32,

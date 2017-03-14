@@ -191,20 +191,19 @@ unsigned int File::Read(StdString& in_string)
 {
 	AssertMsg(m_FileMode == FileMode::ReadOnly || m_FileMode == FileMode::ReadWrite || m_FileMode == FileMode::ReadAppend, L("Invalid Filemode"));
 
-	// Make sure we have somewhere to write
+	// Make sure we have somewhere to read
 	if (!m_FileHandle)
 		return 0;
 
 #define MAX_STR_LEN 2048
-	//TODO : This probably should be a fixed type otherwise files created with a Unicode binary won't load with a UTF8 binary and vice-versa
 	unsigned int sizeRead = 0;
 	unsigned int size = 0;
 	sizeRead += static_cast<unsigned int>(fread(&size, sizeof(unsigned int), 1, m_FileHandle));
 	AssertMsg(size < MAX_STR_LEN, L("Trying to read a string that is bigger than our fixed size buffer."));
 
-	StringChar tempStr[MAX_STR_LEN + 1];
-	sizeRead += static_cast<unsigned int>(fread(tempStr, 1, sizeof(StringChar) * (size + 1), m_FileHandle));
-	in_string = tempStr;
+	wchar_t tempStr[MAX_STR_LEN + 1];
+	sizeRead += static_cast<unsigned int>(fread(tempStr, 1, sizeof(wchar_t) * (size + 1), m_FileHandle));
+	in_string = FROM_WSTRING(tempStr);
 
 	return sizeRead;
 }
@@ -219,12 +218,11 @@ unsigned int File::Write(const StdString& in_string)
 	if (!m_FileHandle)
 		return 0;
 
-	//TODO : This probably should be a fixed type otherwise files created with a Unicode binary won't load with a UTF8 binary and vice-versa
 	unsigned int sizeWritten = 0;
 	unsigned int size = static_cast<unsigned int>(in_string.size());
 	sizeWritten += static_cast<unsigned int>(fwrite(&size, 1, sizeof(unsigned int), m_FileHandle));
 
-	sizeWritten += static_cast<unsigned int>(fwrite(in_string.c_str(), 1, sizeof(StringChar) * (size + 1), m_FileHandle));
+	sizeWritten += static_cast<unsigned int>(fwrite(TO_WSTRING(in_string).c_str(), 1, sizeof(wchar_t) * (size + 1), m_FileHandle));
 
 	return sizeWritten;
 }

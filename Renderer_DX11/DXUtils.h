@@ -4,6 +4,15 @@ enum class BufferFormat;
 
 DXGI_FORMAT GetDXGIFormat(BufferFormat in_eFormat);
 
+#define SAFE_RELEASE(ptr) \
+{ \
+	if(ptr != nullptr) \
+	{ \
+		ptr->Release(); \
+	} \
+	ptr = 0; \
+} 
+
 //#ifdef _DEBUG
 
 class HResult

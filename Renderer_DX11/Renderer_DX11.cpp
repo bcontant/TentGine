@@ -49,6 +49,16 @@ Quad* Renderer_DX11::CreateQuad(float posX, float posY, Texture* texture)
 }
 
 //--------------------------------------------------------------------------------
+Text* Renderer_DX11::CreateText(float posX, float posY, Font* in_pFont, const StdString& in_strText)
+{
+	Text_DX11* pText = new Text_DX11(this);
+	pText->SetPosition(posX, posY);
+	pText->SetFont(in_pFont);
+	pText->SetText(in_strText);
+	return pText;
+}
+
+//--------------------------------------------------------------------------------
 void Renderer_DX11::StartFrame()
 {
 	if (GetBackBufferWidth() != m_pWindow->GetWidth() || GetBackBufferHeight() != m_pWindow->GetHeight())
@@ -143,7 +153,6 @@ void Renderer_DX11::Initialize(DisplayAdapter* /*in_pAdapter*/, Window* in_pWind
 	BlendState.RenderTarget[0].BlendOp = D3D11_BLEND_OP_ADD;
 	BlendState.RenderTarget[0].BlendOpAlpha = D3D11_BLEND_OP_ADD;
 	BlendState.RenderTarget[0].SrcBlend = D3D11_BLEND_SRC_ALPHA;
-	//BlendState.RenderTarget[0].SrcBlend = D3D11_BLEND_ONE;
 	BlendState.RenderTarget[0].DestBlend = D3D11_BLEND_INV_SRC_ALPHA;
 	BlendState.RenderTarget[0].SrcBlendAlpha = D3D11_BLEND_ONE;
 	BlendState.RenderTarget[0].DestBlendAlpha = D3D11_BLEND_ZERO;
@@ -161,8 +170,8 @@ void Renderer_DX11::Initialize(DisplayAdapter* /*in_pAdapter*/, Window* in_pWind
 	IDXGIFactory * pIDXGIFactory;
 	hr = pDXGIAdapter->GetParent(__uuidof(IDXGIFactory), (void **)&pIDXGIFactory);
 
-	//hr = pIDXGIFactory->MakeWindowAssociation(window->m_hwnd, DXGI_MWA_NO_WINDOW_CHANGES);
-	hr = pIDXGIFactory->MakeWindowAssociation((HWND)in_pWindow->GetWindowHandle(), DXGI_MWA_NO_ALT_ENTER);
+	//hr = pIDXGIFactory->MakeWindowAssociation((HWND)in_pWindow->GetWindowHandle(), DXGI_MWA_NO_WINDOW_CHANGES);
+	//hr = pIDXGIFactory->MakeWindowAssociation((HWND)in_pWindow->GetWindowHandle(), DXGI_MWA_NO_ALT_ENTER);
 
 	pIDXGIFactory->Release();
 	pDXGIAdapter->Release();

@@ -20,6 +20,7 @@
 #include "Renderer_DX11.h"
 #include "Texture_DX11.h"
 #include "Quad_DX11.h"
+#include "Text_DX11.h"
 #include "WICTextureLoader.h"
 
 #include "../OS_Base/Window.h"

@@ -56,6 +56,21 @@ std::vector<PackRect> PackTexture(std::vector<PackRect>& io_vRects, unsigned int
 
 	std::vector<PackRect> vPackedRects;
 
+	//Do nothing with 0 size rects and pretend they were successfully packed (it's not false)
+	for (auto it = io_vRects.begin(); it != io_vRects.end(); )
+	{
+		if (it->size_x == 0 || it->size_y == 0)
+		{
+			vPackedRects.push_back(*it);
+			it = io_vRects.erase(it);
+		}
+		else
+		{
+			it++;
+		}
+	}
+
+	
 	std::sort(io_vRects.begin(), io_vRects.end(), [](const PackRect& a, const PackRect& b) { return a.size_x + a.size_y > b.size_x + b.size_y;  });
 	PackTextureRecurse(io_vRects, in_uiTextureWidth - in_uiPadding, in_uiTextureHeight - in_uiPadding, in_uiPadding, in_uiPadding, in_uiPadding, false, false, vPackedRects);
 

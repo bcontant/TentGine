@@ -7,6 +7,7 @@ class DisplayAdapter;
 class Texture;
 class Quad;
 class Font;
+class Text;
 class Window;
 class BitmapData;
 
@@ -20,6 +21,7 @@ public:
 	virtual Texture* CreateTexture(const Path& filename) = 0;
 	virtual Texture* CreateTexture(const BitmapData* in_pData) = 0;
 	virtual Quad* CreateQuad(float posX, float posY, Texture* texture) = 0;
+	virtual Text* CreateText(float poxX, float posY, Font* in_pFont, const StdString& in_strText) = 0;
 	
 	Font* LoadFont(const Path& filename);
 

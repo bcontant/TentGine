@@ -293,6 +293,8 @@
     <ClInclude Include="PNGFile.h" />
     <ClInclude Include="precompiled.h" />
     <ClInclude Include="Profiler.h" />
+    <ClInclude Include="RangedBasedLoops.h" />
+    <ClInclude Include="Rect.h" />
     <ClInclude Include="Singleton.h" />
     <ClInclude Include="StringUtils.h" />
     <ClInclude Include="TGAFile.h" />

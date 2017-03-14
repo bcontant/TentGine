@@ -6,7 +6,10 @@
 
 //--------------------------------------------------------------------------------
 FontDataFile::FontDataFile()
-	: m_FontSize(0)
+	: m_FontName("")
+	, m_FontSize(0)
+	, m_LineHeight(0)
+	, m_MaxAscender(0)
 	, m_pFontTextureData(nullptr)
 {
 }
@@ -16,6 +19,16 @@ FontDataFile::~FontDataFile()
 {
 	delete m_pFontTextureData;
 	m_pFontTextureData = nullptr;
+}
+
+//--------------------------------------------------------------------------------
+const FontDataFile::GlyphInfo* FontDataFile::GetGlyphInfo(wchar_t in_cCharCode) const
+{
+	auto it = m_mCharacterMap.find(in_cCharCode);
+	if (it == m_mCharacterMap.end())
+		return nullptr;
+
+	return it->second;
 }
 
 //--------------------------------------------------------------------------------
@@ -29,6 +42,9 @@ void FontDataFile::Save(const Path& in_filename) const
 
 	fontFile.Write(m_FontName);
 	fontFile.Write(&m_FontSize, sizeof(float));
+
+	fontFile.Write(&m_LineHeight, sizeof(unsigned int));
+	fontFile.Write(&m_MaxAscender, sizeof(unsigned int));
 
 	fontFile.Write(m_FontTextureFilename.GetStdString());
 
@@ -48,10 +64,10 @@ void FontDataFile::Save(const Path& in_filename) const
 		auto glyphIt = std::find(m_vGlyphs.cbegin(), m_vGlyphs.cend(), it->second);
 		Assert(glyphIt != m_vGlyphs.cend());
 
-		size_t glyphIndex = glyphIt - m_vGlyphs.cbegin();
+		unsigned int glyphIndex = static_cast<unsigned int>(glyphIt - m_vGlyphs.cbegin());
 
 		fontFile.Write(&it->first, sizeof(wchar_t));
-		fontFile.Write(&glyphIndex, sizeof(size_t));
+		fontFile.Write(&glyphIndex, sizeof(unsigned int));
 	}
 
 	fontFile.Close();
@@ -71,6 +87,9 @@ void FontDataFile::Load(const Path& in_filename)
 
 	fontFile.Read(m_FontName);
 	fontFile.Read(&m_FontSize, sizeof(float));
+
+	fontFile.Read(&m_LineHeight, sizeof(unsigned int));
+	fontFile.Read(&m_MaxAscender, sizeof(unsigned int));
 
 	StdString filename;
 	fontFile.Read(filename);
@@ -95,8 +114,8 @@ void FontDataFile::Load(const Path& in_filename)
 		wchar_t characterCode;
 		fontFile.Read(&characterCode, sizeof(wchar_t));
 
-		size_t glyphIndex;
-		fontFile.Read(&glyphIndex, sizeof(size_t));
+		unsigned int glyphIndex;
+		fontFile.Read(&glyphIndex, sizeof(unsigned int));
 
 		Assert(glyphIndex < m_vGlyphs.size());
 
