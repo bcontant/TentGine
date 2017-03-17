@@ -42,12 +42,12 @@ void Logger::Initialize()
 }
 
 //--------------------------------------------------------------------------------
-void Logger::Log(LogCategory in_eCategory, LogSeverity in_eSeverity, LogType in_eLogType, const StringChar* in_pMsg, ...)
+void Logger::Log(LogCategory in_eCategory, LogSeverity in_eSeverity, LogType in_eLogType, const string_char* in_pMsg, ...)
 {
 	if (this == nullptr)
 		return;
 
-	static StringChar strTemp[16384];
+	static string_char strTemp[16384];
 
 	va_list ArgPtr;
 	va_start(ArgPtr, in_pMsg);
@@ -58,7 +58,7 @@ void Logger::Log(LogCategory in_eCategory, LogSeverity in_eSeverity, LogType in_
 }
 
 //--------------------------------------------------------------------------------
-void Logger::LogFormattedMsg(LogCategory in_eCategory, LogSeverity in_eSeverity, LogType in_eLogType, StringChar* in_pMsg)
+void Logger::LogFormattedMsg(LogCategory in_eCategory, LogSeverity in_eSeverity, LogType in_eLogType, string_char* in_pMsg)
 {
 	//Do the "Debug" part of the logType
 	if (in_eLogType == LogType::FileAndDebug)
@@ -68,13 +68,13 @@ void Logger::LogFormattedMsg(LogCategory in_eCategory, LogSeverity in_eSeverity,
 	}
 
 	STRCAT(in_pMsg, 16384, L("\n"));
-	StringChar* str = in_pMsg;
-	std::vector<StdString> logMessages;
+	string_char* str = in_pMsg;
+	std::vector<std_string> logMessages;
 
 	//Clean up linefeeds for the logfile, all log messages should be single line.
 	while (*str != '\0')
 	{
-		int i = 0;
+		s32 i = 0;
 		while (str[i] != '\n' && str[i] != '\0')
 			i++;
 
@@ -91,7 +91,7 @@ void Logger::LogFormattedMsg(LogCategory in_eCategory, LogSeverity in_eSeverity,
 	}
 
 	//Do the "File" part of the logType
-	for (unsigned int i = 0; i < logMessages.size(); i++)
+	for (u32 i = 0; i < logMessages.size(); i++)
 	{
 		//if (TimeManager::GetInstance())
 		//	m_CurrentLogSize += m_pLogFile->Print("[%15.6f\t] ", TimeManager::GetInstance()->GetCurrentTimeInSeconds());

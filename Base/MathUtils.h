@@ -2,14 +2,14 @@
 
 //--------------------------------------------------------------------------------
 #define REVERSE_ENDIANNESS(var) ReverseEndianness(&var, sizeof(var));
-void ReverseEndianness(void* pMemory, unsigned int numBytes);
+void ReverseEndianness(void* pMemory, u32 numBytes);
 
 #pragma warning(disable: 4310)
 class Endian
 {
 private:
-	static constexpr unsigned int number = 0xAABBCCDD;
-	static constexpr unsigned char high_byte = (const unsigned char&)number;
+	static constexpr u32 number = 0xAABBCCDD;
+	static constexpr u8 high_byte = (const u8&)number;
 
 public:
 	static constexpr bool IsLittleEndian	=	(high_byte == 0xDD);
@@ -22,9 +22,9 @@ private:
 #pragma warning(default: 4310)
 
 //--------------------------------------------------------------------------------
-int pow(int base, int exp)
+s32 pow(s32 base, s32 exp)
 {
-	int result = 1;
+	s32 result = 1;
 	while (exp)
 	{
 		if (exp & 1)
@@ -36,7 +36,7 @@ int pow(int base, int exp)
 }
 
 //--------------------------------------------------------------------------------
-constexpr int div_up(int x, int y)
+constexpr s32 div_up(s32 x, s32 y)
 {
 	return (x + y - 1) / y;
 }

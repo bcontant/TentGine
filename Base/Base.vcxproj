@@ -292,6 +292,7 @@
     <ClInclude Include="GraphicUtils.h" />
     <ClInclude Include="Logger.h" />
     <ClInclude Include="MathUtils.h" />
+    <ClInclude Include="Matrix.h" />
     <ClInclude Include="MemoryBuffer.h" />
     <ClInclude Include="Path.h" />
     <ClInclude Include="PNGFile.h" />
@@ -302,6 +303,8 @@
     <ClInclude Include="Singleton.h" />
     <ClInclude Include="StringUtils.h" />
     <ClInclude Include="TGAFile.h" />
+    <ClInclude Include="Types.h" />
+    <ClInclude Include="Vector.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Assert.cpp" />

@@ -41,7 +41,7 @@
     <ClInclude Include="Renderer_DX11.h" />
     <ClInclude Include="Texture_DX11.h" />
     <ClInclude Include="Text_DX11.h" />
-    <ClInclude Include="WICTextureLoader.h" />
+    <ClInclude Include="VertexBuffer_DX11.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="DXUtils.cpp" />
@@ -67,7 +67,7 @@
     <ClCompile Include="Renderer_DX11.cpp" />
     <ClCompile Include="Texture_DX11.cpp" />
     <ClCompile Include="Text_DX11.cpp" />
-    <ClCompile Include="WICTextureLoader.cpp" />
+    <ClCompile Include="VertexBuffer_DX11.cpp" />
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="simple_pixel.hlsl">

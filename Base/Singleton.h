@@ -5,7 +5,7 @@
 //--------------------------------------------------------------------------------
 #define MAKE_SINGLETON(CLASS)                       \
     friend class Singleton<CLASS>;                  \
-    static const StringChar* GET_NAME() { return L(#CLASS); }
+    static const string_char* GET_NAME() { return L(#CLASS); }
 
 //--------------------------------------------------------------------------------
 template<class T> class Singleton

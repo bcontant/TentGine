@@ -6,6 +6,8 @@
 #include <vector>
 #include <map>
 
+#include "../Base/Types.h"
+
 #include "Font.h"
 #include "Renderer.h"
 #include "Texture.h"

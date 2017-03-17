@@ -27,5 +27,6 @@ void Font::Load(const Path& in_filename)
 	m_FontDataFile->Load(in_filename);
 
 	const BitmapData* pData = m_FontDataFile->GetTextureData();
-	m_pFontTexture = GetOwner()->CreateTexture(pData);
+	m_pFontTexture = GetOwner()->CreateTexture(pData, EAddressingMode::eWrap, EFilteringMode::eLinear, EFilteringMode::eLinear, EFilteringMode::eLinear);
+	//m_pFontTexture = GetOwner()->CreateTexture(pData, EAddressingMode::eWrap, EFilteringMode::ePoint, EFilteringMode::ePoint, EFilteringMode::ePoint);
 }

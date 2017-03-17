@@ -15,9 +15,9 @@ std::wstring StringToWString(std::string in_string)
 }
 
 //--------------------------------------------------------------------------------
-StdString Format(const StringChar* format, ...)
+std_string Format(const string_char* format, ...)
 {
-	StringChar strMessage[1024];
+	string_char strMessage[1024];
 
 	va_list ArgPtr;
 

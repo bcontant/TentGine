@@ -46,7 +46,7 @@ void Window::UnregisterMessageCallback(IWindowMessageCallback* pCallback)
 }
 
 //--------------------------------------------------------------------------------
-bool Window::NotifyCallbacks(void* hwnd, unsigned int message, uint64_t wParam, int64_t lParam)
+bool Window::NotifyCallbacks(void* hwnd, u32 message, u64 wParam, s64 lParam)
 {
 	bool bHandled = false;
 	for (size_t i = 0; i < m_vMessageCallbacks.size(); i++)

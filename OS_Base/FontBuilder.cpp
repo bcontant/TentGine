@@ -11,7 +11,7 @@
 #include "ft2build.h"
 #include FT_FREETYPE_H
 
-#define GLYPH_TEXTURE_PADDING 0
+#define GLYPH_TEXTURE_PADDING 1
 
 struct Glyph
 {
@@ -22,7 +22,7 @@ struct Glyph
 };
 
 //--------------------------------------------------------------------------------
-bool OS::BuildFont(const Path& in_FontFile, unsigned int in_uiFontSize, unsigned int in_uiTextureSize, unsigned int in_uiFlags, const Path& in_FontDataFileName)
+bool OS::BuildFont(const Path& in_FontFile, u32 in_uiFontSize, u32 in_uiTextureSize, u32 in_uiFlags, const Path& in_FontDataFileName)
 {
 	PROFILE_BLOCK;
 
@@ -31,7 +31,7 @@ bool OS::BuildFont(const Path& in_FontFile, unsigned int in_uiFontSize, unsigned
 	wchar_t wszTextureText[512] = {};
 	for (wchar_t i = 1; i < 256; i++)
 		wszTextureText[i - 1] = i;
-	unsigned int cTextureTextLength = (unsigned int)wcslen(wszTextureText);
+	u32 cTextureTextLength = (u32)wcslen(wszTextureText);
 
 	FT_Library library;
 	FT_Error error;
@@ -42,7 +42,7 @@ bool OS::BuildFont(const Path& in_FontFile, unsigned int in_uiFontSize, unsigned
 	error = FT_Set_Char_Size(face, 0, in_uiFontSize * 64, 96, 96);  //This is correct on my (96DPI) display.  Glyph are the proper size (compared with MS Word)
 
 
-	unsigned int uiLoadFlags = FT_LOAD_DEFAULT;
+	u32 uiLoadFlags = FT_LOAD_DEFAULT;
 	if (in_uiFlags & eFF_Mono)			
 		uiLoadFlags |= FT_LOAD_TARGET_MONO;
 	if (in_uiFlags & eFF_ForceAutoHint)	
@@ -56,13 +56,13 @@ bool OS::BuildFont(const Path& in_FontFile, unsigned int in_uiFontSize, unsigned
 	if (in_uiFlags & eFF_Mono)			
 		eBufferFormat = BufferFormat::A_U1;
 
-	std::map<unsigned int, Glyph> mGlyphs;
+	std::map<u32, Glyph> mGlyphs;
 	std::map<wchar_t, Glyph*> mCharacters;
 	std::vector<PackRect> vUnpackRects;
 
-	for (unsigned int i = 0; i < cTextureTextLength; i++)
+	for (u32 i = 0; i < cTextureTextLength; i++)
 	{
-		unsigned int glyphIndex = FT_Get_Char_Index(face, wszTextureText[i]);
+		u32 glyphIndex = FT_Get_Char_Index(face, wszTextureText[i]);
 
 		error = FT_Load_Glyph(face, glyphIndex, uiLoadFlags);
 		error = FT_Render_Glyph(face->glyph, eRenderMode);
@@ -133,7 +133,7 @@ bool OS::BuildFont(const Path& in_FontFile, unsigned int in_uiFontSize, unsigned
 		}
 	}
 
-	StdString fontName = Format(L("%s %s %dpt%s"), FROM_STRING(face->family_name).c_str(), FROM_STRING(face->style_name).c_str(), in_uiFontSize, in_uiFlags & eFF_Mono ? L(" Mono") : L(""));
+	std_string fontName = Format(L("%s %s %dpt%s"), FROM_STRING(face->family_name).c_str(), FROM_STRING(face->style_name).c_str(), in_uiFontSize, in_uiFlags & eFF_Mono ? L(" Mono") : L(""));
 
 	Path fontDataFile = in_FontDataFileName;
 	if (fontDataFile.GetFileName() == L(""))

@@ -9,24 +9,27 @@ public:
 	Renderer_DX11(Window* in_pWindow);
 	virtual ~Renderer_DX11();
 
-	virtual void Initialize(DisplayAdapter* in_pAdapter, Window* in_pWindow);
+	void Initialize(DisplayAdapter* in_pAdapter, Window* in_pWindow) override;
 
-	virtual Texture* CreateTexture(const Path& filename);
-	virtual Texture* CreateTexture(const BitmapData* in_pData);
-	virtual Quad* CreateQuad(float posX, float posY, Texture* texture);
-	virtual Text* CreateText(float poxX, float posY, Font* in_pFont, const StdString& in_strText);
+	virtual Texture* CreateTexture(const Path& filename, EAddressingMode in_eAddressingMode, EFilteringMode in_eMinFilter, EFilteringMode in_eMagFilter, EFilteringMode in_eMipMapFilter) override;
+	virtual Texture* CreateTexture(const BitmapData* in_pData, EAddressingMode in_eAddressingMode, EFilteringMode in_eMinFilter, EFilteringMode in_eMagFilter, EFilteringMode in_eMipMapFilter) override;
+	virtual Quad* CreateQuad(float posX, float posY, Texture* texture) override;
+	virtual Text* CreateText(float poxX, float posY, Font* in_pFont, const std_string& in_strText) override;
+	virtual VertexBuffer* CreateVertexBuffer(u32 in_uiVertexCount, u32 in_uiVertexMask, EPrimitiveType in_ePrimitiveType, void* in_pVBData, u32 in_eBufferType) override;
 
-	virtual void StartFrame();
-	virtual void EndFrame();
+	virtual void StartFrame() override;
+	virtual void EndFrame() override;
 
-	virtual unsigned int GetBackBufferWidth() const;
-	virtual unsigned int GetBackBufferHeight() const;
+	virtual u32 GetBackBufferWidth() const override;
+	virtual u32 GetBackBufferHeight() const override;
 
 public:
 	ID3D11Device* GetDevice() const { return pD3D11Device; }
 	ID3D11DeviceContext* GetContext() const { return pD3D11DeviceContext; }
 
 private:
+	void ReportLiveObjects() const;
+
 	ID3D11Device* pD3D11Device;
 	ID3D11DeviceContext* pD3D11DeviceContext;
 

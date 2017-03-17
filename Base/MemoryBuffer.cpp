@@ -3,7 +3,7 @@
 #include "MemoryBuffer.h"
 
 //--------------------------------------------------------------------------------
-unsigned int MemoryBuffer::ClampSize(unsigned int in_size) const
+u32 MemoryBuffer::ClampSize(u32 in_size) const
 {
 	if (m_uiCurrentPosition + in_size > m_uiBufferSize)
 		return m_uiBufferSize - m_uiCurrentPosition;
@@ -12,7 +12,7 @@ unsigned int MemoryBuffer::ClampSize(unsigned int in_size) const
 }
 
 //--------------------------------------------------------------------------------
-unsigned int MemoryBuffer::Advance(unsigned int size)
+u32 MemoryBuffer::Advance(u32 size)
 {
 	size = ClampSize(size);
 
@@ -21,7 +21,7 @@ unsigned int MemoryBuffer::Advance(unsigned int size)
 }
 
 //--------------------------------------------------------------------------------
-unsigned int MemoryBuffer::SeekTo(unsigned int offset)
+u32 MemoryBuffer::SeekTo(u32 offset)
 {
 	m_uiCurrentPosition = 0;
 	offset = ClampSize(offset);
@@ -30,28 +30,28 @@ unsigned int MemoryBuffer::SeekTo(unsigned int offset)
 }
 
 //--------------------------------------------------------------------------------
-const void* MemoryBuffer::PeekAt(unsigned int offset) const
+const void* MemoryBuffer::PeekAt(u32 offset) const
 {
 	Assert(offset < m_uiBufferSize);
 	return &m_pBuffer[offset];
 }
 
 //--------------------------------------------------------------------------------
-unsigned int MemoryBuffer::Read(Buffer* buffer, unsigned int bufferSize)
+u32 MemoryBuffer::Read(Buffer* buffer, u32 bufferSize)
 {
 	bufferSize = ClampSize(bufferSize);
 	return buffer->Write(m_pBuffer, bufferSize);
 }
 
 //--------------------------------------------------------------------------------
-unsigned int MemoryBuffer::Write(Buffer* buffer, unsigned int bufferSize)
+u32 MemoryBuffer::Write(Buffer* buffer, u32 bufferSize)
 {
 	bufferSize = ClampSize(bufferSize);
 	return buffer->Read((void*)m_pBuffer, bufferSize);
 }
 
 //--------------------------------------------------------------------------------
-unsigned int MemoryBuffer::Read(void* buffer, unsigned int bufferSize)
+u32 MemoryBuffer::Read(void* buffer, u32 bufferSize)
 {
 	bufferSize = ClampSize(bufferSize);
 
@@ -61,7 +61,7 @@ unsigned int MemoryBuffer::Read(void* buffer, unsigned int bufferSize)
 }
 
 //--------------------------------------------------------------------------------
-unsigned int MemoryBuffer::Write(const void* buffer, unsigned int bufferSize)
+u32 MemoryBuffer::Write(const void* buffer, u32 bufferSize)
 {
 	bufferSize = ClampSize(bufferSize);
 
@@ -71,21 +71,21 @@ unsigned int MemoryBuffer::Write(const void* buffer, unsigned int bufferSize)
 }
 
 //--------------------------------------------------------------------------------
-unsigned int MemoryBuffer::Read(StdString& /*in_string*/)
+u32 MemoryBuffer::Read(std_string& /*in_string*/)
 {
 	Assert(false);
 	return 0;
 }
 
 //--------------------------------------------------------------------------------
-unsigned int MemoryBuffer::Write(const StdString& /*in_string*/)
+u32 MemoryBuffer::Write(const std_string& /*in_string*/)
 {
 	Assert(false);
 	return 0;
 }
 
 //--------------------------------------------------------------------------------
-unsigned int MemoryBuffer::Print(const StringChar* /*buffer*/, ...)
+u32 MemoryBuffer::Print(const string_char* /*buffer*/, ...)
 {
 	Assert(false);
 	return 0;

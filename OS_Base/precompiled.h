@@ -2,6 +2,8 @@
 
 #pragma warning(default : 4062)
 
+#include "../Base/Types.h"
+
 #include "Window.h"
 #include <vector>
 #include <map>

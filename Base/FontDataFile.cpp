@@ -43,31 +43,31 @@ void FontDataFile::Save(const Path& in_filename) const
 	fontFile.Write(m_FontName);
 	fontFile.Write(&m_FontSize, sizeof(float));
 
-	fontFile.Write(&m_LineHeight, sizeof(unsigned int));
-	fontFile.Write(&m_MaxAscender, sizeof(unsigned int));
+	fontFile.Write(&m_LineHeight, sizeof(u32));
+	fontFile.Write(&m_MaxAscender, sizeof(u32));
 
-	fontFile.Write(m_FontTextureFilename.GetStdString());
+	fontFile.Write(m_FontTextureFilename.Getstd_string());
 
-	int glyphCount = (int)m_vGlyphs.size();
-	fontFile.Write(&glyphCount, sizeof(unsigned int));
+	s32 glyphCount = (s32)m_vGlyphs.size();
+	fontFile.Write(&glyphCount, sizeof(u32));
 
-	for (unsigned int i = 0; i < m_vGlyphs.size(); i++)
+	for (u32 i = 0; i < m_vGlyphs.size(); i++)
 	{
 		fontFile.Write(m_vGlyphs[i], sizeof(GlyphInfo));
 	}
 
-	int characterCount = (int)m_mCharacterMap.size();
-	fontFile.Write(&characterCount, sizeof(unsigned int));
+	s32 characterCount = (s32)m_mCharacterMap.size();
+	fontFile.Write(&characterCount, sizeof(u32));
 	
 	for (auto it = m_mCharacterMap.cbegin(); it != m_mCharacterMap.cend(); it++)
 	{
 		auto glyphIt = std::find(m_vGlyphs.cbegin(), m_vGlyphs.cend(), it->second);
 		Assert(glyphIt != m_vGlyphs.cend());
 
-		unsigned int glyphIndex = static_cast<unsigned int>(glyphIt - m_vGlyphs.cbegin());
+		u32 glyphIndex = static_cast<u32>(glyphIt - m_vGlyphs.cbegin());
 
 		fontFile.Write(&it->first, sizeof(wchar_t));
-		fontFile.Write(&glyphIndex, sizeof(unsigned int));
+		fontFile.Write(&glyphIndex, sizeof(u32));
 	}
 
 	fontFile.Close();
@@ -88,17 +88,17 @@ void FontDataFile::Load(const Path& in_filename)
 	fontFile.Read(m_FontName);
 	fontFile.Read(&m_FontSize, sizeof(float));
 
-	fontFile.Read(&m_LineHeight, sizeof(unsigned int));
-	fontFile.Read(&m_MaxAscender, sizeof(unsigned int));
+	fontFile.Read(&m_LineHeight, sizeof(u32));
+	fontFile.Read(&m_MaxAscender, sizeof(u32));
 
-	StdString filename;
+	std_string filename;
 	fontFile.Read(filename);
 	m_FontTextureFilename = filename;
 
-	unsigned int glyphCount;
-	fontFile.Read(&glyphCount, sizeof(unsigned int));
+	u32 glyphCount;
+	fontFile.Read(&glyphCount, sizeof(u32));
 
-	for (unsigned int i = 0; i < glyphCount; i++)
+	for (u32 i = 0; i < glyphCount; i++)
 	{
 		GlyphInfo* newInfo = new GlyphInfo;
 		fontFile.Read(newInfo, sizeof(GlyphInfo));
@@ -106,16 +106,16 @@ void FontDataFile::Load(const Path& in_filename)
 		m_vGlyphs.push_back(newInfo);
 	}
 
-	unsigned int characterCount;
-	fontFile.Read(&characterCount, sizeof(unsigned int));
+	u32 characterCount;
+	fontFile.Read(&characterCount, sizeof(u32));
 
-	for (unsigned int i = 0; i < characterCount; i++)
+	for (u32 i = 0; i < characterCount; i++)
 	{
 		wchar_t characterCode;
 		fontFile.Read(&characterCode, sizeof(wchar_t));
 
-		unsigned int glyphIndex;
-		fontFile.Read(&glyphIndex, sizeof(unsigned int));
+		u32 glyphIndex;
+		fontFile.Read(&glyphIndex, sizeof(u32));
 
 		Assert(glyphIndex < m_vGlyphs.size());
 

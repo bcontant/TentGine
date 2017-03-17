@@ -12,7 +12,7 @@
 class ProfileBlock
 {
 public:
-	ProfileBlock(void* in_sectionID) : m_SectionID((char*)in_sectionID) { m_i64StartTime = OS::GetTickCount(); }
+	ProfileBlock(void* in_sectionID) : m_SectionID((s8*)in_sectionID) { m_i64StartTime = OS::GetTickCount(); }
 	~ProfileBlock();
 
 	void StartBlock(ProfileBlock* in_pChild);
@@ -22,10 +22,10 @@ private:
 	void Stop();
 
 	double m_fBlockTimeMs = 0.f;
-	char* m_SectionID = nullptr;
+	s8* m_SectionID = nullptr;
 
-	__int64 m_i64StartTime = 0;
-	__int64 m_i64StopTime = 0;
+	s64 m_i64StartTime = 0;
+	s64 m_i64StopTime = 0;
 	
 	std::vector<ProfileBlock*> m_vChildren;
 	ProfileBlock* m_pActiveChild = nullptr;
@@ -56,7 +56,7 @@ private:
 class AutoProfileBlock
 {
 public:
-	AutoProfileBlock(char* in_sectionID)
+	AutoProfileBlock(void* in_sectionID)
 	{
 		Profiler::GetInstance()->StartBlock(in_sectionID, std::this_thread::get_id());
 	}

@@ -312,7 +312,7 @@
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <PreprocessorDefinitions>NDEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>$(SolutionDir)sdks\freetype-2.7.1\include;$(SolutionDir)sdks\zlib-1.2.11\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)sdks\freetype-2.7.1\include;$(SolutionDir)sdks\zlib-1.2.11\include;$(SolutionDir)sdks\libjpeg-turbo-1.5.1\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
     </ClCompile>
     <Link>
@@ -321,8 +321,8 @@
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <ShowProgress>NotSet</ShowProgress>
-      <AdditionalDependencies>d3d11.lib;d2d1.lib;dwrite.lib;windowscodecs.lib;dxgi.lib;dbghelp.lib;Base.lib;OS_Base.lib;OS_Win32.lib;Renderer_Base.lib;Renderer_DX11.lib;zlibMTDLL.lib;libpngMTDLL.lib;freetype271MTDLL.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <AdditionalLibraryDirectories>$(SolutionDir)lib\$(Configuration)_$(PlatformTarget)\;$(SolutionDir)sdks\freetype-2.7.1\lib\x64;$(SolutionDir)sdks\zlib-1.2.11\lib\x64;$(SolutionDir)sdks\libpng-1.6.28\lib\x64</AdditionalLibraryDirectories>
+      <AdditionalDependencies>d3d11.lib;d2d1.lib;dwrite.lib;windowscodecs.lib;dxgi.lib;dbghelp.lib;Base.lib;OS_Base.lib;OS_Win32.lib;Renderer_Base.lib;Renderer_DX11.lib;zlibMTDLL.lib;libpngMTDLL.lib;freetype271MTDLL.lib;turbojpeg-staticMTDLL.lib;jpeg-staticMTDLL.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(SolutionDir)lib\$(Configuration)_$(PlatformTarget)\;$(SolutionDir)sdks\freetype-2.7.1\lib\x64;$(SolutionDir)sdks\zlib-1.2.11\lib\x64;$(SolutionDir)sdks\libpng-1.6.28\lib\x64;$(SolutionDir)sdks\libjpeg-turbo-1.5.1\lib\x64</AdditionalLibraryDirectories>
       <OutputFile>$(OutDir)$(TargetName)$(TargetExt)</OutputFile>
     </Link>
   </ItemDefinitionGroup>

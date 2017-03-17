@@ -6,18 +6,21 @@
 class Texture_DX11 : public Texture
 {
 public:
-	Texture_DX11(Renderer* pOwner) : Texture(pOwner) {}
+	Texture_DX11(Renderer* pOwner);
 	virtual ~Texture_DX11();
 
-	virtual void Initialize(const Path& filename);
-	virtual void Initialize(const BitmapData* in_pData);
+	virtual void Initialize(const Path& filename) override;
+	virtual void Initialize(const BitmapData* in_pData) override;
 
-	virtual void Bind(unsigned int startSlot);
+	virtual void Bind(u32 startSlot) const override;
 
-	virtual unsigned int GetWidth() const;
-	virtual unsigned int GetHeight() const;
+	virtual u32 GetWidth() const override;
+	virtual u32 GetHeight() const override;
 
 private:
-	ID3D11Texture2D* pTexture;
-	ID3D11ShaderResourceView* pShaderResourceView;
+	void CreateTextureSampler();
+
+	ID3D11Texture2D* m_pTexture = nullptr;
+	ID3D11ShaderResourceView* m_pShaderResourceView = nullptr;
+	ID3D11SamplerState* m_pDefaultSampler = nullptr;
 };

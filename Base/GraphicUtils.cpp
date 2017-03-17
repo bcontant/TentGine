@@ -4,11 +4,11 @@
 #include <algorithm>
 
 //--------------------------------------------------------------------------------
-void PackTextureRecurse(std::vector<PackRect>& vRects, unsigned int in_uiTextureWidth, unsigned int in_uiTextureHeight, unsigned int in_uiPadding, unsigned int current_x, unsigned int current_y, bool in_bStaticHeight, bool in_bStaticWidth, std::vector<PackRect>& in_vPackedRects)
+void PackTextureRecurse(std::vector<PackRect>& vRects, u32 in_uiTextureWidth, u32 in_uiTextureHeight, u32 in_uiPadding, u32 current_x, u32 current_y, bool in_bStaticHeight, bool in_bStaticWidth, std::vector<PackRect>& in_vPackedRects)
 {
-	AssertMsg(static_cast<int>(in_uiTextureWidth) >= 0 && static_cast<int>(in_uiTextureHeight) >= 0, L("Invalid region size, something went wrong with PackTexture()"));
+	AssertMsg(static_cast<s32>(in_uiTextureWidth) >= 0 && static_cast<s32>(in_uiTextureHeight) >= 0, L("Invalid region size, something went wrong with PackTexture()"));
 
-	auto it = std::find_if(vRects.begin(), vRects.end(), [in_uiTextureWidth, in_uiTextureHeight, in_uiPadding](const PackRect& a) { return a.size_x + in_uiPadding <= static_cast<unsigned int>(in_uiTextureWidth) && a.size_y + in_uiPadding <= static_cast<unsigned int>(in_uiTextureHeight); });
+	auto it = std::find_if(vRects.begin(), vRects.end(), [in_uiTextureWidth, in_uiTextureHeight, in_uiPadding](const PackRect& a) { return a.size_x + in_uiPadding <= static_cast<u32>(in_uiTextureWidth) && a.size_y + in_uiPadding <= static_cast<u32>(in_uiTextureHeight); });
 	if (it == vRects.end())
 		return;
 
@@ -16,8 +16,8 @@ void PackTextureRecurse(std::vector<PackRect>& vRects, unsigned int in_uiTexture
 	in_vPackedRects.push_back(texRc);
 	vRects.erase(it);
 
-	unsigned int paddedSize_x = texRc.size_x + in_uiPadding;
-	unsigned int paddedSize_y = texRc.size_y + in_uiPadding;
+	u32 paddedSize_x = texRc.size_x + in_uiPadding;
+	u32 paddedSize_y = texRc.size_y + in_uiPadding;
 
 	//Filling a row
 	if (in_bStaticHeight)
@@ -50,7 +50,7 @@ void PackTextureRecurse(std::vector<PackRect>& vRects, unsigned int in_uiTexture
 }
 
 //--------------------------------------------------------------------------------
-std::vector<PackRect> PackTexture(std::vector<PackRect>& io_vRects, unsigned int in_uiTextureWidth, unsigned int in_uiTextureHeight, unsigned int in_uiPadding)
+std::vector<PackRect> PackTexture(std::vector<PackRect>& io_vRects, u32 in_uiTextureWidth, u32 in_uiTextureHeight, u32 in_uiPadding)
 {
 	PROFILE_BLOCK;
 

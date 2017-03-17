@@ -608,7 +608,7 @@ HResult CreateWICTextureFromMemory(_In_ ID3D11Device* d3dDevice,
 //--------------------------------------------------------------------------------------
 HResult CreateWICTextureFromFile(_In_ ID3D11Device* d3dDevice,
 	_In_opt_ ID3D11DeviceContext* d3dContext,
-	_In_z_ const StringChar* fileName,
+	_In_z_ const string_char* fileName,
 	_Out_opt_ ID3D11Texture2D** texture,
 	_Out_opt_ ID3D11ShaderResourceView** textureView,
 	_In_ size_t maxsize)

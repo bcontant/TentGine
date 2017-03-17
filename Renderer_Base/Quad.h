@@ -8,13 +8,16 @@ class Texture;
 class Quad : public RendererObject
 {
 public:
-	Quad(Renderer* pOwner) : RendererObject(pOwner) {}
-	virtual ~Quad() {}
+	Quad(Renderer* pOwner);
+	virtual ~Quad();
 
-	virtual void Draw() = 0;
-	void SetTexture(Texture* in_pTexture) { pTexture = in_pTexture; }
-	virtual void SetPosition(float x, float y) = 0;
+	virtual void Draw() const = 0;
+	void SetTexture(Texture* in_pTexture) { m_pTexture = in_pTexture; }
+	virtual void SetPosition(float x, float y);
 
 protected:
-	Texture* pTexture;
+	vec2 m_Position;
+
+	Texture* m_pTexture;
+	VertexBuffer* m_pVertexBuffer;
 };

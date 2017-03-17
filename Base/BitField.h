@@ -4,15 +4,15 @@
 class BitField
 {
 public:
-	BitField(unsigned char* in_pBitField, unsigned int in_uiElementCount, unsigned int in_uiBitsPerElement, unsigned int in_uiBufferStartOffsetInBits);
+	BitField(u8* in_pBitField, u32 in_uiElementCount, u32 in_uiBitsPerElement, u32 in_uiBufferStartOffsetInBits);
 
-	unsigned char GetElement(unsigned int in_uiIndex) const;
-	void SetElement(unsigned int in_uiIndex, unsigned char in_uiValue);
+	u8 GetElement(u32 in_uiIndex) const;
+	void SetElement(u32 in_uiIndex, u8 in_uiValue);
 	
 private:
-	unsigned char* m_pBitField = nullptr;
-	unsigned int m_uiBufferSizeInBytes = 0;
-	unsigned int m_uiBitsPerElement = 0;
-	unsigned int m_uiElementCount = 0;
-	unsigned int m_uiBufferStartOffsetInBits = 0;
+	u8* m_pBitField = nullptr;
+	u32 m_uiBufferSizeInBytes = 0;
+	u32 m_uiBitsPerElement = 0;
+	u32 m_uiElementCount = 0;
+	u32 m_uiBufferStartOffsetInBits = 0;
 };

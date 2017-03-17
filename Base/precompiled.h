@@ -11,6 +11,7 @@
 #include <map>
 #include <vector>
 
+#include "Types.h"
 #include "Assert.h"
 #include "Logger.h"
 #include "Profiler.h"

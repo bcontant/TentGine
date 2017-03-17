@@ -3,7 +3,7 @@
 #include "BitField.h"
 
 //--------------------------------------------------------------------------------
-BitField::BitField(unsigned char* in_pBitField, unsigned int in_uiElementCount, unsigned int in_uiBitsPerElement, unsigned int in_uiBufferStartOffsetInBits)
+BitField::BitField(u8* in_pBitField, u32 in_uiElementCount, u32 in_uiBitsPerElement, u32 in_uiBufferStartOffsetInBits)
 	:m_pBitField(in_pBitField)
 	,m_uiBitsPerElement(in_uiBitsPerElement)
 	,m_uiElementCount(in_uiElementCount)
@@ -15,13 +15,13 @@ BitField::BitField(unsigned char* in_pBitField, unsigned int in_uiElementCount, 
 }
 
 //--------------------------------------------------------------------------------
-unsigned char BitField::GetElement(unsigned int in_uiIndex) const
+u8 BitField::GetElement(u32 in_uiIndex) const
 {
-	unsigned int bytesIndex = (in_uiIndex * m_uiBitsPerElement) / 8;
-	int bitIndex = m_uiBufferStartOffsetInBits + ((in_uiIndex * m_uiBitsPerElement) % 8);
+	u32 bytesIndex = (in_uiIndex * m_uiBitsPerElement) / 8;
+	s32 bitIndex = m_uiBufferStartOffsetInBits + ((in_uiIndex * m_uiBitsPerElement) % 8);
 
 	//We need a 16 bit value in case a >1bpp value spans accross 2 bytes.
-	unsigned short v = *(unsigned short*)(&m_pBitField[bytesIndex]);
+	u8 v = *(u8*)(&m_pBitField[bytesIndex]);
 
 	if (Endian::IsLittleEndian)
 	{
@@ -40,20 +40,20 @@ unsigned char BitField::GetElement(unsigned int in_uiIndex) const
 
 	AssertMsg(v < (1 << m_uiBitsPerElement), L("Something wrong happened."));
 	
-	return static_cast<unsigned char>(v);
+	return static_cast<u8>(v);
 }
 
 //--------------------------------------------------------------------------------
-void BitField::SetElement(unsigned int in_uiIndex, unsigned char in_ucValue)
+void BitField::SetElement(u32 in_uiIndex, u8 in_ucValue)
 {
-	unsigned int bytesIndex = (in_uiIndex * m_uiBitsPerElement) / 8;
-	int bitIndex = m_uiBufferStartOffsetInBits + ((in_uiIndex * m_uiBitsPerElement) % 8);
+	u32 bytesIndex = (in_uiIndex * m_uiBitsPerElement) / 8;
+	s32 bitIndex = m_uiBufferStartOffsetInBits + ((in_uiIndex * m_uiBitsPerElement) % 8);
 
 	//We need a 16 bit value in case a >1bpp value spans accross 2 bytes.
-	unsigned short* v = (unsigned short*)(&m_pBitField[bytesIndex]);
+	u8* v = (u8*)(&m_pBitField[bytesIndex]);
 
-	unsigned short value = in_ucValue;
-	unsigned short mask = 0xFF >> (8 - m_uiBitsPerElement);
+	u8 value = in_ucValue;
+	u8 mask = 0xFF >> (8 - m_uiBitsPerElement);
 
 	AssertMsg(in_ucValue <= mask, L("in_ucValue is too large for this bitfield (%d, max = %d)"), in_ucValue, mask);
 

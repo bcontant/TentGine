@@ -10,11 +10,11 @@
 //--------------------------------------------------------------------------------
 #ifdef _MSC_VER
 	#define DEBUGGER_BREAK __debugbreak()
-#else
+#else 
 	#define DEBUGGER_BREAK asm("int $3")
-#endif //_MSC_VER*/
+#endif
 
-#ifdef _DEBUG
+#ifndef _RETAIL
 
 //--------------------------------------------------------------------------------
 #define ASSERT_MESSAGE_BUFFER_SIZE  (16384)
@@ -23,7 +23,7 @@
 extern bool g_bInsideAssertXYZ;
 
 //--------------------------------------------------------------------------------
-int CustomAssertFunction(const StringChar* in_expstr, const StringChar* in_file, const StringChar* in_function, const int in_line, const StringChar* in_desc = L(""), ...);
+s32 CustomAssertFunction(const string_char* in_expstr, const string_char* in_file, const string_char* in_function, const s32 in_line, const string_char* in_desc = L(""), ...);
 
 //--------------------------------------------------------------------------------
 #define AssertMsg(condition, format, ...) \
@@ -32,7 +32,7 @@ int CustomAssertFunction(const StringChar* in_expstr, const StringChar* in_file,
     if( !bAssertAlwaysIgnore && !(condition) ) \
     { \
 		g_bInsideAssertXYZ = true; \
-        int iReturnValueAssert = CustomAssertFunction(L(#condition), L(__FILE__), L(__FUNCTION__), __LINE__, format, ##__VA_ARGS__); \
+        s32 iReturnValueAssert = CustomAssertFunction(L(#condition), L(__FILE__), L(__FUNCTION__), __LINE__, format, ##__VA_ARGS__); \
         if( iReturnValueAssert == 1)  \
         { \
 			DEBUGGER_BREAK; \
@@ -54,4 +54,4 @@ int CustomAssertFunction(const StringChar* in_expstr, const StringChar* in_file,
 #define AssertMsg(condition, format, ...) { ( false ? (void)(condition) : (void)0 ); }
 #define Assert(condition) AssertMsg(condition, nullptr)
 
-#endif  //#ifdef _DEBUG*/
+#endif  //#ifndef _RETAIL*/

@@ -7,12 +7,12 @@ class Path
 {
 public:
 	Path();
-	Path(const StringChar* in_path);
-	Path(const StdString& in_path);
+	Path(const string_char* in_path);
+	Path(const std_string& in_path);
 	Path(const Path& in_path);
 
-	Path& operator=(const StringChar* in_path);
-	Path& operator=(const StdString& in_path);
+	Path& operator=(const string_char* in_path);
+	Path& operator=(const std_string& in_path);
 	Path& operator=(const Path& in_path);
 
 	Path operator+(const Path& in_path) const;
@@ -21,8 +21,8 @@ public:
 	bool operator!=(const Path& in_path) const;
 	bool operator<(const Path& in_path) const;
 
-	const StdString& GetStdString() const { return m_strPath; }
-	const StringChar* GetData() const { return m_strPath.c_str(); }
+	const std_string& Getstd_string() const { return m_strPath; }
+	const string_char* GetData() const { return m_strPath.c_str(); }
 
 	Path GetFolder() const { return Path(m_Folder); }
 	Path GetName() const { return Path(m_Name); }
@@ -40,9 +40,9 @@ private:
 	void BuildPath();
 	void CleanUpPath();
 
-	StdString m_strPath;
+	std_string m_strPath;
 
-	StdString m_Folder;
-	StdString m_Name;
-	StdString m_Extension;
+	std_string m_Folder;
+	std_string m_Name;
+	std_string m_Extension;
 };

@@ -24,9 +24,6 @@
     <ClInclude Include="Texture_DX11.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="WICTextureLoader.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="Quad_DX11.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -39,15 +36,15 @@
     <ClInclude Include="Text_DX11.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="VertexBuffer_DX11.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Renderer_DX11.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Texture_DX11.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="WICTextureLoader.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Quad_DX11.cpp">
@@ -60,6 +57,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Text_DX11.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="VertexBuffer_DX11.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

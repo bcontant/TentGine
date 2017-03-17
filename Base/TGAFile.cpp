@@ -12,18 +12,18 @@
 //--------------------------------------------------------------------------------
 struct TGA_Header
 {
-	char  IDLength = 0;
-	char  ColorMapType = 0;        
-	char  ImageType = 2;
-	short int ColorMapOrigin = 0;
-	short int ColorMapLength = 0;
-	char  ColorMapBPP = 0;
-	short int XOrigin = 0;
-	short int YOrigin = 0;
-	short Width = 0;
-	short Height = 0;
-	char  BPP = 24;
-	char  ImageDescriptor = 0;
+	s8  IDLength = 0;
+	s8  ColorMapType = 0;        
+	s8  ImageType = 2;
+	s16 ColorMapOrigin = 0;
+	s16 ColorMapLength = 0;
+	s8  ColorMapBPP = 0;
+	s16 XOrigin = 0;
+	s16 YOrigin = 0;
+	s16 Width = 0;
+	s16 Height = 0;
+	s8  BPP = 24;
+	s8  ImageDescriptor = 0;
 };
 
 #pragma pack(pop)
@@ -116,9 +116,9 @@ bool SaveTGA(const Path& in_file, BitmapData* in_pData, bool in_bCompress)
 	hdr.XOrigin = 0;
 	hdr.YOrigin = 0;
 	
-	hdr.Width = static_cast<short>(in_pData->GetWidth());
-	hdr.Height = static_cast<short>(in_pData->GetHeight());
-	hdr.BPP = static_cast<char>(in_pData->GetBitsPerPixel());
+	hdr.Width = static_cast<s16>(in_pData->GetWidth());
+	hdr.Height = static_cast<s16>(in_pData->GetHeight());
+	hdr.BPP = static_cast<s8>(in_pData->GetBitsPerPixel());
 
 	hdr.ImageDescriptor |= eTGA_TopLeft << 4;
 	
@@ -130,7 +130,7 @@ bool SaveTGA(const Path& in_file, BitmapData* in_pData, bool in_bCompress)
 	}
 	else
 	{
-		MemoryBuffer SrcBuffer((unsigned char*)in_pData->GetBuffer(), in_pData->GetBufferSize());
+		MemoryBuffer SrcBuffer((u8*)in_pData->GetBuffer(), in_pData->GetBufferSize());
 		RLE_Encode(&SrcBuffer, &TGAFile, hdr.BPP / 8);
 	}
 
@@ -199,8 +199,8 @@ BitmapData* LoadTGA(const Path& in_file)
 		return nullptr;
 	}
 
-	unsigned int uiImageSize = hdr.Width * hdr.Height * (hdr.BPP / 8);
-	unsigned char* pImageData = new unsigned char[uiImageSize];
+	u32 uiImageSize = hdr.Width * hdr.Height * (hdr.BPP / 8);
+	u8* pImageData = new u8[uiImageSize];
 
 	if (hdr.ImageType & eTGA_RLE)
 	{
@@ -209,7 +209,7 @@ BitmapData* LoadTGA(const Path& in_file)
 	}
 	else
 	{
-		unsigned int bytesRead = TGAFile.Read(pImageData, uiImageSize);
+		u32 bytesRead = TGAFile.Read(pImageData, uiImageSize);
 		Assert(bytesRead == uiImageSize);
 	}
 	

@@ -12,6 +12,11 @@ Renderer_DX11::Renderer_DX11(Window* in_pWindow)
 //--------------------------------------------------------------------------------
 Renderer_DX11::~Renderer_DX11()
 {
+	s32 bIsFullscreen;
+	pSwapChain->GetFullscreenState(&bIsFullscreen, nullptr);
+	if(bIsFullscreen)
+		pSwapChain->SetFullscreenState(false, nullptr);
+
 	pBlendState->Release();
 	pPixelShader->Release();
 	pVertexShader->Release();
@@ -19,21 +24,46 @@ Renderer_DX11::~Renderer_DX11()
 	pBackBuffer->Release();
 	pSwapChain->Release();
 	pD3D11DeviceContext->Release();
-	pD3D11Device->Release();
+
+	u32 refCount = pD3D11Device->Release();
+
+	if (refCount > 0)
+		ReportLiveObjects();
 }
 
 //--------------------------------------------------------------------------------
-Texture* Renderer_DX11::CreateTexture(const Path& filename)
+void Renderer_DX11::ReportLiveObjects() const
+{
+	ID3D11Debug* pD3DDebug = nullptr;
+	pD3D11Device->QueryInterface(__uuidof(ID3D11Debug), reinterpret_cast<void**>(&pD3DDebug));
+
+	if (pD3DDebug)
+	{
+		pD3DDebug->ReportLiveDeviceObjects(D3D11_RLDO_DETAIL);
+		pD3DDebug->Release();
+	}
+}
+
+//--------------------------------------------------------------------------------
+Texture* Renderer_DX11::CreateTexture(const Path& filename, EAddressingMode in_eAddressingMode, EFilteringMode in_eMinFilter, EFilteringMode in_eMagFilter, EFilteringMode in_eMipMapFilter)
 {
 	Texture* pTexture = new Texture_DX11(this);
+	pTexture->SetAddressingMode(in_eAddressingMode);
+	pTexture->SetMinFilter(in_eMinFilter);
+	pTexture->SetMagFilter(in_eMagFilter);
+	pTexture->SetMipMapFilter(in_eMipMapFilter);
 	pTexture->Initialize(filename);
 	return pTexture;
 }
 
 //--------------------------------------------------------------------------------
-Texture* Renderer_DX11::CreateTexture(const BitmapData* in_pData)
+Texture* Renderer_DX11::CreateTexture(const BitmapData* in_pData, EAddressingMode in_eAddressingMode, EFilteringMode in_eMinFilter, EFilteringMode in_eMagFilter, EFilteringMode in_eMipMapFilter)
 {
 	Texture* pTexture = new Texture_DX11(this);
+	pTexture->SetAddressingMode(in_eAddressingMode);
+	pTexture->SetMinFilter(in_eMinFilter);
+	pTexture->SetMagFilter(in_eMagFilter);
+	pTexture->SetMipMapFilter(in_eMipMapFilter);
 	pTexture->Initialize(in_pData);
 	return pTexture;
 }
@@ -49,13 +79,20 @@ Quad* Renderer_DX11::CreateQuad(float posX, float posY, Texture* texture)
 }
 
 //--------------------------------------------------------------------------------
-Text* Renderer_DX11::CreateText(float posX, float posY, Font* in_pFont, const StdString& in_strText)
+Text* Renderer_DX11::CreateText(float posX, float posY, Font* in_pFont, const std_string& in_strText)
 {
 	Text_DX11* pText = new Text_DX11(this);
 	pText->SetPosition(posX, posY);
 	pText->SetFont(in_pFont);
 	pText->SetText(in_strText);
 	return pText;
+}
+
+//--------------------------------------------------------------------------------
+VertexBuffer* Renderer_DX11::CreateVertexBuffer(u32 in_uiVertexCount, u32 in_uiVertexMask, EPrimitiveType in_ePrimitiveType, void* in_pVBData, u32 in_eBufferType)
+{
+	VertexBuffer_DX11* pVB = new VertexBuffer_DX11(this, in_uiVertexCount, in_uiVertexMask, in_ePrimitiveType, in_pVBData, in_eBufferType);
+	return pVB;
 }
 
 //--------------------------------------------------------------------------------
@@ -72,6 +109,9 @@ void Renderer_DX11::StartFrame()
 		hr = pSwapChain->ResizeBuffers(1, m_pWindow->GetWidth(), m_pWindow->GetHeight(), DXGI_FORMAT_R8G8B8A8_UNORM, 0);
 		hr = pSwapChain->GetBuffer(0, __uuidof(ID3D11Texture2D), (void**)&pBackBuffer);
 		hr = pD3D11Device->CreateRenderTargetView(pBackBuffer, nullptr, &pBackBufferView);
+
+		SET_D3D11_OBJECT_NAME(pBackBuffer);
+		SET_D3D11_OBJECT_NAME(pBackBufferView);
 
 		pD3D11DeviceContext->OMSetRenderTargets(1, &pBackBufferView, nullptr);
 
@@ -95,7 +135,7 @@ void Renderer_DX11::EndFrame()
 }
 
 //--------------------------------------------------------------------------------
-unsigned int Renderer_DX11::GetBackBufferWidth() const
+u32 Renderer_DX11::GetBackBufferWidth() const
 {
 	D3D11_TEXTURE2D_DESC desc;
 	pBackBuffer->GetDesc(&desc);
@@ -103,7 +143,7 @@ unsigned int Renderer_DX11::GetBackBufferWidth() const
 }
 
 //--------------------------------------------------------------------------------
-unsigned int Renderer_DX11::GetBackBufferHeight() const
+u32 Renderer_DX11::GetBackBufferHeight() const
 {
 	D3D11_TEXTURE2D_DESC desc;
 	pBackBuffer->GetDesc(&desc);
@@ -128,12 +168,24 @@ void Renderer_DX11::Initialize(DisplayAdapter* /*in_pAdapter*/, Window* in_pWind
 	swapChainDesc.SwapEffect = DXGI_SWAP_EFFECT_DISCARD;
 	//swapChainDesc.SwapEffect = DXGI_SWAP_EFFECT_SEQUENTIAL;
 
+#ifndef _RETAIL
 	HResult hr = D3D11CreateDeviceAndSwapChain(nullptr, D3D_DRIVER_TYPE_HARDWARE, nullptr, D3D11_CREATE_DEVICE_DEBUG, nullptr, 0, D3D11_SDK_VERSION, &swapChainDesc, &pSwapChain, &pD3D11Device, nullptr, &pD3D11DeviceContext);
-	//pRenderer->pSwapChain->SetFullscreenState(TRUE, nullptr);
+#else
+	HResult hr = D3D11CreateDeviceAndSwapChain(nullptr, D3D_DRIVER_TYPE_HARDWARE, nullptr, 0, nullptr, 0, D3D11_SDK_VERSION, &swapChainDesc, &pSwapChain, &pD3D11Device, nullptr, &pD3D11DeviceContext);
+#endif
 
+	SET_D3D11_OBJECT_NAME(pSwapChain);
+	SET_D3D11_OBJECT_NAME(pD3D11Device);
+	SET_D3D11_OBJECT_NAME(pD3D11DeviceContext);
+
+	//pSwapChain->SetFullscreenState(TRUE, nullptr);
+	
 	hr = pSwapChain->GetBuffer(0, __uuidof(ID3D11Texture2D), (void**)&pBackBuffer);
 	hr = pD3D11Device->CreateRenderTargetView(pBackBuffer, nullptr, &pBackBufferView);
 	pD3D11DeviceContext->OMSetRenderTargets(1, &pBackBufferView, nullptr);
+
+	SET_D3D11_OBJECT_NAME(pBackBuffer);
+	SET_D3D11_OBJECT_NAME(pBackBufferView);
 
 	D3D11_VIEWPORT viewport = {};
 	viewport.TopLeftX = 0;
@@ -148,6 +200,9 @@ void Renderer_DX11::Initialize(DisplayAdapter* /*in_pAdapter*/, Window* in_pWind
 	pD3D11DeviceContext->VSSetShader(pVertexShader, 0, 0);
 	pD3D11DeviceContext->PSSetShader(pPixelShader, 0, 0);
 
+	SET_D3D11_OBJECT_NAME(pVertexShader);
+	SET_D3D11_OBJECT_NAME(pPixelShader);
+
 	D3D11_BLEND_DESC BlendState = {};
 	BlendState.RenderTarget[0].BlendEnable = TRUE;
 	BlendState.RenderTarget[0].BlendOp = D3D11_BLEND_OP_ADD;
@@ -159,9 +214,11 @@ void Renderer_DX11::Initialize(DisplayAdapter* /*in_pAdapter*/, Window* in_pWind
 	BlendState.RenderTarget[0].RenderTargetWriteMask = D3D11_COLOR_WRITE_ENABLE_ALL;
 	pD3D11Device->CreateBlendState(&BlendState, &pBlendState);
 
+	SET_D3D11_OBJECT_NAME(pBlendState);
+
 	pD3D11DeviceContext->OMSetBlendState(pBlendState, nullptr, 0xffffffff);
 
-	IDXGIDevice * pDXGIDevice;
+	/*IDXGIDevice * pDXGIDevice;
 	hr = pD3D11Device->QueryInterface(__uuidof(IDXGIDevice), (void **)&pDXGIDevice);
 
 	IDXGIAdapter * pDXGIAdapter;
@@ -175,7 +232,7 @@ void Renderer_DX11::Initialize(DisplayAdapter* /*in_pAdapter*/, Window* in_pWind
 
 	pIDXGIFactory->Release();
 	pDXGIAdapter->Release();
-	pDXGIDevice->Release();
+	pDXGIDevice->Release();*/
 }
 
 //--------------------------------------------------------------------------------

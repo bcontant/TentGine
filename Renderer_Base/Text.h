@@ -4,7 +4,7 @@
 #include "../Base/Rect.h"
 
 class Font;
-
+class VertexBuffer;
 
 class Text : public RendererObject
 {
@@ -16,12 +16,12 @@ public:
 
 	virtual void SetPosition(float in_x, float in_y);
 	virtual void SetFont(const Font* in_pFont);
-	virtual void SetText(const StdString& in_strText);
+	virtual void SetText(const std_string& in_strText);
 
 protected:
 	struct Character
 	{
-		Rect<int> m_Position;
+		Rect<s32> m_Position;
 		Rect<float> m_UVs;
 	};
 	virtual void UpdateText();
@@ -29,10 +29,12 @@ protected:
 protected:
 	const Font* m_pFont = nullptr;
 
-	StdString m_strText = L("");
+	std_string m_strText = L("");
 
 	float m_xPos;
 	float m_yPos;
 
 	std::vector<Character> m_vCharacters;
+
+	VertexBuffer* m_pVertexBuffer = nullptr;
 };

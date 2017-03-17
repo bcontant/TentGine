@@ -3,11 +3,11 @@
 #include "Buffer.h"
 
 //--------------------------------------------------------------------------------
-bool RLE_Decode(Buffer* in_SrcBuffer, Buffer* out_DstBuffer, unsigned int in_uiSizeToDecode, unsigned char in_ucElementSize)
+bool RLE_Decode(Buffer* in_SrcBuffer, Buffer* out_DstBuffer, u32 in_uiSizeToDecode, u8 in_ucElementSize)
 {
-	unsigned int bytesRead = 0;
-	static unsigned char value[4];
-	unsigned char runCount = 0;
+	u32 bytesRead = 0;
+	static u8 value[4];
+	u8 runCount = 0;
 
 	//Loop for the whole image
 	while (bytesRead < in_uiSizeToDecode)
@@ -18,7 +18,7 @@ bool RLE_Decode(Buffer* in_SrcBuffer, Buffer* out_DstBuffer, unsigned int in_uiS
 		{
 			runCount -= 127;
 			in_SrcBuffer->Read(value, in_ucElementSize);
-			for (unsigned int i = 0; i < runCount; i++)
+			for (u32 i = 0; i < runCount; i++)
 			{
 				out_DstBuffer->Write(value, in_ucElementSize);
 			}
@@ -35,12 +35,12 @@ bool RLE_Decode(Buffer* in_SrcBuffer, Buffer* out_DstBuffer, unsigned int in_uiS
 }
 
 //--------------------------------------------------------------------------------
-bool RLE_Encode(Buffer* in_SrcBuffer, Buffer* out_DstBuffer, unsigned char in_ucElementSize)
+bool RLE_Encode(Buffer* in_SrcBuffer, Buffer* out_DstBuffer, u8 in_ucElementSize)
 {
-	unsigned int writtenBytes = 0;
-	unsigned char consecutiveRunSize = 1;
-	unsigned char rawRunSize = 0;
-	unsigned int currentRunIndex = 0;
+	u32 writtenBytes = 0;
+	u8 consecutiveRunSize = 1;
+	u8 rawRunSize = 0;
+	u32 currentRunIndex = 0;
 
 	while (writtenBytes < in_SrcBuffer->Size())
 	{
@@ -72,7 +72,7 @@ bool RLE_Encode(Buffer* in_SrcBuffer, Buffer* out_DstBuffer, unsigned char in_uc
 		if (rawRunSize > 0)
 		{
 			Assert(rawRunSize > 0);
-			unsigned char runSize = rawRunSize - 1;
+			u8 runSize = rawRunSize - 1;
 			out_DstBuffer->Write(&runSize, 1);
 			out_DstBuffer->Write(in_SrcBuffer, rawRunSize * in_ucElementSize);
 			writtenBytes += rawRunSize * in_ucElementSize;
@@ -81,7 +81,7 @@ bool RLE_Encode(Buffer* in_SrcBuffer, Buffer* out_DstBuffer, unsigned char in_uc
 		//Write the consecutiveRun if any
 		if (consecutiveRunSize >= 2)
 		{
-			unsigned char runSize = consecutiveRunSize - 1;
+			u8 runSize = consecutiveRunSize - 1;
 			runSize |= 0x80;
 			out_DstBuffer->Write(&runSize, 1);
 			out_DstBuffer->Write(in_SrcBuffer, in_ucElementSize);

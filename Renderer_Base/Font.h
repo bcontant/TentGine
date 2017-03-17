@@ -17,8 +17,9 @@ public:
 	void Load(const Path& in_filename);
 
 	const FontDataFile* GetFontInfo() const { return m_FontDataFile; }
+	const Texture* GetTexture() const { return m_pFontTexture; }
 
-//private:
+private:
 	FontDataFile* m_FontDataFile;
 	Texture* m_pFontTexture;
 };

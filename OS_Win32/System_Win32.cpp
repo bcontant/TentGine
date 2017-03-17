@@ -8,13 +8,13 @@
 namespace OS
 {
 	//--------------------------------------------------------------------------------
-	void DebugOut(StringChar* in_pMessage)
+	void DebugOut(string_char* in_pMessage)
 	{
 		OutputDebugString(in_pMessage);
 	}
 
 	//--------------------------------------------------------------------------------
-	int ShowMessageBox(const StringChar* title, const StringChar* message, unsigned int buttons)
+	s32 ShowMessageBox(const string_char* title, const string_char* message, u32 buttons)
 	{
 		UINT type = 0;
 		if (buttons == (eAbort | eRetry | eIgnore) )
@@ -30,7 +30,7 @@ namespace OS
 		else
 			return -1;
 		
-		int iRet = MessageBox(nullptr, message, title, type);
+		s32 iRet = MessageBox(nullptr, message, title, type);
 		switch (iRet)
 		{
 		case (IDOK) :
@@ -58,26 +58,26 @@ namespace OS
 	}
 
 	//--------------------------------------------------------------------------------
-	std::vector<StdString> GetCallStack()
+	std::vector<std_string> GetCallStack()
 	{
-		std::vector<StdString> stackTrace;
+		std::vector<std_string> stackTrace;
 		
 		HANDLE process = GetCurrentProcess();
 		SymInitialize(process, nullptr, TRUE);
 
 		// ## The sum of the FramesToSkip and FramesToCapture parameters must be less than 63.
-		const int kMaxCallers = 62;
+		const s32 kMaxCallers = 62;
 		void* callers_stack[kMaxCallers];
-		unsigned short frames = RtlCaptureStackBackTrace(0, kMaxCallers, callers_stack, nullptr);
+		u16 frames = RtlCaptureStackBackTrace(0, kMaxCallers, callers_stack, nullptr);
 
-		SYMBOL_INFO* symbol = (SYMBOL_INFO *)calloc(sizeof(SYMBOL_INFO) + 256 * sizeof(char), 1);
+		SYMBOL_INFO* symbol = (SYMBOL_INFO *)calloc(sizeof(SYMBOL_INFO) + 256 * sizeof(s8), 1);
 		symbol->MaxNameLen = 255;
 		symbol->SizeOfStruct = sizeof(SYMBOL_INFO);
 
-		for (unsigned int i = 1; i < frames; i++)
+		for (u32 i = 1; i < frames; i++)
 		{
 			SymFromAddr(process, (DWORD64)(callers_stack[i]), 0, symbol);
-			StdString function = FROM_STRING(symbol->Name);
+			std_string function = FROM_STRING(symbol->Name);
 			stackTrace.push_back(Format(L(" %s (0x%0X)"), function.c_str(), symbol->Address));
 
 			if (function == L("main") || function == L("WinMain"))
@@ -89,17 +89,17 @@ namespace OS
 	}
 
 	//--------------------------------------------------------------------------------
-	__int64 GetTickCount()
+	s64 GetTickCount()
 	{
-		__int64 t;
+		s64 t;
 		QueryPerformanceCounter((LARGE_INTEGER*)&t);
 		return t;
 	}
 
 	//--------------------------------------------------------------------------------
-	__int64 GetTickFrequency()
+	s64 GetTickFrequency()
 	{
-		static __int64 freq = 0;
+		static s64 freq = 0;
 
 		if(freq == 0)
 			QueryPerformanceFrequency((LARGE_INTEGER*)&freq);

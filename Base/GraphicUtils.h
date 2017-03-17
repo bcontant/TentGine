@@ -6,10 +6,10 @@
 //TODO Make a proper class
 struct PackRect
 {
-	unsigned int x;
-	unsigned int y;
-	unsigned int size_x;
-	unsigned int size_y;
+	u32 x;
+	u32 y;
+	u32 size_x;
+	u32 size_y;
 
 	void* user_data;
 };
@@ -22,4 +22,4 @@ struct PackRect
 //
 // @Return Value 
 // std::vector with all the rects that were successfully packed into the texture
-std::vector<PackRect> PackTexture(std::vector<PackRect>& io_vRects, unsigned int in_uiTextureWidth, unsigned int in_uiTextureHeight, unsigned int in_uiPadding);
+std::vector<PackRect> PackTexture(std::vector<PackRect>& io_vRects, u32 in_uiTextureWidth, u32 in_uiTextureHeight, u32 in_uiPadding);

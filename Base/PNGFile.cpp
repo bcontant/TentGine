@@ -62,8 +62,8 @@ bool SavePNG(const Path& in_file, BitmapData* in_pData)
 		return false;
 	}
 
-	int bit_depth = 0;
-	int color_type = 0;
+	s32 bit_depth = 0;
+	s32 color_type = 0;
 	switch (in_pData->GetFormat())
 	{
 	case BufferFormat::A_U1:
@@ -85,9 +85,9 @@ bool SavePNG(const Path& in_file, BitmapData* in_pData)
 	if (setjmp(png_jmpbuf(png_ptr)))
 		AssertMsg(false, L("Error during writing bytes"));
 
-	unsigned char* pBuffer = (unsigned char*)in_pData->GetBuffer();
-	unsigned char** row_pointers = new unsigned char*[in_pData->GetHeight()];
-	for (unsigned int i = 0; i < in_pData->GetHeight(); i++)
+	u8* pBuffer = (u8*)in_pData->GetBuffer();
+	u8** row_pointers = new u8*[in_pData->GetHeight()];
+	for (u32 i = 0; i < in_pData->GetHeight(); i++)
 	{
 		row_pointers[i] = pBuffer;
 		pBuffer += in_pData->GetBufferPitch();
@@ -115,7 +115,7 @@ BitmapData* LoadPNG(const Path& in_file)
 {
 	PROFILE_BLOCK;
 
-	unsigned char header[8];
+	u8 header[8];
 
 	FILE *fp = nullptr;
 	FOPEN(&fp, in_file.GetData(), L("rb"));
@@ -158,10 +158,10 @@ BitmapData* LoadPNG(const Path& in_file)
 
 	png_read_info(png_ptr, info_ptr);
 
-	int width = png_get_image_width(png_ptr, info_ptr);
-	int height = png_get_image_height(png_ptr, info_ptr);
-	unsigned char color_type = png_get_color_type(png_ptr, info_ptr);
-	unsigned char bit_depth = png_get_bit_depth(png_ptr, info_ptr);
+	s32 width = png_get_image_width(png_ptr, info_ptr);
+	s32 height = png_get_image_height(png_ptr, info_ptr);
+	u8 color_type = png_get_color_type(png_ptr, info_ptr);
+	u8 bit_depth = png_get_bit_depth(png_ptr, info_ptr);
 
 	png_read_update_info(png_ptr, info_ptr);
 
@@ -171,9 +171,9 @@ BitmapData* LoadPNG(const Path& in_file)
 		return nullptr;
 	}
 
-	unsigned char* pBuffer = new unsigned char[height * png_get_rowbytes(png_ptr, info_ptr)];
-	unsigned char** row_pointers = new unsigned char*[height];
-	for (int y = 0; y < height; y++)
+	u8* pBuffer = new u8[height * png_get_rowbytes(png_ptr, info_ptr)];
+	u8** row_pointers = new u8*[height];
+	for (s32 y = 0; y < height; y++)
 		row_pointers[y] = pBuffer + (png_get_rowbytes(png_ptr, info_ptr) * y);
 	
 	png_read_image(png_ptr, row_pointers);
@@ -189,8 +189,8 @@ BitmapData* LoadPNG(const Path& in_file)
 		format = BufferFormat::A_U8;
 	else if (color_type == 2 && bit_depth == 8)
 		format = BufferFormat::BGR_U24;
-	else if (color_type == 3)
-		format = BufferFormat::BGR_U24;
+	//else if (color_type == 3)
+	//	format = BufferFormat::BGR_U24;
 	else if (color_type == 6 && bit_depth == 8)
 		format = BufferFormat::ABGR_U32;
 	else
@@ -200,7 +200,7 @@ BitmapData* LoadPNG(const Path& in_file)
 		return nullptr;
 	}
 
-	BitmapData* pData = new BitmapData(width, height, pBuffer, format, (unsigned int)png_get_rowbytes(png_ptr, info_ptr));
+	BitmapData* pData = new BitmapData(width, height, pBuffer, format, (u32)png_get_rowbytes(png_ptr, info_ptr));
 	return pData;
 }
 

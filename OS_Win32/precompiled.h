@@ -10,6 +10,8 @@
 #include <vector>
 #include <map>
 
+#include "../Base/Types.h"
+
 #include "Window_Win32.h"
 
 #include "../Base/StringUtils.h"

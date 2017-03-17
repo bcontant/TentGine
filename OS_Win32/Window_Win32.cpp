@@ -1,7 +1,7 @@
 #include "precompiled.h"
 
 //--------------------------------------------------------------------------------
-Window* Window::Create(int width, int height, bool fullscreen, void* hInstance)
+Window* Window::Create(s32 width, s32 height, bool fullscreen, void* hInstance)
 {
 	Window* pWindow = new Window_Win32();
 	pWindow->InitWindow(width, height, fullscreen, hInstance);
@@ -14,7 +14,7 @@ Window_Win32::~Window_Win32()
 }
 
 //--------------------------------------------------------------------------------
-void Window_Win32::InitWindow(int width, int height, bool /*fullscreen*/, void* hInstance)
+void Window_Win32::InitWindow(s32 width, s32 height, bool /*fullscreen*/, void* hInstance)
 {
 	WNDCLASSEX wcex = { sizeof(WNDCLASSEX) };
 	wcex.style = CS_HREDRAW | CS_VREDRAW;
@@ -57,7 +57,7 @@ bool Window_Win32::ProcessMessages()
 }
 
 //--------------------------------------------------------------------------------
-bool Window_Win32::MessageCallback(void* /*hwnd*/, unsigned int message, uint64_t /*wParam*/, int64_t lParam)
+bool Window_Win32::MessageCallback(void* /*hwnd*/, u32 message, u64 /*wParam*/, s64 lParam)
 {
 	switch (message)
 	{

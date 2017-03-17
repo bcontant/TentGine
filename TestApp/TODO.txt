@@ -1,13 +1,21 @@
 TODO
 ====
-- Vertex Buffers implementation
-- Static / Dynamic VBs
-
 - Material implementation
   - Diffuse Color
   - Texture
     - Texture hold its sampling state?  Or material?
+  - Holds shaders
+  - Can have multiple shaders for multiple input data (pos/uv only, pos/uv/normal, etc)
 
+- Shader
+  - Responsible for holding and updating their ConstantBuffers
+  - Callers will set the CB values
+
+- InputLayout
+  - Renderer responsibility to make the active geometry (VB) connect correctly to the desired Material (shaders, textures, etc)
+
+- Rendering Overlord should minimize duplication (SamplerStater, InputLayouts, ConstantBuffers)
+  
 - Text implementation
   - Support Tabs
   - Support Linebreaks
@@ -24,9 +32,9 @@ TODO
   - Implement SDF Generation
   - Implement SDF Rendering
 
-- Remove the WIC Stuff
-
 - BitmapData : Threaded conversion?
+
+- PNG Loader : Support Indexed Color (Type:3) ?
 
 - BMP loader / saver
 - JPG loader / saver
@@ -48,15 +56,14 @@ TODO
 - GetDeviceList
 - GetDeviceCaps
 
-- Basic header for uniform type definition (u8, s8, u16, s16, u32, s32, float, double, u64, s64, etc)
-
-
 DONE 
 ====
-
-- Texture should init from a BitmapData (remove simple unsigned char* buffers)
-
+- Texture should init from a BitmapData (remove simple u8* buffers)
 - FontDataFile should use BitmapImage
 - FontDataFile should have a std::vector<GlyphInfo> and a std::map<wchar_t, GlyphInfo*>
-
 - Simple Text implementation
+- Vertex Buffers implementation
+- Static / Dynamic VBs
+- Cross Platform Vector + Matrix
+- Basic header for uniform type definition (u8, s8, u16, s16, u32, s32, float, double, u64, s64, etc)
+- Remove the WIC Stuff

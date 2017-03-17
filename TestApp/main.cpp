@@ -2,13 +2,12 @@
 #include <stdio.h>
 #include <algorithm>
 
+#include "../Base/Types.h"
+
 #include "../Base/Assert.h"
 #include "../Base/Logger.h"
 #include "../Base/Profiler.h"
 #include "../Base/Path.h"
-#include "../Base/BitmapData.h"
-#include "../Base/TGAFile.h"
-#include "../Base/PNGFile.h"
 
 #include "../OS_Base/System.h"
 #include "../OS_Base/FontBuilder.h"
@@ -20,7 +19,10 @@
 #include "../Renderer_Base/Texture.h"
 #include "../Renderer_Base/Text.h"
 
-int CALLBACK WinMain(HINSTANCE hInstance, HINSTANCE, LPSTR, int)
+#include "turbojpeg.h"
+#include "jpeglib.h"
+
+int CALLBACK WinMain(HINSTANCE hInstance, HINSTANCE, LPSTR, s32)
 {
 	Logger::CreateInstance();
 	Profiler::CreateInstance();
@@ -38,24 +40,23 @@ int CALLBACK WinMain(HINSTANCE hInstance, HINSTANCE, LPSTR, int)
 	//OS::GetDisplayAdapters();
 	
 	Renderer* pRenderer = Renderer::CreateRenderer(nullptr, pWindow); 
-	Texture* pTexture1 = pRenderer->CreateTexture(L("../../data/stuff.gif"));
-	Texture* pTexture2 = pRenderer->CreateTexture(L("../../data/papa.jpg"));
-	Texture* pTexture3 = pRenderer->CreateTexture(L("../../data/red.png"));
 
-	Font* pFont = pRenderer->LoadFont(L("../../data/Courier New Bold 24pt.font"));
-	Font* pFont2 = pRenderer->LoadFont(L("../../data/Hylia Serif Beta Regular 48pt.font"));
-
+	Texture* pTexture1 = pRenderer->CreateTexture(L("../../data/stuff.png"), EAddressingMode::eWrap, EFilteringMode::ePoint, EFilteringMode::ePoint, EFilteringMode::ePoint);
+	Texture* pTexture2 = pRenderer->CreateTexture(L("../../data/papa.png"), EAddressingMode::eWrap, EFilteringMode::ePoint, EFilteringMode::ePoint, EFilteringMode::ePoint);
+	Texture* pTexture3 = pRenderer->CreateTexture(L("../../data/red.png"), EAddressingMode::eWrap, EFilteringMode::ePoint, EFilteringMode::ePoint, EFilteringMode::ePoint);
+	
 	Quad* pQuad = pRenderer->CreateQuad(0.f, 0.f, pTexture2);
 	Quad* pQuad2 = pRenderer->CreateQuad(0.5f, 0.5f, pTexture1);
 	Quad* pQuad3 = pRenderer->CreateQuad(0.75f, 0.25f, pTexture3);
 
-	//Quad* pQuad2 = pRenderer->CreateQuad(0.f, 0.f, pFont->m_pFontTexture);
+	Font* pFont = pRenderer->LoadFont(L("../../data/Courier New Bold 24pt.font"));
+	Font* pFont2 = pRenderer->LoadFont(L("../../data/Hylia Serif Beta Regular 48pt.font"));
 
-	Text* pText = pRenderer->CreateText(0.0f, 0.0f, pFont, L("XXXXX.XX FPS"));
+	Text* pText = pRenderer->CreateText(0.0f, 0.0f, pFont, L("0 FPS"));
 	Text* pText2 = pRenderer->CreateText(0.2f, 0.2f, pFont2, L("ZELDA Breath of the Wild"));
-
-
-	__int64 lastTime = OS::GetTickCount();
+	
+	s64 lastTime = OS::GetTickCount();
+	u32 frameCount = 0;
 
 	while(1)
 	{
@@ -64,17 +65,21 @@ int CALLBACK WinMain(HINSTANCE hInstance, HINSTANCE, LPSTR, int)
 		
 		pRenderer->StartFrame();
 		pQuad->Draw();
-		//pQuad2->Draw();
+		pQuad2->Draw();
 		pQuad3->Draw();
 		pText->Draw();
-		//pText2->Draw();
+		pText2->Draw();
 		pRenderer->EndFrame();
 
-		__int64 time = OS::GetTickCount();
-		__int64 delta = time - lastTime;
-		lastTime = time;
+		s64 time = OS::GetTickCount();
 
-		pText->SetText(Format(L("%.2f FPS"), 1.0 / (double(delta) / OS::GetTickFrequency())));
+		frameCount++;
+		if ((time - lastTime) > OS::GetTickFrequency())
+		{
+			lastTime = time;
+			pText->SetText(Format(L("%d FPS"), frameCount));
+			frameCount = 0;
+		}
 	}
 
 	delete pText2;

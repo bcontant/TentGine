@@ -10,6 +10,8 @@
 
 #include <memory>
 
+#include "../Base/Types.h"
+
 #include "../Base/StringUtils.h"
 #include "../Base/Logger.h"
 #include "../Base/Profiler.h"
@@ -21,6 +23,6 @@
 #include "Texture_DX11.h"
 #include "Quad_DX11.h"
 #include "Text_DX11.h"
-#include "WICTextureLoader.h"
+#include "VertexBuffer_DX11.h"
 
 #include "../OS_Base/Window.h"

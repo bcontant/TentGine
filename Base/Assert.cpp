@@ -2,19 +2,19 @@
 
 #include "../OS_Base/System.h"
 
-#ifdef _DEBUG
+#ifndef _RETAIL
 
 //--------------------------------------------------------------------------------
 //Prevent re-entrance from the Logger
 bool g_bInsideAssertXYZ = false;
 
 //------------------------------------------------------------------------------
-int CustomAssertFunction(const StringChar* in_expstr, const StringChar* in_file, const StringChar* in_function, const int in_line, const StringChar* in_desc, ...)
+s32 CustomAssertFunction(const string_char* in_expstr, const string_char* in_file, const string_char* in_function, const s32 in_line, const string_char* in_desc, ...)
 {
 	//Temp strings to store the MessageBox error
-	static StringChar strFormattedMessage[ASSERT_MESSAGE_BUFFER_SIZE];
-	StdString strMessage;
-	StdString strLocation;
+	static string_char strFormattedMessage[ASSERT_MESSAGE_BUFFER_SIZE];
+	std_string strMessage;
+	std_string strLocation;
 
 	//If the assertion is false and we're not ignoring
 	va_list ArgPtr;
@@ -26,7 +26,7 @@ int CustomAssertFunction(const StringChar* in_expstr, const StringChar* in_file,
 		va_end(ArgPtr);
 	}
 
-	std::vector<StdString> stackTrace = OS::GetCallStack();
+	std::vector<std_string> stackTrace = OS::GetCallStack();
 	
 	if (Logger::GetInstance())
 	{
@@ -36,7 +36,7 @@ int CustomAssertFunction(const StringChar* in_expstr, const StringChar* in_file,
 			strMessage += Format(L("%s : %s\n"), in_function, strFormattedMessage);
 		strMessage += Format(L("%s(%d)\n"), in_file, in_line);
 		strMessage += L("Stack Trace:\n");
-		for (unsigned int i = 1; i < stackTrace.size(); i++)
+		for (u32 i = 1; i < stackTrace.size(); i++)
 			strMessage += stackTrace[i] + L("\n");
 		strMessage += L("***************");
 
@@ -48,10 +48,10 @@ int CustomAssertFunction(const StringChar* in_expstr, const StringChar* in_file,
 		strMessage += Format(L("%s : %s\n\n"), in_function, strFormattedMessage);
 	strMessage += Format(L("%s(%d)\n\n"), in_file, in_line);
 	strMessage += L("Stack Trace:\n");
-	for (unsigned int i = 1; i < stackTrace.size(); i++)
+	for (u32 i = 1; i < stackTrace.size(); i++)
 		strMessage += stackTrace[i] + L("\n");
 
-	int iRet = OS::ShowMessageBox(L("ASSERTION FAILED"), strMessage.c_str(), OS::eAbort | OS::eRetry | OS::eIgnore);
+	s32 iRet = OS::ShowMessageBox(L("ASSERTION FAILED"), strMessage.c_str(), OS::eAbort | OS::eRetry | OS::eIgnore);
 	switch (iRet)
 	{
 	case(OS::eAbort) :
@@ -68,6 +68,6 @@ int CustomAssertFunction(const StringChar* in_expstr, const StringChar* in_file,
 	}
 }
 
-#endif
+#endif //#ifndef _RETAIL
 
 

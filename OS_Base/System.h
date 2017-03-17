@@ -6,7 +6,7 @@
 namespace OS
 {
 	//--------------------------------------------------------------------------------
-	void DebugOut(StringChar* in_pMessage);
+	void DebugOut(string_char* in_pMessage);
 
 	//--------------------------------------------------------------------------------
 	enum PopupButtons
@@ -21,17 +21,17 @@ namespace OS
 	};
 
 	//--------------------------------------------------------------------------------
-	int ShowMessageBox(const StringChar* title, const StringChar* message, unsigned int buttons);
+	s32 ShowMessageBox(const string_char* title, const string_char* message, u32 buttons);
 
 	//--------------------------------------------------------------------------------
 	bool LShiftDown();
 
 	//--------------------------------------------------------------------------------
-	std::vector<StdString> GetCallStack();
+	std::vector<std_string> GetCallStack();
 
 	//--------------------------------------------------------------------------------
-	__int64 GetTickCount();
+	s64 GetTickCount();
 
 	//--------------------------------------------------------------------------------
-	__int64 GetTickFrequency();
+	s64 GetTickFrequency();
 }

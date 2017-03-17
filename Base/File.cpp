@@ -2,7 +2,7 @@
 
 #include "File.h"
 
-static const std::map<FileMode, StdString> kFileModes =
+static const std::map<FileMode, std_string> kFileModes =
 {
 	std::make_pair(FileMode::ReadOnly,			L("rb")),
 	std::make_pair(FileMode::WriteOnly,			L("wb")),
@@ -74,18 +74,18 @@ void File::Flush()
 }
 
 //--------------------------------------------------------------------------------
-unsigned long int File::Size() const
+u32 File::Size() const
 {
 	if (!m_FileHandle)
 		return 0;
 
 	// Save current cursor position in stream
-	long int filePos = ftell(m_FileHandle);
+	u32 filePos = ftell(m_FileHandle);
 
 	// Sets the position indicator to the end of file
-	int ret = fseek(m_FileHandle, 0, SEEK_END);
+	s32 ret = fseek(m_FileHandle, 0, SEEK_END);
 	// Save end of file position
-	long int u32FileBufferSize = ftell(m_FileHandle);
+	u32 u32FileBufferSize = ftell(m_FileHandle);
 
 	// Replace cursor position to initial one
 	ret = fseek(m_FileHandle, filePos, SEEK_SET);
@@ -94,7 +94,7 @@ unsigned long int File::Size() const
 }
 
 //--------------------------------------------------------------------------------
-unsigned int File::Advance(unsigned int size)
+u32 File::Advance(u32 size)
 {
 	AssertMsg(m_FileMode == FileMode::ReadOnly || m_FileMode == FileMode::ReadWrite || m_FileMode == FileMode::ReadAppend, L("Invalid Filemode"));
 
@@ -109,7 +109,7 @@ unsigned int File::Advance(unsigned int size)
 }
 
 //--------------------------------------------------------------------------------
-unsigned int File::SeekTo(unsigned int offset)
+u32 File::SeekTo(u32 offset)
 {
 	AssertMsg(m_FileMode == FileMode::ReadOnly || m_FileMode == FileMode::ReadWrite || m_FileMode == FileMode::ReadAppend, L("Invalid Filemode"));
 	
@@ -124,22 +124,22 @@ unsigned int File::SeekTo(unsigned int offset)
 }
 
 //--------------------------------------------------------------------------------
-const void* File::PeekAt(unsigned int /*offset*/) const
+const void* File::PeekAt(u32 /*offset*/) const
 {
 	Assert(false);
 	return nullptr;
 }
 
-static unsigned char* pTmpBuffer = new unsigned char[1024];
-static unsigned int uiTmpBufferSize = 1024;
+static u8* pTmpBuffer = new u8[1024];
+static u32 uiTmpBufferSize = 1024;
 
 //--------------------------------------------------------------------------------
-unsigned int File::Read(Buffer* buffer, unsigned int bufferSize)
+u32 File::Read(Buffer* buffer, u32 bufferSize)
 { 
 	if (bufferSize > uiTmpBufferSize)
 	{
 		delete[] pTmpBuffer;
-		pTmpBuffer = new unsigned char[bufferSize];
+		pTmpBuffer = new u8[bufferSize];
 		uiTmpBufferSize = bufferSize;
 	}
 	Read(pTmpBuffer, bufferSize);
@@ -147,12 +147,12 @@ unsigned int File::Read(Buffer* buffer, unsigned int bufferSize)
 }
 
 //--------------------------------------------------------------------------------
-unsigned int File::Write(Buffer* buffer, unsigned int bufferSize) 
+u32 File::Write(Buffer* buffer, u32 bufferSize) 
 { 
 	if (bufferSize > uiTmpBufferSize)
 	{
 		delete[] pTmpBuffer;
-		pTmpBuffer = new unsigned char[bufferSize];
+		pTmpBuffer = new u8[bufferSize];
 		uiTmpBufferSize = bufferSize;
 	}
 	buffer->Read(pTmpBuffer, bufferSize);
@@ -160,7 +160,7 @@ unsigned int File::Write(Buffer* buffer, unsigned int bufferSize)
 }
 
 //--------------------------------------------------------------------------------
-unsigned int File::Read(void* buffer, unsigned int bufferSize)
+u32 File::Read(void* buffer, u32 bufferSize)
 {
 	AssertMsg(m_FileMode == FileMode::ReadOnly || m_FileMode == FileMode::ReadWrite || m_FileMode == FileMode::ReadAppend, L("Invalid Filemode"));
 
@@ -169,12 +169,12 @@ unsigned int File::Read(void* buffer, unsigned int bufferSize)
 		return 0;
 
 	// Read in the data
-	unsigned int sizeRead = static_cast<unsigned int>(fread(buffer, 1, bufferSize, m_FileHandle));
+	u32 sizeRead = static_cast<u32>(fread(buffer, 1, bufferSize, m_FileHandle));
 	return sizeRead;
 }
 
 //--------------------------------------------------------------------------------
-unsigned int File::Write(const void* buffer, unsigned int bufferSize)
+u32 File::Write(const void* buffer, u32 bufferSize)
 {
 	AssertMsg(m_FileMode == FileMode::WriteOnly || m_FileMode == FileMode::Append || m_FileMode == FileMode::ReadAppend, L("Invalid Filemode"));
 
@@ -183,11 +183,11 @@ unsigned int File::Write(const void* buffer, unsigned int bufferSize)
 		return 0;
 
 	// Write the data
-	return static_cast<unsigned int>(fwrite(buffer, 1, bufferSize, m_FileHandle));
+	return static_cast<u32>(fwrite(buffer, 1, bufferSize, m_FileHandle));
 }
 
 //--------------------------------------------------------------------------------
-unsigned int File::Read(StdString& in_string)
+u32 File::Read(std_string& in_string)
 {
 	AssertMsg(m_FileMode == FileMode::ReadOnly || m_FileMode == FileMode::ReadWrite || m_FileMode == FileMode::ReadAppend, L("Invalid Filemode"));
 
@@ -196,13 +196,13 @@ unsigned int File::Read(StdString& in_string)
 		return 0;
 
 #define MAX_STR_LEN 2048
-	unsigned int sizeRead = 0;
-	unsigned int size = 0;
-	sizeRead += static_cast<unsigned int>(fread(&size, sizeof(unsigned int), 1, m_FileHandle));
+	u32 sizeRead = 0;
+	u32 size = 0;
+	sizeRead += static_cast<u32>(fread(&size, sizeof(u32), 1, m_FileHandle));
 	AssertMsg(size < MAX_STR_LEN, L("Trying to read a string that is bigger than our fixed size buffer."));
 
 	wchar_t tempStr[MAX_STR_LEN + 1];
-	sizeRead += static_cast<unsigned int>(fread(tempStr, 1, sizeof(wchar_t) * (size + 1), m_FileHandle));
+	sizeRead += static_cast<u32>(fread(tempStr, 1, sizeof(wchar_t) * (size + 1), m_FileHandle));
 	in_string = FROM_WSTRING(tempStr);
 
 	return sizeRead;
@@ -210,7 +210,7 @@ unsigned int File::Read(StdString& in_string)
 
 
 //--------------------------------------------------------------------------------
-unsigned int File::Write(const StdString& in_string)
+u32 File::Write(const std_string& in_string)
 {
 	AssertMsg(m_FileMode == FileMode::WriteOnly || m_FileMode == FileMode::Append || m_FileMode == FileMode::ReadAppend, L("Invalid Filemode"));
 
@@ -218,24 +218,24 @@ unsigned int File::Write(const StdString& in_string)
 	if (!m_FileHandle)
 		return 0;
 
-	unsigned int sizeWritten = 0;
-	unsigned int size = static_cast<unsigned int>(in_string.size());
-	sizeWritten += static_cast<unsigned int>(fwrite(&size, 1, sizeof(unsigned int), m_FileHandle));
+	u32 sizeWritten = 0;
+	u32 size = static_cast<u32>(in_string.size());
+	sizeWritten += static_cast<u32>(fwrite(&size, 1, sizeof(u32), m_FileHandle));
 
-	sizeWritten += static_cast<unsigned int>(fwrite(TO_WSTRING(in_string).c_str(), 1, sizeof(wchar_t) * (size + 1), m_FileHandle));
+	sizeWritten += static_cast<u32>(fwrite(TO_WSTRING(in_string).c_str(), 1, sizeof(wchar_t) * (size + 1), m_FileHandle));
 
 	return sizeWritten;
 }
 
 //--------------------------------------------------------------------------------
-unsigned int File::Print(const StringChar* format, ...)
+u32 File::Print(const string_char* format, ...)
 {
 	AssertMsg(m_FileMode == FileMode::WriteText || m_FileMode == FileMode::WriteTextAppend, L("Invalid Filemode"));
 
 	va_list args;
 	va_start(args, format);
 
-	int count = VFPRINTF(m_FileHandle, format, args);
+	s32 count = VFPRINTF(m_FileHandle, format, args);
 	if (count < 0)
 	{
 		count = 0;
@@ -244,5 +244,5 @@ unsigned int File::Print(const StringChar* format, ...)
 	va_end(args);
 
 	// Returns the number of bytes written to the file
-	return static_cast<unsigned int>(count);
+	return static_cast<u32>(count);
 }

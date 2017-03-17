@@ -18,14 +18,14 @@ Path::Path()
 }
 
 //--------------------------------------------------------------------------------
-Path::Path(const StringChar* in_path)
+Path::Path(const string_char* in_path)
 {
 	m_strPath = in_path;
 	CleanUpPath();
 }
 
 //--------------------------------------------------------------------------------
-Path::Path(const StdString& in_path)
+Path::Path(const std_string& in_path)
 {
 	m_strPath = in_path;
 	CleanUpPath();
@@ -39,7 +39,7 @@ Path::Path(const Path& in_path)
 }
 
 //--------------------------------------------------------------------------------
-Path& Path::operator=(const StringChar* in_path)
+Path& Path::operator=(const string_char* in_path)
 {
 	m_strPath = in_path;
 	CleanUpPath();
@@ -47,7 +47,7 @@ Path& Path::operator=(const StringChar* in_path)
 }
 
 //--------------------------------------------------------------------------------
-Path& Path::operator=(const StdString& in_path)
+Path& Path::operator=(const std_string& in_path)
 {
 	m_strPath = in_path;
 	CleanUpPath();
@@ -143,7 +143,7 @@ void Path::BuildPath()
 //--------------------------------------------------------------------------------
 void Path::CleanUpPath()
 {
-	for (unsigned int i = 0; i < static_cast<unsigned int>(m_strPath.size()); i++)
+	for (u32 i = 0; i < static_cast<u32>(m_strPath.size()); i++)
 	{
 		//Clean up the '\\' into '/'
 		if (m_strPath[i] == '\\')
@@ -226,19 +226,19 @@ Path Path::GetRelativePath(const Path& in_WorkingDirectory) const
 	if (m_strPath == L(""))
 		return L("");
 
-	const StringChar* currentDirectory = in_WorkingDirectory.GetData();
-	const StringChar* absoluteFilename = GetData();
+	const string_char* currentDirectory = in_WorkingDirectory.GetData();
+	const string_char* absoluteFilename = GetData();
 
 	// declarations - put here so this should work in a C compiler
-	int afMarker = 0, rfMarker = 0;
-	int cdLen = 0;
-	int afLen = 0;
-	int i = 0;
-	int levels = 0;
-	static StringChar relativeFilename[MAX_FILENAME_LEN + 1];
+	s32 afMarker = 0, rfMarker = 0;
+	s32 cdLen = 0;
+	s32 afLen = 0;
+	s32 i = 0;
+	s32 levels = 0;
+	static string_char relativeFilename[MAX_FILENAME_LEN + 1];
 
-	cdLen = static_cast<int>(STRLEN(currentDirectory));
-	afLen = static_cast<int>(STRLEN(absoluteFilename));
+	cdLen = static_cast<s32>(STRLEN(currentDirectory));
+	afLen = static_cast<s32>(STRLEN(absoluteFilename));
 
 	// make sure the names are not too long or too short
 	if (cdLen > MAX_FILENAME_LEN || cdLen < ABSOLUTE_NAME_START + 1 ||
@@ -337,10 +337,10 @@ Path Path::GetRelativePath(const Path& in_WorkingDirectory) const
 
 Path Path::GetParentFolder() const
 {
-	StdString parentFolder = m_Folder;
+	std_string parentFolder = m_Folder;
 	parentFolder.erase(parentFolder.length() - 1, 1);
 
-	int lastSlashPos = static_cast<int>(parentFolder.find_last_of('/'));
+	s32 lastSlashPos = static_cast<s32>(parentFolder.find_last_of('/'));
 
 #ifdef _WIN32
 	if (lastSlashPos == -1)
