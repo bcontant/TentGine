@@ -49,7 +49,12 @@ Text_DX11::Text_DX11(Renderer* pOwner)
 	};
 
 	File shaderFile;
+#ifdef _DEBUG
+	shaderFile.Open(L("../../data/shaders/Debug/vs_simple_2d_ptc.cso"), FileMode::ReadOnly);
+#else
 	shaderFile.Open(L("../../data/shaders/Release/vs_simple_2d_ptc.cso"), FileMode::ReadOnly);
+#endif
+
 	u8* shaderData = new u8[shaderFile.Size()];
 	shaderFile.Read(shaderData, shaderFile.Size());
 

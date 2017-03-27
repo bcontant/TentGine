@@ -41,7 +41,12 @@ Quad_DX11::Quad_DX11(Renderer* pOwner) : Quad(pOwner)
 	};
 
 	File shaderFile;
+
+#ifdef _DEBUG
+	shaderFile.Open(L("../../data/shaders/Debug/simple_vertex.cso"), FileMode::ReadOnly);
+#else
 	shaderFile.Open(L("../../data/shaders/Release/simple_vertex.cso"), FileMode::ReadOnly);
+#endif
 	u8* shaderData = new u8[shaderFile.Size()];
 	shaderFile.Read(shaderData, shaderFile.Size());
 
