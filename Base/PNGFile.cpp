@@ -33,7 +33,7 @@ bool SavePNG(const Path& in_file, BitmapData* in_pData)
 		return false;
 	}
 
-	png_struct* png_ptr = png_create_write_struct(PNG_LIBPNG_VER_STRING, NULL, NULL, NULL);
+	png_struct* png_ptr = png_create_write_struct(PNG_LIBPNG_VER_STRING, nullptr, nullptr, nullptr);
 
 	if (!png_ptr)
 	{
@@ -102,7 +102,7 @@ bool SavePNG(const Path& in_file, BitmapData* in_pData)
 		return false;
 	}
 
-	png_write_end(png_ptr, NULL);
+	png_write_end(png_ptr, nullptr);
 
 	delete[] row_pointers;
 	
@@ -132,7 +132,7 @@ BitmapData* LoadPNG(const Path& in_file)
 		return nullptr;
 	}
 
-	png_struct* png_ptr = png_create_read_struct(PNG_LIBPNG_VER_STRING, NULL, NULL, NULL);
+	png_struct* png_ptr = png_create_read_struct(PNG_LIBPNG_VER_STRING, nullptr, nullptr, nullptr);
 
 	if (!png_ptr)
 	{

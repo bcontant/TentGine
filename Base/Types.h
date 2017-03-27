@@ -3,6 +3,7 @@
 #include <string>
 #include "Vector.h"
 #include "Matrix.h"
+#include "Rect.h"
 
 using u8 = unsigned char;
 using s8 = signed char;
@@ -24,6 +25,9 @@ using ivec4 = Vector4<int>;
 using mat2 = Matrix2x2<float>;
 using mat3 = Matrix3x3<float>;
 using mat4 = Matrix4x4<float>;
+
+using rect_f = Rect<float>;
+using rect_i = Rect<int>;
 
 #ifdef _UNICODE
 

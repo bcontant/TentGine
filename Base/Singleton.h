@@ -1,11 +1,15 @@
 #pragma once
 
+#include "Types.h"
+#include "Assert.h"
 #include "StringUtils.h"
 
 //--------------------------------------------------------------------------------
 #define MAKE_SINGLETON(CLASS)                       \
-    friend class Singleton<CLASS>;                  \
-    static const string_char* GET_NAME() { return L(#CLASS); }
+    friend class Singleton<CLASS>;                  
+
+#define MAKE_STATIC_SINGLETON(CLASS)                       \
+    friend class StaticSingleton<CLASS>;                  
 
 //--------------------------------------------------------------------------------
 template<class T> class Singleton
@@ -14,6 +18,7 @@ public:
 
 	static T* GetInstance()
 	{
+		AssertMsg(Singleton<T>::ms_pInstance, L("Instance not created"));
 		return ms_pInstance;
 	}
 
@@ -50,3 +55,25 @@ protected:
 
 template<class T> T *Singleton<T>::ms_pInstance = 0;
 
+
+
+//--------------------------------------------------------------------------------
+template<class T> class StaticSingleton
+{
+public:
+
+	static T* GetInstance()
+	{
+		static T ms_Instance;
+		return &ms_Instance;
+	}
+
+protected:
+	// Only derived classes can access ctor/dtor
+	StaticSingleton() {}
+	virtual ~StaticSingleton() {}
+
+	// No copy
+	StaticSingleton(const StaticSingleton &);
+	void operator=(const StaticSingleton &);
+};

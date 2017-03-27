@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Shader m_eType="Pixel" m_HLSLCompiledFile="simple_vertex.cso">
+	<m_vConstants>
+		<ShaderConstant m_Name="World" m_Type="mat4" default=""/>
+		<ShaderConstant m_Name="View" m_Type="mat4" default=""/>
+		<ShaderConstant m_Name="Proj" m_Type="mat4" default=""/>
+	</m_vConstants>
+	
+	<m_vConstantsTest>
+		<ShaderConstant m_Name="WorldG" m_Type="mat4G" default=""/>
+		<ShaderConstant m_Name="ViewG" m_Type="mat4G" default=""/>
+		<ShaderConstant m_Name="ProjG" m_Type="mat4G" default=""/>
+		<SuperShaderConstant m_Name="ProjG" m_SuperName="SUPER_ProjG" m_Type="mat4G" default=""/>
+	</m_vConstantsTest>
+	
+	<ShaderInput name="vPosition" semantic_name="POSITION" index="0"/>
+	<ShaderInput name="vTexCoord" semantic_name="TEXCOORD" index="0"/>
+	
+	<ShaderOutput name="vTexCoord" semantic_name="TEXCOORD" index="0"/>
+	<ShaderOutput name="vPosition" semantic_name="SV_POSITION" index="0"/>
+	
+	<m_pShaderCode m_Type="GLSL"/>
+	<m_ShaderCode m_Type="HLSL">
+		<![CDATA[
+			float4 pos = mul(Input.vPosition, World);
+			pos = mul(pos, View);
+			pos = mul(pos, Proj);
+			Output.vPosition = pos;
+
+			Output.vTexcoord = Input.vTexcoord;
+
+			return Output;
+		]]>
+	</m_ShaderCode>
+</Shader>

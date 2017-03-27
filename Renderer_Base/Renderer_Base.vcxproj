@@ -40,6 +40,7 @@
     <ClInclude Include="Quad.h" />
     <ClInclude Include="Renderer.h" />
     <ClInclude Include="RendererObject.h" />
+    <ClInclude Include="Shader.h" />
     <ClInclude Include="Text.h" />
     <ClInclude Include="Texture.h" />
     <ClInclude Include="VertexBuffer.h" />
@@ -66,6 +67,7 @@
     </ClCompile>
     <ClCompile Include="Quad.cpp" />
     <ClCompile Include="Renderer.cpp" />
+    <ClCompile Include="Shader.cpp" />
     <ClCompile Include="Text.cpp" />
     <ClCompile Include="VertexBuffer.cpp" />
   </ItemGroup>

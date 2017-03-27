@@ -19,8 +19,11 @@
 #include "../Renderer_Base/Texture.h"
 #include "../Renderer_Base/Text.h"
 
-#include "turbojpeg.h"
-#include "jpeglib.h"
+#include "../Base/JPEGFile.h"
+#include "../Base/PNGFile.h"
+#include "../Base/BitmapData.h"
+
+#include "../Base/XMLFile.h"
 
 int CALLBACK WinMain(HINSTANCE hInstance, HINSTANCE, LPSTR, s32)
 {
@@ -29,12 +32,16 @@ int CALLBACK WinMain(HINSTANCE hInstance, HINSTANCE, LPSTR, s32)
 
 	CoInitialize(nullptr);
 
+	XMLFile xmlfile;
+	xmlfile.Parse(Path(L("../../data/shaders/simple_vertex.xml")));
+	xmlfile.Output(Path(L("../../data/shaders/simple_vertex_parsed.xml")), eOF_SpaceIndents_2);
+
 	//OS::BuildFont(L("../../data/Comic.ttf"), 36, 1024, OS::eFF_ForceAutoHint /*| OS::eFF_Mono*/, L("../../data/"));
 	//OS::BuildFont(L("../../data/FFF_Tusj.ttf"), 72, 1024, OS::eFF_ForceAutoHint/* | OS::eFF_Mono*/, L("../../data/"));
 	OS::BuildFont(L("../../data/COURBD.TTF"), 24, 1024, OS::eFF_ForceAutoHint/* | OS::eFF_Mono*/, L("../../data/"));
 	//OS::BuildFont(L("../../data/COUR.TTF"), 24, 1024, OS::eFF_ForceAutoHint/* | OS::eFF_Mono*/, L("../../data/"));
 	OS::BuildFont(L("../../data/HyliaSerifBeta-Regular.otf"), 48, 1024, OS::eFF_ForceAutoHint/* | OS::eFF_Mono*/, L("../../data/"));
-						
+
 	Window* pWindow = Window::Create(1024, 1024, false, hInstance);
 
 	//OS::GetDisplayAdapters();
@@ -53,7 +60,11 @@ int CALLBACK WinMain(HINSTANCE hInstance, HINSTANCE, LPSTR, s32)
 	Font* pFont2 = pRenderer->LoadFont(L("../../data/Hylia Serif Beta Regular 48pt.font"));
 
 	Text* pText = pRenderer->CreateText(0.0f, 0.0f, pFont, L("0 FPS"));
-	Text* pText2 = pRenderer->CreateText(0.2f, 0.2f, pFont2, L("ZELDA Breath of the Wild"));
+	pText->SetColor(0xff0000ff);
+
+	Text* pText2 = pRenderer->CreateText(0.2f, 0.2f, pFont2, L("C'etait\n donc\n une\n\n fable, de la foret verte, allons y tous ensemble, la porte est grand ouverte.  Avec la joie et l'amour, dans tous les coeurs."));
+	pText2->SetColor(0xffffffff);
+	pText2->SetWidth(800.f);
 	
 	s64 lastTime = OS::GetTickCount();
 	u32 frameCount = 0;
@@ -64,11 +75,12 @@ int CALLBACK WinMain(HINSTANCE hInstance, HINSTANCE, LPSTR, s32)
 			break;
 		
 		pRenderer->StartFrame();
-		pQuad->Draw();
+		/*pQuad->Draw();
 		pQuad2->Draw();
-		pQuad3->Draw();
+		pQuad3->Draw();*/
 		pText->Draw();
 		pText2->Draw();
+
 		pRenderer->EndFrame();
 
 		s64 time = OS::GetTickCount();

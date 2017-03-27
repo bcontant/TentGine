@@ -111,8 +111,8 @@ Path& Path::SetFolder(const Path& in_Folder)
 //--------------------------------------------------------------------------------
 Path& Path::SetName(const Path& in_Name)
 {
-	AssertMsg(in_Name.m_strPath.find_first_of('/') == std::string::npos, L("Path::SetName : Invalid name (%s)"), in_Name.GetData());
-	AssertMsg(in_Name.m_strPath.find_first_of('\\') == std::string::npos, L("Path::SetName : Invalid name (%s)"), in_Name.GetData());
+	AssertMsg(in_Name.m_strPath.find_first_of('/') == std_string::npos, L("Path::SetName : Invalid name (%s)"), in_Name.GetData());
+	AssertMsg(in_Name.m_strPath.find_first_of('\\') == std_string::npos, L("Path::SetName : Invalid name (%s)"), in_Name.GetData());
 
 	m_Name = in_Name.GetData();
 	BuildPath();
@@ -123,8 +123,8 @@ Path& Path::SetName(const Path& in_Name)
 //--------------------------------------------------------------------------------
 Path& Path::SetExtension(const Path& in_Extension)
 {
-	AssertMsg(in_Extension.m_strPath.find_first_of('/') == std::string::npos, L("Invalid extension (%s)"), in_Extension.GetData());
-	AssertMsg(in_Extension.m_strPath.find_first_of('\\') == std::string::npos, L("Invalid extension (%s)"), in_Extension.GetData());
+	AssertMsg(in_Extension.m_strPath.find_first_of('/') == std_string::npos, L("Invalid extension (%s)"), in_Extension.GetData());
+	AssertMsg(in_Extension.m_strPath.find_first_of('\\') == std_string::npos, L("Invalid extension (%s)"), in_Extension.GetData());
 	AssertMsg(in_Extension.m_strPath.size() == 0 || in_Extension.m_strPath[0] == '.', L("Invalid extension (%s)"), in_Extension.GetData());
 
 	m_Extension = in_Extension.GetData();
@@ -150,19 +150,19 @@ void Path::CleanUpPath()
 			m_strPath[i] = '/';
 	}
 	
-	std::string::size_type index = 0;
-	std::string::size_type searchOffset = 0;
+	std_string::size_type index = 0;
+	std_string::size_type searchOffset = 0;
 
 	//Remove double slashes
 	//Allow network paths (//computer/folder)
-	while ((index = m_strPath.find(L("//"), 1)) != std::string::npos)
+	while ((index = m_strPath.find(L("//"), 1)) != std_string::npos)
 	{
 		m_strPath.erase(index, 1);
 	}
 
 	//Clean up the ".." to remove them
 	//First, find the start of the first ".."
-	while ((index = m_strPath.find(L(".."), searchOffset)) != std::string::npos)
+	while ((index = m_strPath.find(L(".."), searchOffset)) != std_string::npos)
 	{
 		if (index < ABSOLUTE_NAME_START + 2)
 		{
@@ -172,19 +172,19 @@ void Path::CleanUpPath()
 		}
 
 		//Now, find the leading '/' of the preceding folder name
-		std::string::size_type folderIndex = m_strPath.find_last_of('/', index - 2);
-		AssertMsg(folderIndex != std::string::npos, L("Invalid path has a '..' in a weird place.. (%s)"), m_strPath.c_str());
+		std_string::size_type folderIndex = m_strPath.find_last_of('/', index - 2);
+		AssertMsg(folderIndex != std_string::npos, L("Invalid path has a '..' in a weird place.. (%s)"), m_strPath.c_str());
 
 		//Now remove it all
 		m_strPath.erase(folderIndex, (index - folderIndex) + 2);
 	}
 
-	std::string::size_type lastSlashPos = m_strPath.find_last_of('/');
-	std::string::size_type lastDotPos = m_strPath.find_last_of('.');
-	if (lastDotPos < lastSlashPos && lastSlashPos != std::string::npos)
-		lastDotPos = std::string::npos;
+	std_string::size_type lastSlashPos = m_strPath.find_last_of('/');
+	std_string::size_type lastDotPos = m_strPath.find_last_of('.');
+	if (lastDotPos < lastSlashPos && lastSlashPos != std_string::npos)
+		lastDotPos = std_string::npos;
 
-	if (lastSlashPos == std::string::npos)
+	if (lastSlashPos == std_string::npos)
 	{
 		m_Folder = L("");
 		lastSlashPos = static_cast<size_t>(-1);
@@ -194,7 +194,7 @@ void Path::CleanUpPath()
 		m_Folder = m_strPath.substr(0, lastSlashPos + 1);
 	}
 
-	if (lastDotPos == std::string::npos)
+	if (lastDotPos == std_string::npos)
 	{
 		m_Extension = L("");
 		lastDotPos = m_strPath.size();
@@ -207,8 +207,8 @@ void Path::CleanUpPath()
 	m_Name = m_strPath.substr(lastSlashPos + 1, lastDotPos - (lastSlashPos + 1));
 
 	AssertMsg(m_Folder.size() == 0 || m_Folder[m_Folder.size() - 1] == '/', L("Resulting m_Folder is invalid (Full Path = %s, Resulting m_Folder = %s)"), m_strPath.c_str(), m_Folder.c_str());
-	AssertMsg(m_Extension.find_first_of('/') == std::string::npos, L("Resulting m_FileExtension is invalid (Full Path = %s, Resulting m_FileExtension = %s)"), m_strPath.c_str(), m_Extension.c_str());
-	AssertMsg(m_Name.find_first_of('/') == std::string::npos, L("Resulting m_FileName is invalid (Full Path = %s, Resulting m_FileName = %s)"), m_strPath.c_str(), m_Name.c_str());
+	AssertMsg(m_Extension.find_first_of('/') == std_string::npos, L("Resulting m_FileExtension is invalid (Full Path = %s, Resulting m_FileExtension = %s)"), m_strPath.c_str(), m_Extension.c_str());
+	AssertMsg(m_Name.find_first_of('/') == std_string::npos, L("Resulting m_FileName is invalid (Full Path = %s, Resulting m_FileName = %s)"), m_strPath.c_str(), m_Name.c_str());
 
 	AssertMsg(m_Folder + m_Name + m_Extension == m_strPath, L("Split Path is different from original path (Full Path = %s, Resulting m_Folder = %s, Resulting m_FileExtension = %s, Resulting m_FileName = %s)"), m_strPath.c_str(), m_Folder.c_str(), m_Extension.c_str(), m_Name.c_str());
 }

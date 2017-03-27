@@ -3,24 +3,24 @@
 #include "../OS_Base/System.h"
 
 //--------------------------------------------------------------------------------
-static const std::map<LogCategory, std::string> kLogCategories
+static const std::map<LogCategory, std_string> kLogCategories
 {
-	std::make_pair(LogCategory::Init,		("Init        ")),
-	std::make_pair(LogCategory::Shutdown,	("Shutdown    ")),
-	std::make_pair(LogCategory::System,		("System      ")),
-	std::make_pair(LogCategory::FileSystem,	("FileSystem  ")),
-	std::make_pair(LogCategory::Assert,		("Assert      ")),
-	std::make_pair(LogCategory::DebugInfo,	("Debug Info  ")),
-	std::make_pair(LogCategory::Input,		("Input       ")),
-	std::make_pair(LogCategory::Rendering,	("Rendering   ")),
+	std::make_pair(LogCategory::Init,		L("Init        ")),
+	std::make_pair(LogCategory::Shutdown,	L("Shutdown    ")),
+	std::make_pair(LogCategory::System,		L("System      ")),
+	std::make_pair(LogCategory::FileSystem,	L("FileSystem  ")),
+	std::make_pair(LogCategory::Assert,		L("Assert      ")),
+	std::make_pair(LogCategory::DebugInfo,	L("Debug Info  ")),
+	std::make_pair(LogCategory::Input,		L("Input       ")),
+	std::make_pair(LogCategory::Rendering,	L("Rendering   ")),
 };
 
 //--------------------------------------------------------------------------------
-static const std::map<LogSeverity, std::string> kLogSeverities =
+static const std::map<LogSeverity, std_string> kLogSeverities =
 {
-	std::make_pair(LogSeverity::Message,	("Message  ")),
-	std::make_pair(LogSeverity::Warning,	("Warning  ")),
-	std::make_pair(LogSeverity::Error,		("Error    ")),
+	std::make_pair(LogSeverity::Message,	L("Message  ")),
+	std::make_pair(LogSeverity::Warning,	L("Warning  ")),
+	std::make_pair(LogSeverity::Error,		L("Error    ")),
 };
 
 //--------------------------------------------------------------------------------

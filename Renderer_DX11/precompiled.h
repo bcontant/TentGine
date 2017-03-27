@@ -13,6 +13,7 @@
 #include "../Base/Types.h"
 
 #include "../Base/StringUtils.h"
+#include "../Base/Path.h"
 #include "../Base/Logger.h"
 #include "../Base/Profiler.h"
 #include "../Base/Assert.h"
@@ -24,5 +25,6 @@
 #include "Quad_DX11.h"
 #include "Text_DX11.h"
 #include "VertexBuffer_DX11.h"
+#include "Shader_DX11.h"
 
 #include "../OS_Base/Window.h"

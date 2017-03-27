@@ -5,6 +5,7 @@
 
 #include "PNGFile.h"
 #include "TGAFile.h"
+#include "JPEGFile.h"
 
 //--------------------------------------------------------------------------------
 BitmapData* LoadBitmapData(const Path& in_file)
@@ -14,6 +15,8 @@ BitmapData* LoadBitmapData(const Path& in_file)
 		pImage = LoadPNG(in_file);
 	else if(in_file.GetExtension() == L(".tga"))
 		pImage = LoadTGA(in_file);
+	else if (in_file.GetExtension() == L(".jpg") || in_file.GetExtension() == L(".jpeg"))
+		pImage = LoadJPEG(in_file);
 	else
 		Assert(false);
 

@@ -162,7 +162,7 @@
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>WIN32;_DEBUG;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <PrecompiledHeaderFile>precompiled.h</PrecompiledHeaderFile>
-      <AdditionalIncludeDirectories>$(SolutionDir)sdks\libpng-1.6.28\include</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)sdks\libpng-1.6.28\include;$(SolutionDir)sdks\libjpeg-turbo-1.5.1\include</AdditionalIncludeDirectories>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
     </ClCompile>
     <Link>
@@ -176,7 +176,7 @@
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>WIN32;_DEBUG;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <PrecompiledHeaderFile>precompiled.h</PrecompiledHeaderFile>
-      <AdditionalIncludeDirectories>$(SolutionDir)sdks\libpng-1.6.28\include</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)sdks\libpng-1.6.28\include;$(SolutionDir)sdks\libjpeg-turbo-1.5.1\include</AdditionalIncludeDirectories>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
     </ClCompile>
     <Link>
@@ -190,7 +190,7 @@
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>_DEBUG;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <PrecompiledHeaderFile>precompiled.h</PrecompiledHeaderFile>
-      <AdditionalIncludeDirectories>$(SolutionDir)sdks\libpng-1.6.28\include</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)sdks\libpng-1.6.28\include;$(SolutionDir)sdks\libjpeg-turbo-1.5.1\include</AdditionalIncludeDirectories>
       <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
     </ClCompile>
@@ -205,7 +205,7 @@
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>_DEBUG;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <PrecompiledHeaderFile>precompiled.h</PrecompiledHeaderFile>
-      <AdditionalIncludeDirectories>$(SolutionDir)sdks\libpng-1.6.28\include</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)sdks\libpng-1.6.28\include;$(SolutionDir)sdks\libjpeg-turbo-1.5.1\include</AdditionalIncludeDirectories>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
     </ClCompile>
     <Link>
@@ -221,7 +221,7 @@
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <PreprocessorDefinitions>WIN32;NDEBUG;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <PrecompiledHeaderFile>precompiled.h</PrecompiledHeaderFile>
-      <AdditionalIncludeDirectories>$(SolutionDir)sdks\libpng-1.6.28\include</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)sdks\libpng-1.6.28\include;$(SolutionDir)sdks\libjpeg-turbo-1.5.1\include</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -238,7 +238,7 @@
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <PreprocessorDefinitions>WIN32;NDEBUG;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <PrecompiledHeaderFile>precompiled.h</PrecompiledHeaderFile>
-      <AdditionalIncludeDirectories>$(SolutionDir)sdks\libpng-1.6.28\include</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)sdks\libpng-1.6.28\include;$(SolutionDir)sdks\libjpeg-turbo-1.5.1\include</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -256,7 +256,7 @@
       <PreprocessorDefinitions>NDEBUG;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <PrecompiledHeaderFile>precompiled.h</PrecompiledHeaderFile>
       <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
-      <AdditionalIncludeDirectories>$(SolutionDir)sdks\libpng-1.6.28\include</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)sdks\libpng-1.6.28\include;$(SolutionDir)sdks\libjpeg-turbo-1.5.1\include</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -273,7 +273,7 @@
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <PreprocessorDefinitions>NDEBUG;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <PrecompiledHeaderFile>precompiled.h</PrecompiledHeaderFile>
-      <AdditionalIncludeDirectories>$(SolutionDir)sdks\libpng-1.6.28\include</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)sdks\libpng-1.6.28\include;$(SolutionDir)sdks\libjpeg-turbo-1.5.1\include</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -290,6 +290,7 @@
     <ClInclude Include="File.h" />
     <ClInclude Include="FontDataFile.h" />
     <ClInclude Include="GraphicUtils.h" />
+    <ClInclude Include="JPEGFile.h" />
     <ClInclude Include="Logger.h" />
     <ClInclude Include="MathUtils.h" />
     <ClInclude Include="Matrix.h" />
@@ -301,10 +302,16 @@
     <ClInclude Include="RangedBasedLoops.h" />
     <ClInclude Include="Rect.h" />
     <ClInclude Include="Singleton.h" />
+    <ClInclude Include="Streamable.h" />
     <ClInclude Include="StringUtils.h" />
     <ClInclude Include="TGAFile.h" />
     <ClInclude Include="Types.h" />
     <ClInclude Include="Vector.h" />
+    <ClInclude Include="XMLAttribute.h" />
+    <ClInclude Include="XMLDefines.h" />
+    <ClInclude Include="XMLFile.h" />
+    <ClInclude Include="XMLParser.h" />
+    <ClInclude Include="XMLTag.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Assert.cpp" />
@@ -325,6 +332,7 @@
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release - Unicode|x64'">false</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</ExcludedFromBuild>
     </ClCompile>
+    <ClCompile Include="JPEGFile.cpp" />
     <ClCompile Include="Logger.cpp" />
     <ClCompile Include="MathUtils.cpp" />
     <ClCompile Include="MemoryBuffer.cpp" />
@@ -349,8 +357,14 @@
       <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Release - Unicode|x64'">precompiled.h</PrecompiledHeaderFile>
     </ClCompile>
     <ClCompile Include="Profiler.cpp" />
+    <ClCompile Include="Streamable.cpp" />
     <ClCompile Include="StringUtils.cpp" />
     <ClCompile Include="TGAFile.cpp" />
+    <ClCompile Include="XMLAttribute.cpp" />
+    <ClCompile Include="XMLDefines.cpp" />
+    <ClCompile Include="XMLFile.cpp" />
+    <ClCompile Include="XMLParser.cpp" />
+    <ClCompile Include="XMLTag.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

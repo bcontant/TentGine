@@ -46,7 +46,7 @@ void FontDataFile::Save(const Path& in_filename) const
 	fontFile.Write(&m_LineHeight, sizeof(u32));
 	fontFile.Write(&m_MaxAscender, sizeof(u32));
 
-	fontFile.Write(m_FontTextureFilename.Getstd_string());
+	fontFile.Write(m_FontTextureFilename.GetString());
 
 	s32 glyphCount = (s32)m_vGlyphs.size();
 	fontFile.Write(&glyphCount, sizeof(u32));

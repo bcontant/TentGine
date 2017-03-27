@@ -37,6 +37,12 @@
     <Filter Include="Source Files\I/O">
       <UniqueIdentifier>{e8a23587-7aed-4fe8-a452-2f07aa279d16}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header Files\XML">
+      <UniqueIdentifier>{43a3698b-a320-49e0-ba1d-e0355955fba2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\XML">
+      <UniqueIdentifier>{d1272502-ab2c-44f8-809c-f6a2b776911c}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="precompiled.h">
@@ -108,6 +114,27 @@
     <ClInclude Include="Matrix.h">
       <Filter>Header Files\Math</Filter>
     </ClInclude>
+    <ClInclude Include="JPEGFile.h">
+      <Filter>Header Files\Graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="XMLTag.h">
+      <Filter>Header Files\XML</Filter>
+    </ClInclude>
+    <ClInclude Include="XMLAttribute.h">
+      <Filter>Header Files\XML</Filter>
+    </ClInclude>
+    <ClInclude Include="XMLDefines.h">
+      <Filter>Header Files\XML</Filter>
+    </ClInclude>
+    <ClInclude Include="XMLFile.h">
+      <Filter>Header Files\XML</Filter>
+    </ClInclude>
+    <ClInclude Include="XMLParser.h">
+      <Filter>Header Files\XML</Filter>
+    </ClInclude>
+    <ClInclude Include="Streamable.h">
+      <Filter>Header Files\DevTools</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="precompiled.cpp">
@@ -157,6 +184,27 @@
     </ClCompile>
     <ClCompile Include="PNGFile.cpp">
       <Filter>Source Files\Graphics</Filter>
+    </ClCompile>
+    <ClCompile Include="JPEGFile.cpp">
+      <Filter>Source Files\Graphics</Filter>
+    </ClCompile>
+    <ClCompile Include="XMLTag.cpp">
+      <Filter>Source Files\XML</Filter>
+    </ClCompile>
+    <ClCompile Include="XMLAttribute.cpp">
+      <Filter>Source Files\XML</Filter>
+    </ClCompile>
+    <ClCompile Include="XMLDefines.cpp">
+      <Filter>Source Files\XML</Filter>
+    </ClCompile>
+    <ClCompile Include="XMLFile.cpp">
+      <Filter>Source Files\XML</Filter>
+    </ClCompile>
+    <ClCompile Include="XMLParser.cpp">
+      <Filter>Source Files\XML</Filter>
+    </ClCompile>
+    <ClCompile Include="Streamable.cpp">
+      <Filter>Source Files\DevTools</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

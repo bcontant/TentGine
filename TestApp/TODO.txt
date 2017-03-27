@@ -14,13 +14,11 @@ TODO
 - InputLayout
   - Renderer responsibility to make the active geometry (VB) connect correctly to the desired Material (shaders, textures, etc)
 
-- Rendering Overlord should minimize duplication (SamplerStater, InputLayouts, ConstantBuffers)
+- Rendering Overlord should minimize duplication (SamplerStates, InputLayouts, ConstantBuffers)
   
 - Text implementation
-  - Support Tabs
-  - Support Linebreaks
-  - Support Regions
-  - Support Color
+  - Right / Left / Center Align (X + Y)
+  - Support Gradient
   - Support Drop Shadow
   - Support Outlines
   
@@ -32,15 +30,15 @@ TODO
   - Implement SDF Generation
   - Implement SDF Rendering
 
-- BitmapData : Threaded conversion?
-
 - PNG Loader : Support Indexed Color (Type:3) ?
 
 - BMP loader / saver
-- JPG loader / saver
 - GIF?  TIFF?  PBM?  DDS?
 
-- XML Parser
+- XML : Support encodings (UTF8 etc)
+
+- Basic Serialization
+- Refac to support serializing obect for different types (text, binary, XML, JSON, etc)
 
 - Profile viewer
   - Make it realtime
@@ -67,3 +65,9 @@ DONE
 - Cross Platform Vector + Matrix
 - Basic header for uniform type definition (u8, s8, u16, s16, u32, s32, float, double, u64, s64, etc)
 - Remove the WIC Stuff
+- JPG loader / saver
+- Support Regions (Text)
+- Support Linebreaks (\n) (Text)
+- Support clean line breaking on spaces, if possible (Text)
+- Support Color (Text)
+- XML Parser

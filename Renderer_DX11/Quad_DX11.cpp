@@ -1,6 +1,6 @@
 #include "precompiled.h"
 
-#include "simple_vertex.h"
+//#include "simple_vertex.h"
 
 //--------------------------------------------------------------------------------
 struct CBStruct
@@ -40,7 +40,13 @@ Quad_DX11::Quad_DX11(Renderer* pOwner) : Quad(pOwner)
 		{ "TEXCOORD", 0, DXGI_FORMAT_R32G32_FLOAT, 0, 12, D3D11_INPUT_PER_VERTEX_DATA, 0 },
 	};
 
-	hr = pDX11Renderer->GetDevice()->CreateInputLayout(inputElementDescs, 2, g_VShader, sizeof(g_VShader), &pInputLayout);
+	File shaderFile;
+	shaderFile.Open(L("../../data/shaders/Release/simple_vertex.cso"), FileMode::ReadOnly);
+	u8* shaderData = new u8[shaderFile.Size()];
+	shaderFile.Read(shaderData, shaderFile.Size());
+
+	//hr = pDX11Renderer->GetDevice()->CreateInputLayout(inputElementDescs, 2, g_VShader, sizeof(g_VShader), &pInputLayout);
+	hr = pDX11Renderer->GetDevice()->CreateInputLayout(inputElementDescs, 2, shaderData, shaderFile.Size(), &pInputLayout);
 	SET_D3D11_OBJECT_NAME(pInputLayout);
 }
 

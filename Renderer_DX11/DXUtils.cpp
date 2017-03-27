@@ -97,7 +97,7 @@ string_char* GetDXErrorString(HRESULT hr)
 	static string_char s_DXError[4096];
 	if (FAILED(hr))
 	{
-		FormatMessage(FORMAT_MESSAGE_FROM_SYSTEM | FORMAT_MESSAGE_IGNORE_INSERTS, nullptr, hr, MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT), s_DXError, 4096, NULL);
+		FormatMessage(FORMAT_MESSAGE_FROM_SYSTEM | FORMAT_MESSAGE_IGNORE_INSERTS, nullptr, hr, MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT), s_DXError, 4096, nullptr);
 	}
 	
 	return s_DXError;

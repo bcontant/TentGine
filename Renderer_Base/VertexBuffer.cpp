@@ -30,6 +30,7 @@ void VertexBuffer::CalculateVertexSize()
 		m_uiVertexSize += sizeof(float) * 2;
 
 	if (m_uiVertexMask & eVB_Color)
+	//	m_uiVertexSize += sizeof(float) * 4;
 		m_uiVertexSize += sizeof(u32);
 
 	Assert(m_uiVertexSize > 0);

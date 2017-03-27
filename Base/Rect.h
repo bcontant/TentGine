@@ -4,8 +4,8 @@ template <class T>
 class Rect
 {
 public:
-	T Width() { return m_right - m_left; }
-	T Height() { return m_bottom - m_top; }
+	T Width() const { return m_right - m_left; }
+	T Height() const { return m_bottom - m_top; }
 
 	T m_left;
 	T m_top;

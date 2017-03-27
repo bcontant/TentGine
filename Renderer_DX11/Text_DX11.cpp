@@ -3,7 +3,9 @@
 #include "Text_DX11.h"
 
 #include "../Renderer_Base/Font.h"
-#include "simple_vertex.h"
+
+// #include "simple_vertex.h"
+// #include "vs_simple_2d_ptc.h"
 
 //--------------------------------------------------------------------------------
 struct CBStruct
@@ -41,12 +43,19 @@ Text_DX11::Text_DX11(Renderer* pOwner)
 
 	D3D11_INPUT_ELEMENT_DESC inputElementDescs[] =
 	{
-		{ "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D11_INPUT_PER_VERTEX_DATA, 0 },
-		{ "TEXCOORD", 0, DXGI_FORMAT_R32G32_FLOAT, 0, 12, D3D11_INPUT_PER_VERTEX_DATA, 0 },
+		{ "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT , D3D11_INPUT_PER_VERTEX_DATA, 0 },
+		{ "TEXCOORD", 0, DXGI_FORMAT_R32G32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT , D3D11_INPUT_PER_VERTEX_DATA, 0 },
+		{ "COLOR",	  0, DXGI_FORMAT_R8G8B8A8_UNORM, 0, D3D11_APPEND_ALIGNED_ELEMENT,  D3D11_INPUT_PER_VERTEX_DATA, 0 },
 	};
 
+	File shaderFile;
+	shaderFile.Open(L("../../data/shaders/Release/vs_simple_2d_ptc.cso"), FileMode::ReadOnly);
+	u8* shaderData = new u8[shaderFile.Size()];
+	shaderFile.Read(shaderData, shaderFile.Size());
+
 	SAFE_RELEASE(pInputLayout);
-	hr = pDX11Renderer->GetDevice()->CreateInputLayout(inputElementDescs, 2, g_VShader, sizeof(g_VShader), &pInputLayout);
+	//hr = pDX11Renderer->GetDevice()->CreateInputLayout(inputElementDescs, 3, g_vs_simple_2d_ptc, sizeof(g_vs_simple_2d_ptc), &pInputLayout);
+	hr = pDX11Renderer->GetDevice()->CreateInputLayout(inputElementDescs, 3, shaderData, shaderFile.Size(), &pInputLayout);
 	SET_D3D11_OBJECT_NAME(pInputLayout);
 }
 	
@@ -62,6 +71,8 @@ void Text_DX11::Draw()
 {
 	PROFILE_BLOCK;
 
+	UpdateText();
+
 	Renderer_DX11* pDX11Renderer = (Renderer_DX11*)GetOwner();
 
 	D3D11_MAPPED_SUBRESOURCE mappedResource;
@@ -69,10 +80,8 @@ void Text_DX11::Draw()
 
 	CBStruct* dataPtr = (CBStruct*)mappedResource.pData;
 
-	//Scale Quad to texture's size and position it where it needs to go.
 	dataPtr->world = DirectX::XMMatrixTranspose(DirectX::XMMatrixScaling(1.f / GetOwner()->GetBackBufferWidth(), 1.f / GetOwner()->GetBackBufferHeight(), 1.f) * DirectX::XMMatrixTranslation(m_xPos, m_yPos, 0.f));
 	dataPtr->view = DirectX::XMMatrixIdentity();
-	//Transform our [0..1][0..1] coords to [-1..1][1..-1]
 	dataPtr->proj = DirectX::XMMatrixTranspose(DirectX::XMMatrixScaling(2.f, -2.f, 1.f) * DirectX::XMMatrixTranslation(-1.f, 1.f, 0.f));
 
 	pDX11Renderer->GetContext()->Unmap(pConstantBuffer, 0);
@@ -84,5 +93,5 @@ void Text_DX11::Draw()
 
 	pDX11Renderer->GetContext()->IASetInputLayout(pInputLayout);
 
-	pDX11Renderer->GetContext()->Draw( static_cast<u32>(6 * m_vCharacters.size()), 0);
+	pDX11Renderer->GetContext()->Draw(m_pVertexBuffer->GetVertexCount(), 0);
 }

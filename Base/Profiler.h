@@ -67,4 +67,8 @@ public:
 	}
 };
 
+#ifdef _DEBUG
 #define PROFILE_BLOCK AutoProfileBlock __autoprofileobj( __FUNCTION__ );
+#else
+#define PROFILE_BLOCK AutoProfileBlock __autoprofileobj( __FUNCTION__ );
+#endif

@@ -16,12 +16,13 @@ public:
 	Path& operator=(const Path& in_path);
 
 	Path operator+(const Path& in_path) const;
+	//Path operator+(const string_char* in_path) const { return this->operator+(Path(in_path)); }
 	Path& operator+=(const Path& in_path);
 	bool operator==(const Path& in_path) const;
 	bool operator!=(const Path& in_path) const;
 	bool operator<(const Path& in_path) const;
 
-	const std_string& Getstd_string() const { return m_strPath; }
+	const std_string& GetString() const { return m_strPath; }
 	const string_char* GetData() const { return m_strPath.c_str(); }
 
 	Path GetFolder() const { return Path(m_Folder); }
@@ -46,3 +47,5 @@ private:
 	std_string m_Name;
 	std_string m_Extension;
 };
+
+//Path operator+(const string_char* in_Path1, const Path& in_path2) { return Path(in_Path1) + in_path2; }

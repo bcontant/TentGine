@@ -201,9 +201,9 @@ u32 File::Read(std_string& in_string)
 	sizeRead += static_cast<u32>(fread(&size, sizeof(u32), 1, m_FileHandle));
 	AssertMsg(size < MAX_STR_LEN, L("Trying to read a string that is bigger than our fixed size buffer."));
 
-	wchar_t tempStr[MAX_STR_LEN + 1];
-	sizeRead += static_cast<u32>(fread(tempStr, 1, sizeof(wchar_t) * (size + 1), m_FileHandle));
-	in_string = FROM_WSTRING(tempStr);
+	char tempStr[MAX_STR_LEN + 1];
+	sizeRead += static_cast<u32>(fread(tempStr, 1, sizeof(char) * (size + 1), m_FileHandle));
+	in_string = FROM_STRING(tempStr);
 
 	return sizeRead;
 }
@@ -222,7 +222,7 @@ u32 File::Write(const std_string& in_string)
 	u32 size = static_cast<u32>(in_string.size());
 	sizeWritten += static_cast<u32>(fwrite(&size, 1, sizeof(u32), m_FileHandle));
 
-	sizeWritten += static_cast<u32>(fwrite(TO_WSTRING(in_string).c_str(), 1, sizeof(wchar_t) * (size + 1), m_FileHandle));
+	sizeWritten += static_cast<u32>(fwrite(TO_STRING(in_string).c_str(), 1, sizeof(char) * (size + 1), m_FileHandle));
 
 	return sizeWritten;
 }
@@ -235,7 +235,8 @@ u32 File::Print(const string_char* format, ...)
 	va_list args;
 	va_start(args, format);
 
-	s32 count = VFPRINTF(m_FileHandle, format, args);
+	//s32 count = VFPRINTF(m_FileHandle, format, args);
+	s32 count = vfprintf_s(m_FileHandle, TO_STRING(format).c_str(), args);
 	if (count < 0)
 	{
 		count = 0;

@@ -107,6 +107,68 @@ namespace OS
 		return freq;
 	}
 
+	//--------------------------------------------------------------------------------
+	std::vector<Path> GetFileList(const Path& folderPath, const std_string fileExtension, bool in_bRecurseSubFolders)
+	{
+		// Find out if we're looking for specific search pattern
+		Path searchPattern;
+		if (fileExtension[0] == '.')
+			searchPattern = folderPath + L("/*") + fileExtension;
+		else
+			searchPattern = folderPath + L("/*.") + fileExtension;
 
+		// Create the vector to fill
+		std::vector<Path> filenames;
+
+		// Now use those windows functions to list the files
+		WIN32_FIND_DATA findInfo;
+		HANDLE findHandle = FindFirstFile(searchPattern.GetData(), &findInfo);
+		BOOL keepSearching = (findHandle != INVALID_HANDLE_VALUE);
+		while (keepSearching)
+		{
+			if ((findInfo.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY) == 0)
+			{
+				filenames.push_back(findInfo.cFileName);
+			}
+
+			// Pick up the next file
+			keepSearching = FindNextFile(findHandle, &findInfo);
+		}
+
+		// Clean up and leave
+		FindClose(findHandle);
+
+		//Recurse sub-folders
+		if (in_bRecurseSubFolders)
+		{
+			searchPattern = folderPath + L("/*.");
+			findHandle = FindFirstFile(searchPattern.GetData(), &findInfo);
+			keepSearching = (findHandle != INVALID_HANDLE_VALUE);
+			while (keepSearching)
+			{
+				if ((findInfo.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY) != 0)
+				{
+					if (STRCMP(findInfo.cFileName, L(".")) != 0 && STRCMP(findInfo.cFileName, L("..")) != 0)
+					{
+						std::vector<Path> subfilenames = OS::GetFileList(folderPath + findInfo.cFileName + L("/"), fileExtension, in_bRecurseSubFolders);
+						for (unsigned int i = 0; i < subfilenames.size(); i++)
+						{
+							Path path = findInfo.cFileName;
+							path += L("/");
+							filenames.push_back(path + subfilenames[i]);
+						}
+					}
+				}
+
+				// Pick up the next file
+				keepSearching = FindNextFile(findHandle, &findInfo);
+			}
+
+			FindClose(findHandle);
+		}
+
+
+		return filenames;
+	}
 }
 

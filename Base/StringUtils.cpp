@@ -27,3 +27,32 @@ std_string Format(const string_char* format, ...)
 
 	return strMessage;
 }
+
+namespace StringUtils
+{
+
+	//--------------------------------------------------------------------------------
+	s32 atoi32(const string_char* in_string)
+	{
+		s32 value;
+		SSCANF(in_string, L("%d"), &value);
+		return value;
+	}
+
+	//--------------------------------------------------------------------------------
+	s64 atoi64(const string_char* in_string)
+	{
+		s64 value;
+		SSCANF(in_string, L("%llx"), &value);
+		return value;
+	}
+
+	//--------------------------------------------------------------------------------
+	float atof(const string_char* in_string)
+	{
+		float value;
+		SSCANF(in_string, L("%f"), &value);
+		return value;
+	}
+
+}

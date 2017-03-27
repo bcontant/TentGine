@@ -39,6 +39,7 @@
     <ClInclude Include="precompiled.h" />
     <ClInclude Include="Quad_DX11.h" />
     <ClInclude Include="Renderer_DX11.h" />
+    <ClInclude Include="Shader_DX11.h" />
     <ClInclude Include="Texture_DX11.h" />
     <ClInclude Include="Text_DX11.h" />
     <ClInclude Include="VertexBuffer_DX11.h" />
@@ -65,20 +66,71 @@
     </ClCompile>
     <ClCompile Include="Quad_DX11.cpp" />
     <ClCompile Include="Renderer_DX11.cpp" />
+    <ClCompile Include="Shader_DX11.cpp" />
     <ClCompile Include="Texture_DX11.cpp" />
     <ClCompile Include="Text_DX11.cpp" />
     <ClCompile Include="VertexBuffer_DX11.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <FxCompile Include="ps_simple_2d_ptc.hlsl">
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release - Unicode|x64'">Pixel</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release - Unicode|Win32'">Pixel</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Pixel</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Pixel</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Pixel</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Pixel</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug - Unicode|Win32'">Pixel</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug - Unicode|x64'">Pixel</ShaderType>
+      <HeaderFileOutput Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+      </HeaderFileOutput>
+      <EntryPointName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">ps_simple_2d_ptc</EntryPointName>
+      <EntryPointName Condition="'$(Configuration)|$(Platform)'=='Debug - Unicode|Win32'">ps_simple_2d_ptc</EntryPointName>
+      <EntryPointName Condition="'$(Configuration)|$(Platform)'=='Release - Unicode|Win32'">ps_simple_2d_ptc</EntryPointName>
+      <EntryPointName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">ps_simple_2d_ptc</EntryPointName>
+      <EntryPointName Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">ps_simple_2d_ptc</EntryPointName>
+      <EntryPointName Condition="'$(Configuration)|$(Platform)'=='Debug - Unicode|x64'">ps_simple_2d_ptc</EntryPointName>
+      <EntryPointName Condition="'$(Configuration)|$(Platform)'=='Release - Unicode|x64'">ps_simple_2d_ptc</EntryPointName>
+      <EntryPointName Condition="'$(Configuration)|$(Platform)'=='Release|x64'">ps_simple_2d_ptc</EntryPointName>
+      <HeaderFileOutput Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+      </HeaderFileOutput>
+      <HeaderFileOutput Condition="'$(Configuration)|$(Platform)'=='Debug - Unicode|Win32'">
+      </HeaderFileOutput>
+      <HeaderFileOutput Condition="'$(Configuration)|$(Platform)'=='Release - Unicode|Win32'">
+      </HeaderFileOutput>
+      <HeaderFileOutput Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+      </HeaderFileOutput>
+      <HeaderFileOutput Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+      </HeaderFileOutput>
+      <HeaderFileOutput Condition="'$(Configuration)|$(Platform)'=='Debug - Unicode|x64'">
+      </HeaderFileOutput>
+      <HeaderFileOutput Condition="'$(Configuration)|$(Platform)'=='Release - Unicode|x64'">
+      </HeaderFileOutput>
+      <ObjectFileOutput Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(ProjectDir)\..\data\shaders\Debug\%(Filename).cso</ObjectFileOutput>
+      <ObjectFileOutput Condition="'$(Configuration)|$(Platform)'=='Debug - Unicode|Win32'">$(ProjectDir)\..\data\shaders\Debug\%(Filename).cso</ObjectFileOutput>
+      <ObjectFileOutput Condition="'$(Configuration)|$(Platform)'=='Release - Unicode|Win32'">$(ProjectDir)\..\data\shaders\Release\%(Filename).cso</ObjectFileOutput>
+      <ObjectFileOutput Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(ProjectDir)\..\data\shaders\Release\%(Filename).cso</ObjectFileOutput>
+      <ObjectFileOutput Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(ProjectDir)\..\data\shaders\Debug\%(Filename).cso</ObjectFileOutput>
+      <ObjectFileOutput Condition="'$(Configuration)|$(Platform)'=='Debug - Unicode|x64'">$(ProjectDir)\..\data\shaders\Debug\%(Filename).cso</ObjectFileOutput>
+      <ObjectFileOutput Condition="'$(Configuration)|$(Platform)'=='Release - Unicode|x64'">$(ProjectDir)\..\data\shaders\Release\%(Filename).cso</ObjectFileOutput>
+      <ObjectFileOutput Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(ProjectDir)\..\data\shaders\Release\%(Filename).cso</ObjectFileOutput>
+    </FxCompile>
     <FxCompile Include="simple_pixel.hlsl">
-      <HeaderFileOutput Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(ProjectDir)%(Filename).h</HeaderFileOutput>
-      <HeaderFileOutput Condition="'$(Configuration)|$(Platform)'=='Debug - Unicode|Win32'">$(ProjectDir)%(Filename).h</HeaderFileOutput>
-      <HeaderFileOutput Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(ProjectDir)%(Filename).h</HeaderFileOutput>
-      <HeaderFileOutput Condition="'$(Configuration)|$(Platform)'=='Release - Unicode|Win32'">$(ProjectDir)%(Filename).h</HeaderFileOutput>
-      <HeaderFileOutput Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(ProjectDir)%(Filename).h</HeaderFileOutput>
-      <HeaderFileOutput Condition="'$(Configuration)|$(Platform)'=='Debug - Unicode|x64'">$(ProjectDir)%(Filename).h</HeaderFileOutput>
-      <HeaderFileOutput Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(ProjectDir)%(Filename).h</HeaderFileOutput>
-      <HeaderFileOutput Condition="'$(Configuration)|$(Platform)'=='Release - Unicode|x64'">$(ProjectDir)%(Filename).h</HeaderFileOutput>
+      <HeaderFileOutput Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+      </HeaderFileOutput>
+      <HeaderFileOutput Condition="'$(Configuration)|$(Platform)'=='Debug - Unicode|Win32'">
+      </HeaderFileOutput>
+      <HeaderFileOutput Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+      </HeaderFileOutput>
+      <HeaderFileOutput Condition="'$(Configuration)|$(Platform)'=='Release - Unicode|Win32'">
+      </HeaderFileOutput>
+      <HeaderFileOutput Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+      </HeaderFileOutput>
+      <HeaderFileOutput Condition="'$(Configuration)|$(Platform)'=='Debug - Unicode|x64'">
+      </HeaderFileOutput>
+      <HeaderFileOutput Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+      </HeaderFileOutput>
+      <HeaderFileOutput Condition="'$(Configuration)|$(Platform)'=='Release - Unicode|x64'">
+      </HeaderFileOutput>
       <EntryPointName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">PShader</EntryPointName>
       <EntryPointName Condition="'$(Configuration)|$(Platform)'=='Debug - Unicode|Win32'">PShader</EntryPointName>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Pixel</ShaderType>
@@ -95,16 +147,33 @@
       <EntryPointName Condition="'$(Configuration)|$(Platform)'=='Release - Unicode|x64'">PShader</EntryPointName>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Pixel</ShaderType>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release - Unicode|x64'">Pixel</ShaderType>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|x64'">4.0_level_9_1</ShaderModel>
+      <ObjectFileOutput Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(ProjectDir)\..\data\shaders\Debug\%(Filename).cso</ObjectFileOutput>
+      <ObjectFileOutput Condition="'$(Configuration)|$(Platform)'=='Debug - Unicode|Win32'">$(ProjectDir)\..\data\shaders\Debug\%(Filename).cso</ObjectFileOutput>
+      <ObjectFileOutput Condition="'$(Configuration)|$(Platform)'=='Release - Unicode|Win32'">$(ProjectDir)\..\data\shaders\Release\%(Filename).cso</ObjectFileOutput>
+      <ObjectFileOutput Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(ProjectDir)\..\data\shaders\Release\%(Filename).cso</ObjectFileOutput>
+      <ObjectFileOutput Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(ProjectDir)\..\data\shaders\Debug\%(Filename).cso</ObjectFileOutput>
+      <ObjectFileOutput Condition="'$(Configuration)|$(Platform)'=='Debug - Unicode|x64'">$(ProjectDir)\..\data\shaders\Debug\%(Filename).cso</ObjectFileOutput>
+      <ObjectFileOutput Condition="'$(Configuration)|$(Platform)'=='Release - Unicode|x64'">$(ProjectDir)\..\data\shaders\Release\%(Filename).cso</ObjectFileOutput>
+      <ObjectFileOutput Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(ProjectDir)\..\data\shaders\Release\%(Filename).cso</ObjectFileOutput>
     </FxCompile>
     <FxCompile Include="simple_vertex.hlsl">
-      <HeaderFileOutput Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(ProjectDir)%(Filename).h</HeaderFileOutput>
-      <HeaderFileOutput Condition="'$(Configuration)|$(Platform)'=='Debug - Unicode|Win32'">$(ProjectDir)%(Filename).h</HeaderFileOutput>
-      <HeaderFileOutput Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(ProjectDir)%(Filename).h</HeaderFileOutput>
-      <HeaderFileOutput Condition="'$(Configuration)|$(Platform)'=='Release - Unicode|Win32'">$(ProjectDir)%(Filename).h</HeaderFileOutput>
-      <HeaderFileOutput Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(ProjectDir)%(Filename).h</HeaderFileOutput>
-      <HeaderFileOutput Condition="'$(Configuration)|$(Platform)'=='Debug - Unicode|x64'">$(ProjectDir)%(Filename).h</HeaderFileOutput>
-      <HeaderFileOutput Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(ProjectDir)%(Filename).h</HeaderFileOutput>
-      <HeaderFileOutput Condition="'$(Configuration)|$(Platform)'=='Release - Unicode|x64'">$(ProjectDir)%(Filename).h</HeaderFileOutput>
+      <HeaderFileOutput Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+      </HeaderFileOutput>
+      <HeaderFileOutput Condition="'$(Configuration)|$(Platform)'=='Debug - Unicode|Win32'">
+      </HeaderFileOutput>
+      <HeaderFileOutput Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+      </HeaderFileOutput>
+      <HeaderFileOutput Condition="'$(Configuration)|$(Platform)'=='Release - Unicode|Win32'">
+      </HeaderFileOutput>
+      <HeaderFileOutput Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+      </HeaderFileOutput>
+      <HeaderFileOutput Condition="'$(Configuration)|$(Platform)'=='Debug - Unicode|x64'">
+      </HeaderFileOutput>
+      <HeaderFileOutput Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+      </HeaderFileOutput>
+      <HeaderFileOutput Condition="'$(Configuration)|$(Platform)'=='Release - Unicode|x64'">
+      </HeaderFileOutput>
       <EntryPointName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">VShader</EntryPointName>
       <EntryPointName Condition="'$(Configuration)|$(Platform)'=='Debug - Unicode|Win32'">VShader</EntryPointName>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Vertex</ShaderType>
@@ -121,6 +190,57 @@
       <EntryPointName Condition="'$(Configuration)|$(Platform)'=='Release - Unicode|x64'">VShader</EntryPointName>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Vertex</ShaderType>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release - Unicode|x64'">Vertex</ShaderType>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|x64'">4.0_level_9_1</ShaderModel>
+      <ObjectFileOutput Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(ProjectDir)\..\data\shaders\Debug\%(Filename).cso</ObjectFileOutput>
+      <ObjectFileOutput Condition="'$(Configuration)|$(Platform)'=='Debug - Unicode|Win32'">$(ProjectDir)\..\data\shaders\Debug\%(Filename).cso</ObjectFileOutput>
+      <ObjectFileOutput Condition="'$(Configuration)|$(Platform)'=='Release - Unicode|Win32'">$(ProjectDir)\..\data\shaders\Release\%(Filename).cso</ObjectFileOutput>
+      <ObjectFileOutput Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(ProjectDir)\..\data\shaders\Release\%(Filename).cso</ObjectFileOutput>
+      <ObjectFileOutput Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(ProjectDir)\..\data\shaders\Debug\%(Filename).cso</ObjectFileOutput>
+      <ObjectFileOutput Condition="'$(Configuration)|$(Platform)'=='Debug - Unicode|x64'">$(ProjectDir)\..\data\shaders\Debug\%(Filename).cso</ObjectFileOutput>
+      <ObjectFileOutput Condition="'$(Configuration)|$(Platform)'=='Release - Unicode|x64'">$(ProjectDir)\..\data\shaders\Release\%(Filename).cso</ObjectFileOutput>
+      <ObjectFileOutput Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(ProjectDir)\..\data\shaders\Release\%(Filename).cso</ObjectFileOutput>
+    </FxCompile>
+    <FxCompile Include="vs_simple_2d_ptc.hlsl">
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release - Unicode|x64'">Vertex</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release - Unicode|Win32'">Vertex</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Vertex</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Vertex</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Vertex</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Vertex</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug - Unicode|Win32'">Vertex</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug - Unicode|x64'">Vertex</ShaderType>
+      <HeaderFileOutput Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+      </HeaderFileOutput>
+      <EntryPointName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">vs_simple_2d_ptc</EntryPointName>
+      <EntryPointName Condition="'$(Configuration)|$(Platform)'=='Debug - Unicode|Win32'">vs_simple_2d_ptc</EntryPointName>
+      <EntryPointName Condition="'$(Configuration)|$(Platform)'=='Release - Unicode|Win32'">vs_simple_2d_ptc</EntryPointName>
+      <EntryPointName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">vs_simple_2d_ptc</EntryPointName>
+      <EntryPointName Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">vs_simple_2d_ptc</EntryPointName>
+      <EntryPointName Condition="'$(Configuration)|$(Platform)'=='Debug - Unicode|x64'">vs_simple_2d_ptc</EntryPointName>
+      <EntryPointName Condition="'$(Configuration)|$(Platform)'=='Release - Unicode|x64'">vs_simple_2d_ptc</EntryPointName>
+      <EntryPointName Condition="'$(Configuration)|$(Platform)'=='Release|x64'">vs_simple_2d_ptc</EntryPointName>
+      <HeaderFileOutput Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+      </HeaderFileOutput>
+      <HeaderFileOutput Condition="'$(Configuration)|$(Platform)'=='Debug - Unicode|Win32'">
+      </HeaderFileOutput>
+      <HeaderFileOutput Condition="'$(Configuration)|$(Platform)'=='Release - Unicode|Win32'">
+      </HeaderFileOutput>
+      <HeaderFileOutput Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+      </HeaderFileOutput>
+      <HeaderFileOutput Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+      </HeaderFileOutput>
+      <HeaderFileOutput Condition="'$(Configuration)|$(Platform)'=='Debug - Unicode|x64'">
+      </HeaderFileOutput>
+      <HeaderFileOutput Condition="'$(Configuration)|$(Platform)'=='Release - Unicode|x64'">
+      </HeaderFileOutput>
+      <ObjectFileOutput Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(ProjectDir)\..\data\shaders\Debug\%(Filename).cso</ObjectFileOutput>
+      <ObjectFileOutput Condition="'$(Configuration)|$(Platform)'=='Debug - Unicode|Win32'">$(ProjectDir)\..\data\shaders\Debug\%(Filename).cso</ObjectFileOutput>
+      <ObjectFileOutput Condition="'$(Configuration)|$(Platform)'=='Release - Unicode|Win32'">$(ProjectDir)\..\data\shaders\Release\%(Filename).cso</ObjectFileOutput>
+      <ObjectFileOutput Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(ProjectDir)\..\data\shaders\Release\%(Filename).cso</ObjectFileOutput>
+      <ObjectFileOutput Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(ProjectDir)\..\data\shaders\Debug\%(Filename).cso</ObjectFileOutput>
+      <ObjectFileOutput Condition="'$(Configuration)|$(Platform)'=='Debug - Unicode|x64'">$(ProjectDir)\..\data\shaders\Debug\%(Filename).cso</ObjectFileOutput>
+      <ObjectFileOutput Condition="'$(Configuration)|$(Platform)'=='Release - Unicode|x64'">$(ProjectDir)\..\data\shaders\Release\%(Filename).cso</ObjectFileOutput>
+      <ObjectFileOutput Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(ProjectDir)\..\data\shaders\Release\%(Filename).cso</ObjectFileOutput>
     </FxCompile>
   </ItemGroup>
   <PropertyGroup Label="Globals">

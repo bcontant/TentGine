@@ -1,7 +1,10 @@
 #include "precompiled.h"
 
-#include "simple_pixel.h"
-#include "simple_vertex.h"
+#ifdef _DEBUG
+Path shaderPath = L("../../data/shaders/Debug/");
+#else
+Path shaderPath = L("../../data/shaders/Release/");
+#endif
 
 //--------------------------------------------------------------------------------
 Renderer_DX11::Renderer_DX11(Window* in_pWindow)
@@ -12,6 +15,8 @@ Renderer_DX11::Renderer_DX11(Window* in_pWindow)
 //--------------------------------------------------------------------------------
 Renderer_DX11::~Renderer_DX11()
 {
+	UnloadShaders();
+
 	s32 bIsFullscreen;
 	pSwapChain->GetFullscreenState(&bIsFullscreen, nullptr);
 	if(bIsFullscreen)
@@ -20,6 +25,10 @@ Renderer_DX11::~Renderer_DX11()
 	pBlendState->Release();
 	pPixelShader->Release();
 	pVertexShader->Release();
+
+	pPixelShader2->Release();
+	pVertexShader2->Release();
+
 	pBackBufferView->Release();
 	pBackBuffer->Release();
 	pSwapChain->Release();
@@ -89,10 +98,30 @@ Text* Renderer_DX11::CreateText(float posX, float posY, Font* in_pFont, const st
 }
 
 //--------------------------------------------------------------------------------
+Text* Renderer_DX11::CreateText(const rect_f& rc, Font* in_pFont, const std_string& in_strText)
+{
+	Text_DX11* pText = new Text_DX11(this);
+	pText->SetPosition(rc.m_left, rc.m_top);
+	pText->SetWidth(rc.Width());
+	pText->SetHeight(rc.Height());
+	pText->SetFont(in_pFont);
+	pText->SetText(in_strText);
+	return pText;
+}
+
+//--------------------------------------------------------------------------------
 VertexBuffer* Renderer_DX11::CreateVertexBuffer(u32 in_uiVertexCount, u32 in_uiVertexMask, EPrimitiveType in_ePrimitiveType, void* in_pVBData, u32 in_eBufferType)
 {
 	VertexBuffer_DX11* pVB = new VertexBuffer_DX11(this, in_uiVertexCount, in_uiVertexMask, in_ePrimitiveType, in_pVBData, in_eBufferType);
 	return pVB;
+}
+
+//--------------------------------------------------------------------------------
+Shader* Renderer_DX11::CreateShader(const Path& in_shaderFile)
+{
+	Shader_DX11* pShader = new Shader_DX11(this);
+	pShader->Initialize(in_shaderFile, EShaderType::Vertex);
+	return pShader;
 }
 
 //--------------------------------------------------------------------------------
@@ -151,11 +180,11 @@ u32 Renderer_DX11::GetBackBufferHeight() const
 }
 
 //--------------------------------------------------------------------------------
-void Renderer_DX11::Initialize(DisplayAdapter* /*in_pAdapter*/, Window* in_pWindow)
+void Renderer_DX11::Initialize(DisplayAdapter* in_pAdapter)
 {
 	DXGI_SWAP_CHAIN_DESC swapChainDesc = {};
-	swapChainDesc.BufferDesc.Width = in_pWindow->GetWidth();
-	swapChainDesc.BufferDesc.Height = in_pWindow->GetHeight();
+	swapChainDesc.BufferDesc.Width = m_pWindow->GetWidth();
+	swapChainDesc.BufferDesc.Height = m_pWindow->GetHeight();
 	swapChainDesc.BufferDesc.RefreshRate.Numerator = 0;
 	swapChainDesc.BufferDesc.RefreshRate.Denominator = 0;
 	swapChainDesc.BufferDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
@@ -163,12 +192,12 @@ void Renderer_DX11::Initialize(DisplayAdapter* /*in_pAdapter*/, Window* in_pWind
 	swapChainDesc.SampleDesc.Count = 1;
 	swapChainDesc.BufferUsage = DXGI_USAGE_RENDER_TARGET_OUTPUT;
 	swapChainDesc.BufferCount = 1;
-	swapChainDesc.OutputWindow = (HWND)in_pWindow->GetWindowHandle();
+	swapChainDesc.OutputWindow = (HWND)m_pWindow->GetWindowHandle();
 	swapChainDesc.Windowed = TRUE;
 	swapChainDesc.SwapEffect = DXGI_SWAP_EFFECT_DISCARD;
 	//swapChainDesc.SwapEffect = DXGI_SWAP_EFFECT_SEQUENTIAL;
 
-#ifndef _RETAIL
+#ifdef _DEBUG
 	HResult hr = D3D11CreateDeviceAndSwapChain(nullptr, D3D_DRIVER_TYPE_HARDWARE, nullptr, D3D11_CREATE_DEVICE_DEBUG, nullptr, 0, D3D11_SDK_VERSION, &swapChainDesc, &pSwapChain, &pD3D11Device, nullptr, &pD3D11DeviceContext);
 #else
 	HResult hr = D3D11CreateDeviceAndSwapChain(nullptr, D3D_DRIVER_TYPE_HARDWARE, nullptr, 0, nullptr, 0, D3D11_SDK_VERSION, &swapChainDesc, &pSwapChain, &pD3D11Device, nullptr, &pD3D11DeviceContext);
@@ -190,19 +219,50 @@ void Renderer_DX11::Initialize(DisplayAdapter* /*in_pAdapter*/, Window* in_pWind
 	D3D11_VIEWPORT viewport = {};
 	viewport.TopLeftX = 0;
 	viewport.TopLeftY = 0;
-	viewport.Width = (FLOAT)in_pWindow->GetWidth();
-	viewport.Height = (FLOAT)in_pWindow->GetHeight();
+	viewport.Width = (FLOAT)m_pWindow->GetWidth();
+	viewport.Height = (FLOAT)m_pWindow->GetHeight();
 
 	pD3D11DeviceContext->RSSetViewports(1, &viewport);
 
-	hr = pD3D11Device->CreateVertexShader(g_VShader, sizeof(g_VShader), nullptr, &pVertexShader);
-	hr = pD3D11Device->CreatePixelShader(g_PShader, sizeof(g_PShader), nullptr, &pPixelShader);
-	pD3D11DeviceContext->VSSetShader(pVertexShader, 0, 0);
-	pD3D11DeviceContext->PSSetShader(pPixelShader, 0, 0);
+	File shaderFile;
+
+	shaderFile.Open(shaderPath + L("vs_simple_2d_ptc.cso"), FileMode::ReadOnly);
+	u8* shaderData = new u8[shaderFile.Size()];
+	shaderFile.Read(shaderData, shaderFile.Size());
+
+	hr = pD3D11Device->CreateVertexShader(shaderData, shaderFile.Size(), nullptr, &pVertexShader2);
+
+	shaderFile.Close();
+	shaderFile.Open(shaderPath + L("ps_simple_2d_ptc.cso"), FileMode::ReadOnly);
+	shaderData = new u8[shaderFile.Size()];
+	shaderFile.Read(shaderData, shaderFile.Size());
+
+	hr = pD3D11Device->CreatePixelShader(shaderData, shaderFile.Size(), nullptr, &pPixelShader2);
+
+	SET_D3D11_OBJECT_NAME(pVertexShader2);
+	SET_D3D11_OBJECT_NAME(pPixelShader2);
+
+	shaderFile.Close();
+	shaderFile.Open(shaderPath + L("simple_vertex.cso"), FileMode::ReadOnly);
+	shaderData = new u8[shaderFile.Size()];
+	shaderFile.Read(shaderData, shaderFile.Size());
+
+	hr = pD3D11Device->CreateVertexShader(shaderData, shaderFile.Size(), nullptr, &pVertexShader);
+
+	shaderFile.Close();
+	shaderFile.Open(shaderPath + L("simple_pixel.cso"), FileMode::ReadOnly);
+	shaderData = new u8[shaderFile.Size()];
+	shaderFile.Read(shaderData, shaderFile.Size());
+
+	hr = pD3D11Device->CreatePixelShader(shaderData, shaderFile.Size(), nullptr, &pPixelShader);
+
 
 	SET_D3D11_OBJECT_NAME(pVertexShader);
 	SET_D3D11_OBJECT_NAME(pPixelShader);
-
+	
+	pD3D11DeviceContext->VSSetShader(pVertexShader2, nullptr, 0);
+	pD3D11DeviceContext->PSSetShader(pPixelShader2, nullptr, 0);
+		
 	D3D11_BLEND_DESC BlendState = {};
 	BlendState.RenderTarget[0].BlendEnable = TRUE;
 	BlendState.RenderTarget[0].BlendOp = D3D11_BLEND_OP_ADD;
@@ -218,6 +278,8 @@ void Renderer_DX11::Initialize(DisplayAdapter* /*in_pAdapter*/, Window* in_pWind
 
 	pD3D11DeviceContext->OMSetBlendState(pBlendState, nullptr, 0xffffffff);
 
+	Renderer::Initialize(in_pAdapter);
+
 	/*IDXGIDevice * pDXGIDevice;
 	hr = pD3D11Device->QueryInterface(__uuidof(IDXGIDevice), (void **)&pDXGIDevice);
 
@@ -227,8 +289,8 @@ void Renderer_DX11::Initialize(DisplayAdapter* /*in_pAdapter*/, Window* in_pWind
 	IDXGIFactory * pIDXGIFactory;
 	hr = pDXGIAdapter->GetParent(__uuidof(IDXGIFactory), (void **)&pIDXGIFactory);
 
-	//hr = pIDXGIFactory->MakeWindowAssociation((HWND)in_pWindow->GetWindowHandle(), DXGI_MWA_NO_WINDOW_CHANGES);
-	//hr = pIDXGIFactory->MakeWindowAssociation((HWND)in_pWindow->GetWindowHandle(), DXGI_MWA_NO_ALT_ENTER);
+	//hr = pIDXGIFactory->MakeWindowAssociation((HWND)m_pWindow->GetWindowHandle(), DXGI_MWA_NO_WINDOW_CHANGES);
+	//hr = pIDXGIFactory->MakeWindowAssociation((HWND)m_pWindow->GetWindowHandle(), DXGI_MWA_NO_ALT_ENTER);
 
 	pIDXGIFactory->Release();
 	pDXGIAdapter->Release();
@@ -239,6 +301,6 @@ void Renderer_DX11::Initialize(DisplayAdapter* /*in_pAdapter*/, Window* in_pWind
 Renderer* Renderer::CreateRenderer(DisplayAdapter* in_pAdapter, Window* in_pWindow)
 {
 	Renderer_DX11* pRenderer = new Renderer_DX11(in_pWindow);
-	pRenderer->Initialize(in_pAdapter, in_pWindow);
+	pRenderer->Initialize(in_pAdapter);
 	return pRenderer;
 }

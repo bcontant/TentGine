@@ -39,6 +39,9 @@
     <ClInclude Include="VertexBuffer_DX11.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="Shader_DX11.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Renderer_DX11.cpp">
@@ -62,12 +65,21 @@
     <ClCompile Include="VertexBuffer_DX11.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="Shader_DX11.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="simple_pixel.hlsl">
       <Filter>Shaders</Filter>
     </FxCompile>
     <FxCompile Include="simple_vertex.hlsl">
+      <Filter>Shaders</Filter>
+    </FxCompile>
+    <FxCompile Include="ps_simple_2d_ptc.hlsl">
+      <Filter>Shaders</Filter>
+    </FxCompile>
+    <FxCompile Include="vs_simple_2d_ptc.hlsl">
       <Filter>Shaders</Filter>
     </FxCompile>
   </ItemGroup>

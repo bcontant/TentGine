@@ -26,10 +26,7 @@ void Texture_DX11::Initialize(const Path& filename)
 
 	//TODO : ConvertToDXCompatibleFormat
 	if (pData->GetFormat() == BufferFormat::BGR_U24)
-	{
 		pData->ConvertTo(BufferFormat::ARGB_U32);
-		SaveTGA("../../data/TEST.tga", pData, true);
-	}
 
 	Initialize(pData);
 }
