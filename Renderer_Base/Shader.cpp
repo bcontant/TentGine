@@ -2,11 +2,11 @@
 
 #include "Shader.h"
 
-EnumString kShaderTypeStrings =
+EnumStrings kShaderTypeStrings =
 {
-	{ static_cast<int>(EShaderType::Vertex), "Vertex" },
-	{ static_cast<int>(EShaderType::Pixel), "Pixel" },
-	{ static_cast<int>(EShaderType::Invalid), "Invalid" }
+	{ static_cast<int>(EShaderType::Vertex), L("Vertex") },
+	{ static_cast<int>(EShaderType::Pixel), L("Pixel") },
+	{ static_cast<int>(EShaderType::Invalid), L("Invalid") }
 };
 
 DEFINE_PROPERTIES(ShaderConstant);

@@ -18,12 +18,16 @@
 #include "../Renderer_Base/Quad.h"
 #include "../Renderer_Base/Texture.h"
 #include "../Renderer_Base/Text.h"
+#include "../Renderer_Base/Shader.h"
 
 #include "../Base/JPEGFile.h"
 #include "../Base/PNGFile.h"
 #include "../Base/BitmapData.h"
 
 #include "../Base/XMLFile.h"
+
+#include "../Base/Streamable.h"
+
 
 int CALLBACK WinMain(HINSTANCE hInstance, HINSTANCE, LPSTR, s32)
 {
@@ -35,6 +39,8 @@ int CALLBACK WinMain(HINSTANCE hInstance, HINSTANCE, LPSTR, s32)
 	XMLFile xmlfile;
 	xmlfile.Parse(Path(L("../../data/shaders/simple_vertex.xml")));
 	xmlfile.Output(Path(L("../../data/shaders/simple_vertex_parsed.xml")), eOF_SpaceIndents_2);
+
+	Shader* pShader = XMLSerializer::Serialize(&pShader, L("../../data/shaders/simple_vertex.xml"));
 
 	//OS::BuildFont(L("../../data/Comic.ttf"), 36, 1024, OS::eFF_ForceAutoHint /*| OS::eFF_Mono*/, L("../../data/"));
 	//OS::BuildFont(L("../../data/FFF_Tusj.ttf"), 72, 1024, OS::eFF_ForceAutoHint/* | OS::eFF_Mono*/, L("../../data/"));

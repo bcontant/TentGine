@@ -22,25 +22,25 @@ void* StreamableObjectFactory::CreateStreamableObject(const std_string& in_objec
 	auto it = m_mStreamableObjects.find(in_objectName);
 	if (it == m_mStreamableObjects.end())
 	{
-		AssertMsg(false, "Class [%s] is not registered (did you forget DEFINE_PROPERTIES(%s);?)", in_objectName.c_str(), in_objectName.c_str());
+		AssertMsg(false, L("Class [%s] is not registered (did you forget DEFINE_PROPERTIES(%s);?)"), in_objectName.c_str(), in_objectName.c_str());
 		return nullptr;
 	}
 
 	Assert(it->second != nullptr);
 	Assert(it->second->pCreationFunc != nullptr);
 
-	if (in_baseClass != "" && in_baseClass != in_objectName)
+	if (in_baseClass != L("") && in_baseClass != in_objectName)
 	{
 		auto parentIt = m_mStreamableObjects.find(in_baseClass);
 		if (parentIt == m_mStreamableObjects.end())
 		{
-			AssertMsg(false, "Inexistant base class [%s]", in_baseClass.c_str());
+			AssertMsg(false, L("Inexistant base class [%s]"), in_baseClass.c_str());
 			return nullptr;
 		}
 
 		if (!parentIt->second->HasChildNamed(in_objectName))
 		{
-			AssertMsg(false, "Object class [%s] is not derived from [%s]", in_objectName.c_str(), in_baseClass.c_str());
+			AssertMsg(false, L("Object class [%s] is not derived from [%s]"), in_objectName.c_str(), in_baseClass.c_str());
 			return nullptr;
 		}
 	}
@@ -68,7 +68,7 @@ void StreamableObjectFactory::RegisterStreamableObject(const std_string& in_objN
 	}
 	pNewObject->pCreationFunc = in_creationFunc;
 
-	if (in_parentName != "")
+	if (in_parentName != L(""))
 	{
 		auto parentIt = m_mStreamableObjects.find(in_parentName);
 		if(parentIt == m_mStreamableObjects.end())

@@ -7,6 +7,35 @@
 #include "../Base/Profiler.h"
 #include "../Base/Singleton.h"
 
+
+/////////////////////////////////////////////////
+//GENERIC
+using ObjCreationFunction = void*(*)();
+
+//Factory for creation / dynamic type checking
+class StreamableObjectFactory : public StaticSingleton<StreamableObjectFactory>
+{
+	MAKE_STATIC_SINGLETON(StreamableObjectFactory);
+
+	struct StreamableObject
+	{
+		std_string m_Name;
+		ObjCreationFunction pCreationFunc;
+		std::vector<StreamableObject*> vChildren;
+
+		bool HasChildNamed(const std_string& in_ChildName);
+	};
+	
+public:
+	void* CreateStreamableObject(const std_string& in_objectName, const std_string& in_baseClass);
+	void RegisterStreamableObject(const std_string& in_objName, ObjCreationFunction in_creationFunc, const std_string& in_parentName = L(""));
+
+	//TODO CLEANUP 
+	std::map<std_string, StreamableObject*> m_mStreamableObjects;
+};
+
+extern StreamableObjectFactory s_StreamableObjectFactory;
+
 template<class T>
 struct StreamableObjectRegisterer
 {
@@ -16,12 +45,32 @@ struct StreamableObjectRegisterer
 	}
 };
 
+//Property Class
+using EnumStrings = std::vector<std::pair<int, std_string>>;
+
+template<typename Class, typename T>
+struct Property 
+{
+	constexpr Property(T Class::*aMember, const string_char* aName, EnumStrings* aEnumStrings) : member{ aMember }, name{ aName }, enum_strings{ aEnumStrings } {}
+
+	T Class::*member;
+	const string_char* name;
+	EnumStrings* enum_strings;
+};
+
+template<typename Class, typename T>
+constexpr auto makeProperty(T Class::*member, const string_char* name, EnumStrings* enumStrings = nullptr)
+{
+	return Property<Class, T>{member, name, enumStrings};
+}
+
+//MACROS
 #define DECLARE_PROPERTIES_BEGIN(T) \
 	using Type = T; \
 	static void* StreamableObjectCreator() { return new Type; } \
 	static StreamableObjectRegisterer<Type> ms_StreamableObjectRegisterer; \
-	static const char* GetStreamableClassName() { return #T; } \
-	static const char* GetStreamableParentClassName() { return ""; } \
+	static const string_char* GetStreamableClassName() { return L(#T); } \
+	static const string_char* GetStreamableParentClassName() { return L(""); } \
 	static auto& streamables() \
 	{ \
 		static auto streamables_props = std::make_tuple( 
@@ -30,8 +79,8 @@ struct StreamableObjectRegisterer
 	using Type = T; \
 	static void* StreamableObjectCreator() { return new Type; } \
 	static StreamableObjectRegisterer<Type> ms_StreamableObjectRegisterer; \
-	static const char* GetStreamableClassName() { return #T; } \
-	static const char* GetStreamableParentClassName() { return #Base; } \
+	static const string_char* GetStreamableClassName() { return L(#T); } \
+	static const string_char* GetStreamableParentClassName() { return L(#Base); } \
 	static auto& streamables() \
 	{ \
 		static auto streamables_props = std::tuple_cat(ShaderConstant::streamables(), \
@@ -39,10 +88,10 @@ struct StreamableObjectRegisterer
 
 
 #define ADD_PROPERTY(var) \
-			makeProperty(&Type::var, #var) \
+			makeProperty(&Type::var, L(#var)) \
 
 #define ADD_ENUM_PROPERTY(var, enumStrings) \
-			makeProperty(&Type::var, #var, &enumStrings) \
+			makeProperty(&Type::var, L(#var), &enumStrings) \
 
 #define DECLARE_PROPERTIES_END() \
 		); \
@@ -65,52 +114,6 @@ struct StreamableObjectRegisterer
 #define DEFINE_PROPERTIES(T) \
 	StreamableObjectRegisterer<T> T::ms_StreamableObjectRegisterer;
 
-/////////////////////////////////////////////////
-//GENERIC
-using ObjCreationFunction = void*(*)();
-
-//TODO : Convert to Singleton
-class StreamableObjectFactory : public StaticSingleton<StreamableObjectFactory>
-{
-	MAKE_STATIC_SINGLETON(StreamableObjectFactory);
-
-	struct StreamableObject
-	{
-		std_string m_Name;
-		ObjCreationFunction pCreationFunc;
-		std::vector<StreamableObject*> vChildren;
-
-		bool HasChildNamed(const std_string& in_ChildName);
-	};
-	
-public:
-	void* CreateStreamableObject(const std_string& in_objectName, const std_string& in_baseClass);
-	void RegisterStreamableObject(const std_string& in_objName, ObjCreationFunction in_creationFunc, const std_string& in_parentName = "");
-
-	//TODO CLEANUP 
-	std::map<std_string, StreamableObject*> m_mStreamableObjects;
-};
-
-extern StreamableObjectFactory s_StreamableObjectFactory;
-
-using EnumString = std::vector<std::pair<int, std_string>>;
-
-template<typename Class, typename T>
-struct Property 
-{
-	constexpr Property(T Class::*aMember, const char* aName, EnumString* aEnumStrings) : member{ aMember }, name{ aName }, enum_strings{ aEnumStrings } {}
-
-	T Class::*member;
-	const char* name;
-	EnumString* enum_strings;
-};
-
-template<typename Class, typename T>
-constexpr auto makeProperty(T Class::*member, const char* name, EnumString* enumStrings = nullptr)
-{
-	return Property<Class, T>{member, name, enumStrings};
-}
-
 
 //PER-SERIALIZATION STYLE (xml, json, binary, plain text, etc)
 class XMLSerializer
@@ -121,14 +124,14 @@ private:
 
 	template<typename T>
 	static typename std::enable_if<!std::is_enum<T>::value, void>::type
-		ToAny(const XMLTag* in_pTag, const char* in_Name, T& in_Object, EnumString*)
+		ToAny(const XMLTag* in_pTag, const string_char* in_Name, T& in_Object, EnumStrings*)
 	{
 		ToAny_Impl<T>::f(in_pTag, in_Name, in_Object);
 	}
 
 	template<typename T>
 	static typename std::enable_if<std::is_enum<T>::value, void>::type
-		ToAny(const XMLTag* in_pTag, const char* in_Name, T& in_Object, EnumString* enum_strings)
+		ToAny(const XMLTag* in_pTag, const string_char* in_Name, T& in_Object, EnumStrings* enum_strings)
 	{
 		std_string enumValue;
 		if (enum_strings == nullptr)
@@ -149,7 +152,7 @@ private:
 	template <class T>
 	struct ToAny_Impl
 	{
-		static void f(const XMLTag* in_pTag, const char* in_Name, T& in_Object)
+		static void f(const XMLTag* in_pTag, const string_char* in_Name, T& in_Object)
 		{
 			PROFILE_BLOCK;
 
@@ -163,7 +166,7 @@ private:
 	template <class T>
 	struct ToAny_Impl<T*>
 	{
-		static void f(const XMLTag* in_pTag, const char* in_Name, T*& in_Object)
+		static void f(const XMLTag* in_pTag, const string_char* in_Name, T*& in_Object)
 		{
 			PROFILE_BLOCK;
 
@@ -176,7 +179,7 @@ private:
 	template <class T>
 	struct ToAny_Impl<std::vector<T>>
 	{
-		static void f(const XMLTag* in_pTag, const char* in_Name, std::vector<T>& in_Object)
+		static void f(const XMLTag* in_pTag, const string_char* in_Name, std::vector<T>& in_Object)
 		{
 			PROFILE_BLOCK;
 
@@ -189,7 +192,7 @@ private:
 			XMLTag* pObjectTag = pVectorTag->GetChild();
 			while (pObjectTag != nullptr)
 			{
-				AssertMsg(pObjectTag->GetName() == T::GetStreamableClassName(), "vector<%s> cannot contains an object of type %s", T::GetStreamableClassName(), pObjectTag->GetName().c_str());
+				AssertMsg(pObjectTag->GetName() == T::GetStreamableClassName(), L("vector<%s> cannot contains an object of type %s"), T::GetStreamableClassName(), pObjectTag->GetName().c_str());
 
 				T p;
 				setStreamableProperties(std::make_index_sequence<std::tuple_size<std::remove_reference<decltype(std::decay_t<T>::streamables())>::type>::value>{}, p, pObjectTag);
@@ -205,7 +208,7 @@ private:
 	template <class T>
 	struct ToAny_Impl<std::vector<T*>>
 	{
-		static void f(const XMLTag* in_pTag, const char* in_Name, std::vector<T*>& in_Object)
+		static void f(const XMLTag* in_pTag, const string_char* in_Name, std::vector<T*>& in_Object)
 		{
 			PROFILE_BLOCK;
 
@@ -237,7 +240,7 @@ private:
 	template <>
 	struct ToAny_Impl<Path>
 	{
-		static void f(const XMLTag* in_pTag, const char* in_Name, Path& in_Object)
+		static void f(const XMLTag* in_pTag, const string_char* in_Name, Path& in_Object)
 		{
 			PROFILE_BLOCK;
 
@@ -249,7 +252,7 @@ private:
 	template <>
 	struct ToAny_Impl<std_string>
 	{
-		static void f(const XMLTag* in_pTag, const char* in_Name, std_string& in_Object)
+		static void f(const XMLTag* in_pTag, const string_char* in_Name, std_string& in_Object)
 		{
 			PROFILE_BLOCK;
 
@@ -298,11 +301,11 @@ public:
 	}
 
 	template<typename T>
-	static T* Serialize(const Path& in_file)
+	static T* Serialize(T** in_object, const Path& in_file)
 	{
-		T* object = new T;
-		Serialize(object, in_file);
-		return object;
+		*in_object = new T;
+		Serialize(*in_object, in_file);
+		return *in_object;
 	}
 
 	template<typename T>

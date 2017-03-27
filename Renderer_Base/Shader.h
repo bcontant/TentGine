@@ -10,15 +10,15 @@ enum class EShaderType
 	Invalid
 };
 
-extern EnumString kShaderTypeStrings;
+extern EnumStrings kShaderTypeStrings;
 
 class ShaderConstant
 {
 public:
 	virtual ~ShaderConstant();
 
-	std_string m_Name = "";
-	std_string m_Type = "";
+	std_string m_Name = L("");
+	std_string m_Type = L("");
 
 	void* m_Data = nullptr;
 	u32 m_DataSize = 0;
@@ -32,7 +32,7 @@ public:
 class SuperShaderConstant : public ShaderConstant
 {
 public:
-	std_string m_SuperName = "";
+	std_string m_SuperName = L("");
 
 public:
 	DECLARE_DERIVED_PROPERTIES_BEGIN(SuperShaderConstant, ShaderConstant)
@@ -69,7 +69,7 @@ public:
 protected:
 	std_string m_Name = L("");
 	EShaderType m_eType = EShaderType::Invalid;
-	Path m_HLSLCompiledFile = "";
+	Path m_HLSLCompiledFile = L("");
 
 	ShaderCode m_ShaderCode;
 	ShaderCode* m_pShaderCode;

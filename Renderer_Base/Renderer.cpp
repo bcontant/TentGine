@@ -41,8 +41,6 @@ void Renderer::LoadShaders()
 		//fromXML<Shader>(pNewShader, "../../data/shaders/simple_vertex.xml");
 		//fromXML(pNewShader, "../../data/shaders/simple_vertex.xml");
 
-		XMLSerializer::Serialize(pNewShader, "../../data/shaders/simple_vertex.xml");
-
 		m_vShaders.push_back(pNewShader);
 	}
 }
