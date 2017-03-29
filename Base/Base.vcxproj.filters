@@ -43,6 +43,12 @@
     <Filter Include="Source Files\XML">
       <UniqueIdentifier>{d1272502-ab2c-44f8-809c-f6a2b776911c}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\Reflection">
+      <UniqueIdentifier>{10b8d2f9-5111-4fd1-9231-e3b5723a165b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Reflection">
+      <UniqueIdentifier>{5cc47a12-08c0-48a5-8364-61ac0cffc21d}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="precompiled.h">
@@ -135,6 +141,9 @@
     <ClInclude Include="Streamable.h">
       <Filter>Header Files\DevTools</Filter>
     </ClInclude>
+    <ClInclude Include="Reflection.h">
+      <Filter>Header Files\Reflection</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="precompiled.cpp">
@@ -206,5 +215,13 @@
     <ClCompile Include="Streamable.cpp">
       <Filter>Source Files\DevTools</Filter>
     </ClCompile>
+    <ClCompile Include="Reflection.cpp">
+      <Filter>Source Files\Reflection</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Reflection.inl">
+      <Filter>Header Files\Reflection</Filter>
+    </None>
   </ItemGroup>
 </Project>

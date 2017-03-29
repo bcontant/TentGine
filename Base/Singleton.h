@@ -65,6 +65,7 @@ public:
 	static T* GetInstance()
 	{
 		static T ms_Instance;
+		ms_pInstance = &ms_Instance;
 		return &ms_Instance;
 	}
 
@@ -76,4 +77,9 @@ protected:
 	// No copy
 	StaticSingleton(const StaticSingleton &);
 	void operator=(const StaticSingleton &);
+
+	static T *ms_pInstance;
 };
+
+template<class T> T *StaticSingleton<T>::ms_pInstance = 0;
+

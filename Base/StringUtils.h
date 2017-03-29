@@ -18,6 +18,7 @@
 #define STRCPY wcscpy_s
 #define STRCAT wcscat_s
 #define STRCMP wcscmp
+#define STRSTR wcsstr
 
 #define FOPEN _wfopen_s
 
@@ -39,6 +40,7 @@
 #define STRCPY strcpy_s
 #define STRCAT strcat_s
 #define STRCMP strcmp
+#define STRSTR strstr
 
 #define FOPEN fopen_s
 

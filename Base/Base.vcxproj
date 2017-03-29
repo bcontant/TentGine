@@ -301,6 +301,7 @@
     <ClInclude Include="Profiler.h" />
     <ClInclude Include="RangedBasedLoops.h" />
     <ClInclude Include="Rect.h" />
+    <ClInclude Include="Reflection.h" />
     <ClInclude Include="Singleton.h" />
     <ClInclude Include="Streamable.h" />
     <ClInclude Include="StringUtils.h" />
@@ -357,6 +358,7 @@
       <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Release - Unicode|x64'">precompiled.h</PrecompiledHeaderFile>
     </ClCompile>
     <ClCompile Include="Profiler.cpp" />
+    <ClCompile Include="Reflection.cpp" />
     <ClCompile Include="Streamable.cpp" />
     <ClCompile Include="StringUtils.cpp" />
     <ClCompile Include="TGAFile.cpp" />
@@ -365,6 +367,9 @@
     <ClCompile Include="XMLFile.cpp" />
     <ClCompile Include="XMLParser.cpp" />
     <ClCompile Include="XMLTag.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Reflection.inl" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

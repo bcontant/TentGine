@@ -2,6 +2,7 @@
 
 #include "RendererObject.h"
 #include "../Base/Streamable.h"
+#include "../Base/Reflection.h"
 
 enum class EShaderType
 {

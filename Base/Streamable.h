@@ -97,7 +97,7 @@ constexpr auto makeProperty(T Class::*member, const string_char* name, EnumStrin
 		); \
 		return streamables_props; \
 	} \
-	virtual void Serialize_XML(XMLTag* in_pTag) \
+	virtual void Deserialize_XML(XMLTag* in_pTag) \
 	{ \
 		XMLSerializer::setStreamableProperties(std::make_index_sequence<std::tuple_size<std::remove_reference<decltype(Type::streamables())>::type>::value>{}, *this, in_pTag); \
 	}
@@ -106,7 +106,7 @@ constexpr auto makeProperty(T Class::*member, const string_char* name, EnumStrin
 		)); \
 		return streamables_props; \
 	} \
-	virtual void Serialize_XML(XMLTag* in_pTag) \
+	virtual void Deserialize_XML(XMLTag* in_pTag) \
 	{ \
 		XMLSerializer::setStreamableProperties(std::make_index_sequence<std::tuple_size<std::remove_reference<decltype(Type::streamables())>::type>::value>{}, *this, in_pTag); \
 	}
@@ -226,7 +226,7 @@ private:
 				T* p = (T*)StreamableObjectFactory::GetInstance()->CreateStreamableObject(tagName, T::GetStreamableClassName());
 				if (p != nullptr)
 				{
-					p->Serialize_XML(pObjectTag);
+					p->Deserialize_XML(pObjectTag);
 					in_Object.push_back(p);
 				}
 
@@ -286,30 +286,30 @@ public:
 	}
 
 	template<typename T>
-	static T Serialize(const Path& in_file)
+	static T Deserialize(const Path& in_file)
 	{
 		T object;
-		Serialize(&object, in_file);
+		Deserialize(&object, in_file);
 		return object;
 	}
 
 	template<typename T>
-	static T& Serialize(T& in_object, const Path& in_file)
+	static T& Deserialize(T& in_object, const Path& in_file)
 	{
-		Serialize(&in_object, in_file);
+		Deserialize(&in_object, in_file);
 		return in_object;
 	}
 
 	template<typename T>
-	static T* Serialize(T** in_object, const Path& in_file)
+	static T* Deserialize(T** in_object, const Path& in_file)
 	{
 		*in_object = new T;
-		Serialize(*in_object, in_file);
+		Deserialize(*in_object, in_file);
 		return *in_object;
 	}
 
 	template<typename T>
-	static T* Serialize(T* in_object, const Path& in_file)
+	static T* Deserialize(T* in_object, const Path& in_file)
 	{
 		PROFILE_BLOCK;
 
