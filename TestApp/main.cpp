@@ -60,7 +60,9 @@ struct MyTypeBase
 
 enum class TestEnumType
 {
-	VAL_A, VAL_B, VAL_C
+	VAL_A,
+	VAL_B,
+	VAL_C
 };
 
 struct MyType : MyTypeBase
@@ -76,15 +78,27 @@ struct MyType : MyTypeBase
 
 	float Test() 
 	{
-		x = 100;
+		//x = 100;
 		return 1.f;
 	}
 
-	/*virtual float Test2()
+	virtual float Test2()
 	{
 		y = 100.f;
 		return y;
-	}*/
+	}
+
+	int Test3(void* in_p)
+	{
+		*((unsigned int*)in_p) = 123;
+		return 12;
+	}
+
+	bool Test4()
+	{
+		z = 'A';
+		return true;
+	}
 
 	int x;
 	float y;
@@ -102,7 +116,7 @@ private:
 
 DECLARE_TYPE(MyTypeBase)
 	ADD_PROP(cache)
-END_DECLARE_TYPE(MyTypeBase)
+END_DECLARE(MyTypeBase)
 
 DECLARE_TYPE(MyType)
 	BASE_CLASS(MyTypeBase)
@@ -114,56 +128,70 @@ DECLARE_TYPE(MyType)
 	ADD_PROP(vInts)
 	ADD_PROP(ohshit_private)
 	ADD_PROP(private_enum)
-END_DECLARE_TYPE(MyType)
+	ADD_FUNC(Test)
+	ADD_FUNC(Test2)
+	ADD_FUNC(Test3)
+END_DECLARE(MyType)
 
 DECLARE_TYPE(TestEnumType)
 	ADD_ENUM_VALUE(VAL_A)
 	ADD_ENUM_VALUE(VAL_B)
 	ADD_ENUM_VALUE(VAL_C)
-END_DECLARE_TYPE(TestEnumType)
+END_DECLARE(TestEnumType)
+
+DECLARE_TYPE(Type)
+	ADD_PROP(base_type)
+	ADD_PROP(name)
+	ADD_PROP(vProperties)
+	//ADD_PROP(vFunctions)
+END_DECLARE(Type)
 
 int CALLBACK WinMain(HINSTANCE hInstance, HINSTANCE, LPSTR, s32)
 {
 	Logger::CreateInstance();
 	Profiler::CreateInstance();
 
+	MyType obj1;
+
 	u8* objBuf = nullptr;
 	Type* t = TypeDB::GetInstance()->GetType(L("MyType"));
 	objBuf = new u8[t->size];
 	t->constructor(objBuf);
 
-	TypeFunc_Base* typefunc3 = t->AddFunction("Test", &MyType::Test);
+	Variant v(&obj1);
+	MyType* obj2 = v.GetValue<MyType*>();
+	v = 17;
+	int bla = v.GetValue<int>();
+	v = 500.f;
+	float fla = v.GetValue<float>();
 
-	TypeFunc_Base* typefunc = new TypeFunc<MyType, float(void)>(Name("Test"), &MyType::Test);
-	TypeFunc_Base* typefunc2 = new TypeFunc<MyType, float(void)>(Name("Test2"), &MyType::Test2);
+	t->AddFunction(TypeFunction(std::make_pair(Name(L("Test4")), &MyType::Test4)));
 
-/*
-	TypeFunc_Base* typefunc = new TypeFunc<MyType, float(void)>(&MyType::Test);
-	TypeFunc_Base* typefunc2 = new TypeFunc<MyType, float(void)>(&MyType::Test2);
-*/
+	float fRet = FLT_MAX;
+	fRet = Invoker<float()>::invoke(t->GetFunction(L("Test")));
 
-	//float ret = Invoker<int()>::Invoke(typefunc3, objBuf);
+	MyType* myObj = (MyType*)objBuf;
+	fRet = Invoker<float()>::invoke(myObj, t->GetFunction(L("Test2")));
+	fRet = Invoker<float()>::invoke((void*)objBuf, t->GetFunction(L("Test2")));
+	fRet = Invoker<float()>::invoke(objBuf, t->GetFunction(L("Test2")));
+	fRet = Invoker<float()>::invoke(t->GetFunction(L("Test2")));
 
-	float ret;
-	typefunc3->Invoke_WithRet(objBuf, &ret);
-	typefunc->Invoke_WithRet(objBuf, &ret);
-	typefunc2->Invoke_WithRet(objBuf, &ret);
+	unsigned int i = 0;
+	int iRet;
+	iRet = Invoker<int(void*)>::invoke(myObj, t->GetFunction(L("Test3")), &i);
+	iRet = Invoker<int(void*)>::invoke((void*)objBuf, t->GetFunction(L("Test3")), &i);
+	iRet = Invoker<int(void*)>::invoke(objBuf, t->GetFunction(L("Test3")), &i);
+	iRet = Invoker<int(void*)>::invoke(t->GetFunction(L("Test3")), &i);
 
 	TypeProperty* f = t->GetProperty(L("y"));
 	float *pf = (float*)f->GetPtr(objBuf);
 	*pf = 3.f;
-
-	float value = 5.f;
-	f->Assign(Protocol::Float, f->GetPtr(objBuf), &value);
-	f->Assign(f->GetPtr(objBuf), float(15.f));
 
 	TypeProperty* f2 = t->GetProperty(L("other_ptr"));
 	u8* obj2Buf = new u8[f2->type->size];
 	void** ppf = (void**)f2->GetPtr(objBuf);
 	*ppf = obj2Buf;
 	f2->type->constructor(obj2Buf);
-
-	f2->Assign(f2->GetPtr(objBuf), float(15.f));
 
 	t->destructor(objBuf);
 

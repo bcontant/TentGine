@@ -287,14 +287,19 @@
     <ClInclude Include="BitmapData.h" />
     <ClInclude Include="Buffer.h" />
     <ClInclude Include="CompressionUtils.h" />
+    <ClInclude Include="EnumConstant.h" />
     <ClInclude Include="File.h" />
     <ClInclude Include="FontDataFile.h" />
+    <ClInclude Include="Function_Prototype.h" />
     <ClInclude Include="GraphicUtils.h" />
+    <ClInclude Include="IContainer.h" />
+    <ClInclude Include="Invoker.h" />
     <ClInclude Include="JPEGFile.h" />
     <ClInclude Include="Logger.h" />
     <ClInclude Include="MathUtils.h" />
     <ClInclude Include="Matrix.h" />
     <ClInclude Include="MemoryBuffer.h" />
+    <ClInclude Include="Name.h" />
     <ClInclude Include="Path.h" />
     <ClInclude Include="PNGFile.h" />
     <ClInclude Include="precompiled.h" />
@@ -306,7 +311,12 @@
     <ClInclude Include="Streamable.h" />
     <ClInclude Include="StringUtils.h" />
     <ClInclude Include="TGAFile.h" />
+    <ClInclude Include="Type.h" />
+    <ClInclude Include="TypeDB.h" />
+    <ClInclude Include="TypeFunction.h" />
+    <ClInclude Include="TypeProperty.h" />
     <ClInclude Include="Types.h" />
+    <ClInclude Include="Variant.h" />
     <ClInclude Include="Vector.h" />
     <ClInclude Include="XMLAttribute.h" />
     <ClInclude Include="XMLDefines.h" />
@@ -337,6 +347,7 @@
     <ClCompile Include="Logger.cpp" />
     <ClCompile Include="MathUtils.cpp" />
     <ClCompile Include="MemoryBuffer.cpp" />
+    <ClCompile Include="Name.cpp" />
     <ClCompile Include="Path.cpp" />
     <ClCompile Include="PNGFile.cpp" />
     <ClCompile Include="precompiled.cpp">
@@ -358,10 +369,13 @@
       <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Release - Unicode|x64'">precompiled.h</PrecompiledHeaderFile>
     </ClCompile>
     <ClCompile Include="Profiler.cpp" />
-    <ClCompile Include="Reflection.cpp" />
     <ClCompile Include="Streamable.cpp" />
     <ClCompile Include="StringUtils.cpp" />
     <ClCompile Include="TGAFile.cpp" />
+    <ClCompile Include="Type.cpp" />
+    <ClCompile Include="TypeDB.cpp" />
+    <ClCompile Include="TypeProperty.cpp" />
+    <ClCompile Include="Variant.cpp" />
     <ClCompile Include="XMLAttribute.cpp" />
     <ClCompile Include="XMLDefines.cpp" />
     <ClCompile Include="XMLFile.cpp" />
