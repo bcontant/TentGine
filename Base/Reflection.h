@@ -2,6 +2,7 @@
 
 #include "TypeDB.h"
 
+#include "InstanceTypeInfo.h"
 #include "Variant.h"
 #include "Invoker.h"
 
@@ -28,10 +29,20 @@ public:
 		pType->AddFunction( TypeFunction( std::make_pair( Name(L(#FUNC)), &T::FUNC) ) );
 
 #define ADD_ENUM_VALUE(ENUM) \
-		pType->AddEnumConstant( EnumConst(L(#ENUM), static_cast<int>(T::ENUM) ) );
+		pType->AddEnumConstant( EnumConstant(L(#ENUM), static_cast<int>(T::ENUM) ) );
 
 #define BASE_CLASS(BASE) \
 		pType->Base<BASE>();
+
+#define SET_DEFAULT_CTOR_ARGS(...) \
+		struct DefaultConstructor \
+		{ \
+			static void ConstructObject(void* object) { new (object) T(##__VA_ARGS__); } \
+			static void* DefaultObject() { static T obj(##__VA_ARGS__);  obj = T(##__VA_ARGS__);  return &obj; } \
+		}; \
+		pType->SetCtor(DefaultConstructor::ConstructObject); \
+		if(IsDestructible<T>::val) \
+			pType->SetDefaultObject(DefaultConstructor::DefaultObject);
 
 #define END_DECLARE(TYPE) \
 	} \

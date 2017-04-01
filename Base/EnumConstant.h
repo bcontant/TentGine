@@ -2,9 +2,9 @@
 
 #include "Name.h"
 
-struct EnumConst
+struct EnumConstant
 {
-	EnumConst(Name name, int value) : name(name), value(value) { }
+	EnumConstant(Name name, u64 value) : name(name), value(value) { }
 	Name name;
-	int value = 0;
+	u64 value = 0;
 };

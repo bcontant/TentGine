@@ -2,18 +2,6 @@
 
 #include "Shader.h"
 
-EnumStrings kShaderTypeStrings =
-{
-	{ static_cast<int>(EShaderType::Vertex), L("Vertex") },
-	{ static_cast<int>(EShaderType::Pixel), L("Pixel") },
-	{ static_cast<int>(EShaderType::Invalid), L("Invalid") }
-};
-
-DEFINE_PROPERTIES(ShaderConstant);
-DEFINE_PROPERTIES(SuperShaderConstant);
-DEFINE_PROPERTIES(ShaderCode);
-DEFINE_PROPERTIES(Shader);
-
 ShaderConstant::~ShaderConstant()
 {
 	delete[] m_Data;

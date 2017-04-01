@@ -50,3 +50,6 @@ private:
 
 	File m_LogFile;
 };
+
+#define DEBUG_LOG(format, ...) \
+	Logger::GetInstance()->Log(LogCategory::DebugInfo, LogSeverity::Message, LogType::FileAndDebug, format, ##__VA_ARGS__);

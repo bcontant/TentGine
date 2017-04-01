@@ -18,7 +18,7 @@ public:
 
 	static T* GetInstance()
 	{
-		AssertMsg(Singleton<T>::ms_pInstance, L("Instance not created"));
+		//AssertMsg(Singleton<T>::ms_pInstance, L("Instance not created"));
 		return ms_pInstance;
 	}
 

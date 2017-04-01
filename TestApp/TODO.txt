@@ -31,18 +31,35 @@ TODO
   - Implement SDF Rendering
 
 - PNG Loader : Support Indexed Color (Type:3) ?
-
-- BMP loader / saver
-- GIF?  TIFF?  PBM?  DDS?
+- DDS Loader
+- BMP loader / saver?
+- GIF?  TIFF?  PBM?
 
 - XML : Support encodings (UTF8 etc)
 
-- Basic Serialization
-- Refac to support serializing obect for different types (text, binary, XML, JSON, etc)
+- Fix annoying line endings shennanigans with MSCV + GitHub
 
+- Reflection : Add Assignment Copy and Constructor Copy, and use it properly.
+- Reflection : Handle Method overload
+- Reflection : Add meta info in TypeFunction (return type, param types, param count)
+- Reflection : Handle Static Functions / Members
+- Reflection : Support non-copyable classes
+
+- Reflection : Is Invoke on safe instance really useful?  Seems like it's just and elaborate cast.
+- Reflection : Is Invoke on new, temporary object really useful?  Seems like it's just and elaborate cast.
+
+- Reflection : Array support for serialization (how to treat Type*, basically.  Is it one?  two?  a million objects?  Ideas : flags to indicate null termination or size from another property)
+- Reflection : How are double**, triple*** pointers supposed to work?  They're currently lost in translation
+
+- Variant : .As() autocasts from pointer to value or from value to pointer???
+
+  
 - Profile viewer
   - Make it realtime
   - Bunch of features (grouping blocks, etc)
+- Profiler : Consolidate Data after a certain number of frames
+- Profiler : Keep data from irregular frames
+- Profiler : Make aware of Frame Start and Frame End for better evaluation of irregularities
 
 - Visual Graphical Debug Tool
   - Wireframe / Flat mode
@@ -71,3 +88,27 @@ DONE
 - Support clean line breaking on spaces, if possible (Text)
 - Support Color (Text)
 - XML Parser
+- Reflection : Implement Type Meta Data
+- Reflection : Implement Members
+- Reflection : Implement Functions (Type-safe, w/ and w/o instances)
+- Reflection : Support abstract classes
+- Reflection : Support types with no default constructor 
+- Reflection : Fix issue with unstripped types (Obj != Obj** != Obj& etc) (Variants)
+- Reflection : Variant
+- Reflection : Support setting a different default constructor
+- Reflection : Support instance-less method calling on classes that don't have a default constructor.
+- Reflection : Support adding methods on nonDestructible classes (was an issue because of the instanceless calling code which created an object on the stack which needed a destructor)
+- Reflection : Typesafety checks on Variant casting
+- Reflection : Casting operator on Variant
+- Basic Serialization
+- Refac to support serializing object for different types (text, binary, XML, JSON, etc)
+- Reflection : Handle Arrays[].  Also supported by serialization through the existing Container interface
+- Reflection : Container support for serialization
+- Reflection : Add std::string support as a fundamental
+- Reflection : Clean up / Organisation
+- Reflection : Fix Custom Ctor not getting called properly by InstanceTypeInfo (using default or nullptr instead) (Ex : Variant v = MyType() -> no ctor called within Variant)
+- Reflection : Fix Array[] type <T> + CreateDefaultObject
+- Reflection : VariantBase + VariantRef
+- Reflection : Remove requirement to provide function signature when calling functions
+- Reflection : Support dropping params to find the right prototy when calling methods
+

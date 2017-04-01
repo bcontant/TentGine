@@ -12,69 +12,78 @@ struct TypeFunction
 	friend struct Invoker;
 
 public:
-	//TODO : Proper way to delete these (just use smart pointers and forget about it?)
 	struct FunctionsContainer
 	{
-		Function_Prototype_Base* no_instance;
-		Function_Prototype_Base* safe_instance;
-		Function_Prototype_Base* unsafe_instance;
+		std::shared_ptr<Function_Prototype_Base> no_instance;
+		std::shared_ptr<Function_Prototype_Base> safe_instance;
+		std::shared_ptr<Function_Prototype_Base> unsafe_instance;
 	};
 
-	template <typename TYPE, typename ReturnType, typename... Params>
-	TypeFunction(const std::pair<Name, ReturnType(TYPE::*)(Params...)>& func);
+	template <typename T, typename ReturnType, typename... Params>
+	TypeFunction(const std::pair<Name, ReturnType(T::*)(Params...)>& func);
 
-private:
+//private:
 	template<typename ReturnType, typename... Params>
-	ReturnType Invoke_NoObj(Params... params);
+	ReturnType Invoke_NoObj(Params... params) const;
 
-	template<typename ClassType, typename ReturnType, typename... Params>
-	ReturnType Invoke_SafeObj(ClassType* obj, Params... params);
+	template<typename T, typename ReturnType, typename... Params>
+	ReturnType Invoke_SafeObj(T* obj, Params... params) const;
 
 	template<typename ReturnType, typename... Params>
-	ReturnType Invoke_UnsafeObj(void* obj, Params... params);
+	ReturnType Invoke_UnsafeObj(void* obj, Params... params) const;
 
 public:
 	Name name = L("");
 	FunctionsContainer m_functions;
+
+	Function_Prototype_Base_NoStd* m_test;
 };
 
-template <typename TYPE, typename ReturnType, typename... Params>
-TypeFunction::TypeFunction(const std::pair<Name, ReturnType(TYPE::*)(Params...)>& func)
+template <typename T, typename ReturnType, typename... Params>
+TypeFunction::TypeFunction(const std::pair<Name, ReturnType(T::*)(Params...)>& func)
 {
-	auto f_without_instance = [func](Params... params) -> ReturnType {
-		return (TYPE().*func.second)(std::ref(params)...);
+	Type* type = TypeDB::GetInstance()->GetType<T>();
+
+	auto f_without_instance = [func, type](Params... params) -> ReturnType {
+		return (((T*)type->default_obj())->*func.second)(std::ref(params)...);
 	};
 
-	auto f_with_instance = [func](TYPE* obj, Params... params) -> ReturnType {
+	auto f_with_instance = [func](T* obj, Params... params) -> ReturnType {
 		return std::bind(func.second, obj, std::ref(params)...)();
 	};
 
 	auto f_with_unsafe_instance = [func](void* obj, Params... params) -> ReturnType {
-		return std::bind(func.second, (TYPE*)obj, std::ref(params)...)();
+		return std::bind(func.second, (T*)obj, std::ref(params)...)();
 	};
 
-	m_functions.no_instance = new Function_Prototype_Without_Object<ReturnType(Params...)>(f_without_instance);
-	m_functions.safe_instance = new Function_Prototype_With_Object<TYPE, ReturnType(Params...)>(f_with_instance);
-	m_functions.unsafe_instance = new Function_Prototype_With_Object<void, ReturnType(Params...)>(f_with_unsafe_instance);
+	if (type->default_obj)
+		m_functions.no_instance = std::shared_ptr<Function_Prototype_Base>(new Function_Prototype_Without_Object<ReturnType(Params...)>(f_without_instance));
+	else
+		m_functions.no_instance = nullptr;
+
+	m_functions.safe_instance = std::shared_ptr<Function_Prototype_Base>(new Function_Prototype_With_Object<T, ReturnType(Params...)>(f_with_instance));
+	m_functions.unsafe_instance = std::shared_ptr<Function_Prototype_Base>(new Function_Prototype_With_Object<void, ReturnType(Params...)>(f_with_unsafe_instance));
+
+	m_test = new Function_Prototype_NoStd<T, ReturnType(Params...), sizeof...(Params)>(func.second);
 
 	name = func.first;
 }
 
 
 template<typename ReturnType, typename... Params>
-ReturnType TypeFunction::Invoke_NoObj(Params... params)
+ReturnType TypeFunction::Invoke_NoObj(Params... params) const
 {
-	auto f = dynamic_cast<Function_Prototype_Without_Object<ReturnType(Params...)>*>(m_functions.no_instance);
+	auto f = dynamic_cast<Function_Prototype_Without_Object<ReturnType(Params...)>*>(m_functions.no_instance.get());
 	if (f != nullptr)
 		return (*f)(params...);
 
 	return ReturnType();
 }
 
-template<typename ClassType, typename ReturnType, typename... Params>
-ReturnType TypeFunction::Invoke_SafeObj(ClassType* obj, Params... params)
+template<typename T, typename ReturnType, typename... Params>
+ReturnType TypeFunction::Invoke_SafeObj(T* obj, Params... params) const
 {
-	auto f = dynamic_cast<Function_Prototype_With_Object<ClassType, ReturnType(Params...)>*>(m_functions.safe_instance);
+	auto f = dynamic_cast<Function_Prototype_With_Object<T, ReturnType(Params...)>*>(m_functions.safe_instance.get());
 	if (f != nullptr)
 		return (*f)(obj, params...);
 
@@ -82,9 +91,9 @@ ReturnType TypeFunction::Invoke_SafeObj(ClassType* obj, Params... params)
 }
 
 template<typename ReturnType, typename... Params>
-ReturnType TypeFunction::Invoke_UnsafeObj(void* obj, Params... params)
+ReturnType TypeFunction::Invoke_UnsafeObj(void* obj, Params... params) const
 {
-	auto f = dynamic_cast<Function_Prototype_With_Object<void, ReturnType(Params...)>*>(m_functions.unsafe_instance);
+	auto f = dynamic_cast<Function_Prototype_With_Object<void, ReturnType(Params...)>*>(m_functions.unsafe_instance.get());
 	if (f != nullptr)
 		return (*f)(obj, params...);
 

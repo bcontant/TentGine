@@ -8,26 +8,26 @@
 //-----------------------------------------
 Type& Type::AddProperty(TypeProperty&& field)
 {
-	Assert(!isEnum);
+	//TODO : Check duplicate
 	vProperties.push_back(field);
 	return *this;
 }
 
-Type& Type::AddEnumConstant(EnumConst&& enumConst)
+Type& Type::AddEnumConstant(EnumConstant&& enumConst)
 {
-	Assert(isEnum);
+	//TODO : Check duplicate
 	vEnumConstants.push_back(enumConst);
 	return *this;
 }
 
 Type& Type::AddFunction(TypeFunction&& function)
 {
-	Assert(!isEnum);
+	//TODO : Check duplicate
 	vFunctions.push_back(function);
 	return *this;
 }
 
-TypeProperty* Type::GetProperty(const string_char* in_name)
+const TypeProperty* Type::GetProperty(const string_char* in_name) const
 {
 	for (size_t i = 0; i < vProperties.size(); i++)
 	{
@@ -43,7 +43,7 @@ TypeProperty* Type::GetProperty(const string_char* in_name)
 	return nullptr;
 }
 
-TypeFunction* Type::GetFunction(const string_char* in_name)
+const TypeFunction* Type::GetFunction(const string_char* in_name) const
 {
 	for (size_t i = 0; i < vFunctions.size(); i++)
 	{
@@ -59,28 +59,12 @@ TypeFunction* Type::GetFunction(const string_char* in_name)
 	return nullptr;
 }
 
-void  Type::Copy(void* dst, const void* src) const
+const EnumConstant* Type::GetEnumConstant(u64 in_value) const
 {
-	memcpy(dst, src, size);
-}
-void* Type::NewCopy(const void* src) const
-{
-	void* data = new u8[size];
-	constructor(data);
-	memcpy(data, src, size);
-	return data;
-}
-
-void* Type::New(void) const
-{
-	void* data = new u8[size];
-	constructor(data);
-	return data;
-}
-
-void  Type::Delete(void* data) const
-{
-	destructor(data);
-	delete[] reinterpret_cast<u8*>(data);
-	data = nullptr;
+	for (size_t i = 0; i < vEnumConstants.size(); i++)
+	{
+		if (in_value == vEnumConstants[i].value)
+			return &(vEnumConstants[i]);
+	}
+	return nullptr;
 }
