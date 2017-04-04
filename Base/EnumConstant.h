@@ -4,7 +4,7 @@
 
 struct EnumConstant
 {
-	EnumConstant(Name name, u64 value) : name(name), value(value) { }
-	Name name;
+	EnumConstant(Name m_Name, u64 value) : m_Name(m_Name), value(value) { }
+	Name m_Name;
 	u64 value = 0;
 };

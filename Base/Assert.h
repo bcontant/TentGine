@@ -27,7 +27,7 @@ s32 CustomAssertFunction(const string_char* in_expstr, const string_char* in_fil
 
 //--------------------------------------------------------------------------------
 #define AssertMsg(condition, format, ...) \
-{ \
+do { \
     static bool bAssertAlwaysIgnore = false; \
     if( !bAssertAlwaysIgnore && !(condition) ) \
     { \
@@ -43,7 +43,7 @@ s32 CustomAssertFunction(const string_char* in_expstr, const string_char* in_fil
         } \
 		g_bInsideAssertXYZ = false; \
     } \
-}
+} while(false)
 
 //--------------------------------------------------------------------------------
 #define Assert(condition) AssertMsg(condition, nullptr)

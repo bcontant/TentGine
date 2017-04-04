@@ -39,20 +39,14 @@ TODO
 
 - Fix annoying line endings shennanigans with MSCV + GitHub
 
-- Reflection : Add Assignment Copy and Constructor Copy, and use it properly.
 - Reflection : Handle Method overload
-- Reflection : Add meta info in TypeFunction (return type, param types, param count)
 - Reflection : Handle Static Functions / Members
-- Reflection : Support non-copyable classes
-
-- Reflection : Is Invoke on safe instance really useful?  Seems like it's just and elaborate cast.
-- Reflection : Is Invoke on new, temporary object really useful?  Seems like it's just and elaborate cast.
-
-- Reflection : Array support for serialization (how to treat Type*, basically.  Is it one?  two?  a million objects?  Ideas : flags to indicate null termination or size from another property)
+- Reflection : Formatting, variable names, private/protected and useful assert / error reporting
+- Relfection : If I'm going to drop params to find the right prototype, should I support adding extra params too (default objects)?
+- Reflection : Dynamic array support for serialization (how to treat T*, basically.  Is it one?  two?  a million objects?  Ideas : flags to indicate null termination or size from another property)
 - Reflection : How are double**, triple*** pointers supposed to work?  They're currently lost in translation
-
-- Variant : .As() autocasts from pointer to value or from value to pointer???
-
+- Reflection : Try to add a int* member to MyType, see what happens. (+Serialize)
+- Reflection : Make Custom Ctor's better (support passing params to New + Default Arguments, use a list of args instead of shitting function redefinition)
   
 - Profile viewer
   - Make it realtime
@@ -110,5 +104,11 @@ DONE
 - Reflection : Fix Array[] type <T> + CreateDefaultObject
 - Reflection : VariantBase + VariantRef
 - Reflection : Remove requirement to provide function signature when calling functions
-- Reflection : Support dropping params to find the right prototy when calling methods
-
+- Reflection : Support dropping params to find the right prototype when calling methods
+- Reflection : Remove the std::function stuff, don't like it.  Figure out how to make it work with pointers to member function
+- Reflection : Add meta info in TypeFunction (return type, param types, param count)
+- Reflection : Add Assignment Copy and Constructor Copy, and use it properly.
+- Reflection : Support reference types properly (VariantRef + reference params in reflected functions)
+- [REJECTED] Variant : .As() autocasts from pointer to value or from value to pointer???
+- Reflection : Support non-copyable classes
+- Reflection + Variant : Only allow 'casting' down to void* or a base type?

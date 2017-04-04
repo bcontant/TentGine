@@ -181,6 +181,8 @@
       <SDLCheck>true</SDLCheck>
       <BrowseInformation>true</BrowseInformation>
       <AdditionalIncludeDirectories>$(SolutionDir)sdks\freetype-2.7.1\include;$(SolutionDir)sdks\zlib-1.2.11\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
+      <ShowIncludes>false</ShowIncludes>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -204,6 +206,8 @@
       <SDLCheck>true</SDLCheck>
       <BrowseInformation>true</BrowseInformation>
       <AdditionalIncludeDirectories>$(SolutionDir)sdks\freetype-2.7.1\include;$(SolutionDir)sdks\zlib-1.2.11\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
+      <ShowIncludes>false</ShowIncludes>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -227,6 +231,8 @@
       <SDLCheck>true</SDLCheck>
       <AdditionalIncludeDirectories>$(SolutionDir)sdks\freetype-2.7.1\include;$(SolutionDir)sdks\zlib-1.2.11\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
+      <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
+      <ShowIncludes>false</ShowIncludes>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -246,6 +252,8 @@
       <PreprocessorDefinitions>_DEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
       <AdditionalIncludeDirectories>$(SolutionDir)sdks\freetype-2.7.1\include;$(SolutionDir)sdks\zlib-1.2.11\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
+      <ShowIncludes>false</ShowIncludes>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -267,6 +275,7 @@
       <PreprocessorDefinitions>WIN32;NDEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
       <AdditionalIncludeDirectories>$(SolutionDir)sdks\freetype-2.7.1\include;$(SolutionDir)sdks\zlib-1.2.11\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <ShowIncludes>false</ShowIncludes>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -290,6 +299,7 @@
       <PreprocessorDefinitions>WIN32;NDEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
       <AdditionalIncludeDirectories>$(SolutionDir)sdks\freetype-2.7.1\include;$(SolutionDir)sdks\zlib-1.2.11\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <ShowIncludes>false</ShowIncludes>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -314,6 +324,7 @@
       <SDLCheck>true</SDLCheck>
       <AdditionalIncludeDirectories>$(SolutionDir)sdks\freetype-2.7.1\include;$(SolutionDir)sdks\zlib-1.2.11\include;$(SolutionDir)sdks\libjpeg-turbo-1.5.1\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
+      <ShowIncludes>false</ShowIncludes>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -337,6 +348,7 @@
       <PreprocessorDefinitions>NDEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
       <AdditionalIncludeDirectories>$(SolutionDir)sdks\freetype-2.7.1\include;$(SolutionDir)sdks\zlib-1.2.11\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <ShowIncludes>false</ShowIncludes>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -360,9 +372,13 @@
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release - Unicode|x64'">false</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</ExcludedFromBuild>
     </ClCompile>
+    <ClCompile Include="Reflection_Tests.cpp" />
   </ItemGroup>
   <ItemGroup>
     <Text Include="TODO.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="Reflection_Tests.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

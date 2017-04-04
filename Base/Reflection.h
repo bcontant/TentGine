@@ -1,10 +1,8 @@
 #pragma once
 
 #include "TypeDB.h"
-
 #include "InstanceTypeInfo.h"
 #include "Variant.h"
-#include "Invoker.h"
 
 template <class T>
 class ReflectionRegisterer
@@ -15,18 +13,19 @@ public:
 
 #define REFLECTABLE(TYPE) friend class ReflectionRegisterer<TYPE>;
 
+ //TODO : Warning when declaring empty class
 #define DECLARE_TYPE(TYPE) \
 	template <> \
 	ReflectionRegisterer<TYPE>::ReflectionRegisterer() \
 	{ \
 		using T = TYPE; \
-		Type* pType = &TypeDB::GetInstance()->RegisterType<T>();
+		Type* pType = &TypeDB::GetInstance()->RegisterType<T>();  pType ? (void)0 : (void)0;
 
 #define ADD_PROP(VAR) \
 		pType->AddProperty( TypeProperty(L(#VAR), &T::VAR) );
 
 #define ADD_FUNC(FUNC) \
-		pType->AddFunction( TypeFunction( std::make_pair( Name(L(#FUNC)), &T::FUNC) ) );
+		pType->AddFunction( TypeFunction( Name(L(#FUNC)), &T::FUNC) );
 
 #define ADD_ENUM_VALUE(ENUM) \
 		pType->AddEnumConstant( EnumConstant(L(#ENUM), static_cast<int>(T::ENUM) ) );
@@ -38,23 +37,12 @@ public:
 		struct DefaultConstructor \
 		{ \
 			static void ConstructObject(void* object) { new (object) T(##__VA_ARGS__); } \
-			static void* DefaultObject() { static T obj(##__VA_ARGS__);  obj = T(##__VA_ARGS__);  return &obj; } \
 		}; \
 		pType->SetCtor(DefaultConstructor::ConstructObject); \
-		if(IsDestructible<T>::val) \
-			pType->SetDefaultObject(DefaultConstructor::DefaultObject);
 
 #define END_DECLARE(TYPE) \
 	} \
 	static ReflectionRegisterer<TYPE> s_ReflectionRegisterer##TYPE; 
-
-/*
-template <typename TYPE> u32 GetTypeID()
-{
-	static int type_id = GenerateStringHash(GetTypeName<TYPE>());
-	return type_id;
-}*/
-
 
 // INSPIRATION GOES HERE
 

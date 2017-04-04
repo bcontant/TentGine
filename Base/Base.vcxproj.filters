@@ -171,9 +171,6 @@
     <ClInclude Include="Variant.h">
       <Filter>Header Files\Reflection</Filter>
     </ClInclude>
-    <ClInclude Include="Invoker.h">
-      <Filter>Header Files\Reflection</Filter>
-    </ClInclude>
     <ClInclude Include="InstanceTypeInfo.h">
       <Filter>Header Files\Reflection</Filter>
     </ClInclude>
@@ -181,6 +178,12 @@
       <Filter>Header Files\Reflection</Filter>
     </ClInclude>
     <ClInclude Include="Utils.h">
+      <Filter>Header Files\Reflection</Filter>
+    </ClInclude>
+    <ClInclude Include="TypeOperators.h">
+      <Filter>Header Files\Reflection</Filter>
+    </ClInclude>
+    <ClInclude Include="ErrorHandler.h">
       <Filter>Header Files\Reflection</Filter>
     </ClInclude>
   </ItemGroup>
@@ -273,6 +276,12 @@
       <Filter>Source Files\Reflection</Filter>
     </ClCompile>
     <ClCompile Include="Serializer.cpp">
+      <Filter>Source Files\Reflection</Filter>
+    </ClCompile>
+    <ClCompile Include="Utils.cpp">
+      <Filter>Source Files\Reflection</Filter>
+    </ClCompile>
+    <ClCompile Include="IContainer.cpp">
       <Filter>Source Files\Reflection</Filter>
     </ClCompile>
   </ItemGroup>

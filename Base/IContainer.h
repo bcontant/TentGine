@@ -1,6 +1,9 @@
 #pragma once
 
 #include "Utils.h"
+#include "ErrorHandler.h"
+
+struct IContainer;
 
 template <typename T>
 typename std::enable_if<IsStdVector<T>::val, IContainer*>::type
@@ -23,33 +26,37 @@ GetContainer()
 	return nullptr;
 }
 
-struct InstanceTypeInfo;
+struct TypeInfo;
 
 struct IContainer
 {
-	IContainer(const InstanceTypeInfo* info) : typeInfo(info) {}
+	IContainer(const TypeInfo* in_pInfo) : m_pTypeInfo(in_pInfo) {}
 
-	virtual size_t GetCount(void* container) = 0;
-	virtual void* GetValue(void* container, size_t index) = 0;
+	virtual size_t GetCount(void* in_pContainer) = 0;
+	virtual void* GetValue(void* in_pContainer, size_t in_Index) = 0;
 
 	virtual const string_char* GetContainerName() = 0;
 
-	const InstanceTypeInfo* typeInfo;
+	void Serialize(Serializer* in_pSerializer, void* in_pData, const string_char* in_Name);
+private:
+	const TypeInfo* m_pTypeInfo;
 };
 
 template <typename T>
 struct VectorContainer : public IContainer
 {
-	VectorContainer() : IContainer(InstanceTypeInfo::Get<T>()) {}
+	VectorContainer() : IContainer(TypeInfo::Get<T>()) {}
 
-	size_t GetCount(void* container)
+	size_t GetCount(void* in_pContainer)
 	{
-		return ((std::vector<T>*)container)->size();
+		return ((std::vector<T>*)in_pContainer)->size();
 	}
 
-	void* GetValue(void* container, size_t index)
+	void* GetValue(void* in_pContainer, size_t in_Index)
 	{
-		return &((std::vector<T>*)container)->at(index);
+		CHECK_ERROR(ErrorCode::InvalidContainerIndex, in_Index >= 0 && in_Index < GetCount(in_pContainer));
+
+		return &((std::vector<T>*)in_pContainer)->at(in_Index);
 	}
 
 	virtual const string_char* GetContainerName() { return L("Vector"); }
@@ -58,13 +65,17 @@ struct VectorContainer : public IContainer
 template <typename T>
 struct ArrayContainer : public IContainer
 {
-	ArrayContainer(size_t arraySize) : IContainer(InstanceTypeInfo::Get<T>()), m_ArraySize(arraySize) {}
+	ArrayContainer(size_t in_ArraySize) : IContainer(TypeInfo::Get<T>()), m_ArraySize(in_ArraySize) {}
 
 	size_t GetCount(void*) { return m_ArraySize; }
-	void* GetValue(void* container, size_t index)
+	void* GetValue(void* in_pContainer, size_t in_Index)
 	{
-		Assert(index >= 0 && index < m_ArraySize);
-		return (void*)&((T*)container)[index];
+		CHECK_ERROR(ErrorCode::InvalidContainerIndex, in_Index >= 0 && in_Index < m_ArraySize);
+
+		if(in_Index >= 0 && in_Index < m_ArraySize)
+			return (void*)&((T*)in_pContainer)[in_Index];
+
+		return nullptr;
 	}
 
 	virtual const string_char* GetContainerName() { return L("Array"); }

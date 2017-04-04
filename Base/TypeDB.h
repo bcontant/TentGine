@@ -4,18 +4,8 @@
 
 #include "Singleton.h"
 #include "Name.h"
-#include "Type.h"
 
-//-----------------------------------------
-//Utility	
-//-----------------------------------------
-std_string GenerateTypeName(const char* in_typeName);
-
-template <typename T> const string_char* GetTypeName()
-{
-	static std_string type_name = GenerateTypeName(typeid(T).name());
-	return type_name.c_str();
-}
+struct Type;
 
 //-----------------------------------------
 //TypeDB
@@ -32,16 +22,21 @@ public:
 	template <typename T>
 	Type& RegisterType();
 
+	/*template <typename T>
+	Type& SoftRegisterType();*/
+
 	template <typename T>
 	Type* GetType();
 
 	Type* GetType(Name name);
 
+	void Clear();
+
 private:
-	using TypeMap = std::map<Name, Type*>;
-	TypeMap mTypes;
+	std::map<Name, Type*> mTypes;
 };
 
+#include "Type.h"
 
 //-----------------------------------------
 //TypeDB
@@ -52,7 +47,7 @@ Type& TypeDB::RegisterType()
 	Type* type = nullptr;
 	Name name = GetTypeName<T>();
 
-	TypeMap::iterator type_i = mTypes.find(name);
+	auto type_i = mTypes.find(name);
 	if (type_i == mTypes.end())
 	{
 		type = new Type;
@@ -60,33 +55,43 @@ Type& TypeDB::RegisterType()
 	}
 	else
 	{
-		Assert(STRCMP(type_i->first.text, name.text) == 0);
+		CHECK_ERROR(ErrorCode::HashCollision, STRCMP(type_i->first.text, name.text) == 0);
 		type = type_i->second;
 	}
 
 	// Apply type properties
-	type->name = name;
-	type->size = SizeOf<T>::val;
+	//type->typeInfo = TypeInfo::Get<T>();
+	type->m_Name = name;
+	type->m_Operators = { 0 };
 
-	type->constructor = GetDefaultConstructor<T>();
-	type->destructor = GetDestructor<T>();
-	type->default_obj = GetDefaultObject<T>();
+	//Assert(type->typeInfo->m_Name == type->m_Name);
 
 	return *type;
 }
+
+/*template <typename T>
+Type& TypeDB::SoftRegisterType()
+{
+	Name name = GetTypeName<T>();
+
+	CHECK_ERROR(ErrorCode::Undefined, mTypes.find(GetTypeName<T>()) == mTypes.end());
+
+	Type* type = new Type;
+	mTypes[name] = type;
+	type->m_Name = name;
+	type->m_Operators = TypeOperators::Get<T>();
+
+	return *type;
+}*/
 
 template <typename T>
 Type* TypeDB::GetType()
 {
 	Name name = GetTypeName<T>();
-	TypeMap::iterator type_i = mTypes.find(name);
+	auto type_i = mTypes.find(name);
 	if (type_i == mTypes.end())
 	{
-		//TODO: This works but is it really necessary?
-		if(!IsFundamental<T>::val) 
-			return &RegisterType<T>();
-		else
-			return nullptr;
+		return &RegisterType<T>();
 	}
 	return type_i->second;
 }

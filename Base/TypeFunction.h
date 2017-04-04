@@ -1,101 +1,146 @@
 #pragma once
 
-#include "Function_Prototype.h"
 #include "Name.h"
+#include "InstanceTypeInfo.h"
+#include "Variant.h"
 
-template<typename ReturnType, typename... Params>
-struct Invoker;
+class Function_Pointer_Base;
+struct TypeInfo;
 
 struct TypeFunction
 {
-	template<typename ReturnType, typename... Params>
-	friend struct Invoker;
-
 public:
-	struct FunctionsContainer
+	template <typename T, typename ReturnType, typename... Params>
+	TypeFunction(Name name, ReturnType(T::*func)(Params...) );
+
+	template<typename T, typename... Params>
+	AutoVariant invoke(T& object, Params&&... params) const;
+
+	template<typename T, typename... Params>
+	AutoVariant invoke(T* object, Params&&... params) const;
+
+private:
+	template<typename... Params>
+	bool ValidateArguments(Params&&... params) const;
+	template<typename T>
+	bool ValidateObject(T* object) const;
+
+	template<int N>
+	struct ParamWalk
 	{
-		std::shared_ptr<Function_Prototype_Base> no_instance;
-		std::shared_ptr<Function_Prototype_Base> safe_instance;
-		std::shared_ptr<Function_Prototype_Base> unsafe_instance;
+		template<typename... Params>
+		static void Execute(std::vector<const TypeInfo*>& vParamTypes);
 	};
 
-	template <typename T, typename ReturnType, typename... Params>
-	TypeFunction(const std::pair<Name, ReturnType(T::*)(Params...)>& func);
-
-//private:
-	template<typename ReturnType, typename... Params>
-	ReturnType Invoke_NoObj(Params... params) const;
-
-	template<typename T, typename ReturnType, typename... Params>
-	ReturnType Invoke_SafeObj(T* obj, Params... params) const;
-
-	template<typename ReturnType, typename... Params>
-	ReturnType Invoke_UnsafeObj(void* obj, Params... params) const;
-
 public:
-	Name name = L("");
-	FunctionsContainer m_functions;
+	Name m_Name = L("");
 
-	Function_Prototype_Base_NoStd* m_test;
+	const TypeInfo* m_ReturnType = nullptr;
+	const TypeInfo* m_ObjectType = nullptr;
+	std::vector<const TypeInfo*> m_vParamTypes;
+
+	Function_Pointer_Base* m_FunctionPointer = nullptr;
 };
 
+#include "Function_Prototype.h"
+#include "InstanceTypeInfo.h"
+
 template <typename T, typename ReturnType, typename... Params>
-TypeFunction::TypeFunction(const std::pair<Name, ReturnType(T::*)(Params...)>& func)
+TypeFunction::TypeFunction(Name in_name, ReturnType(T::*func)(Params...) )
+	: m_Name(in_name)
 {
-	Type* type = TypeDB::GetInstance()->GetType<T>();
+	m_ReturnType = TypeInfo::Get<ReturnType>();
+	m_ObjectType = TypeInfo::Get<T>();
+	
+	m_vParamTypes.resize(sizeof...(Params));
+	ParamWalk<sizeof...(Params)>::Execute<Params...>(m_vParamTypes);
 
-	auto f_without_instance = [func, type](Params... params) -> ReturnType {
-		return (((T*)type->default_obj())->*func.second)(std::ref(params)...);
-	};
+	static_assert(sizeof...(Params) <= 6, "You tried to register a method with more than 6 parameters   Unsupported.");
+	m_FunctionPointer = new Function_Pointer<T, ReturnType(Params...), sizeof...(Params)>(func);
+}
 
-	auto f_with_instance = [func](T* obj, Params... params) -> ReturnType {
-		return std::bind(func.second, obj, std::ref(params)...)();
-	};
+template<typename T, typename... Params>
+AutoVariant TypeFunction::invoke(T& object, Params&&... params) const
+{
+	return invoke(&object, params...);
+}
 
-	auto f_with_unsafe_instance = [func](void* obj, Params... params) -> ReturnType {
-		return std::bind(func.second, (T*)obj, std::ref(params)...)();
-	};
+template<typename T, typename... Params>
+AutoVariant TypeFunction::invoke(T* object, Params&&... params) const
+{
+	ValidateArguments(params...);
+	ValidateObject(object);
 
-	if (type->default_obj)
-		m_functions.no_instance = std::shared_ptr<Function_Prototype_Base>(new Function_Prototype_Without_Object<ReturnType(Params...)>(f_without_instance));
-	else
-		m_functions.no_instance = nullptr;
+	return m_FunctionPointer->Call(object, params...);
+}
 
-	m_functions.safe_instance = std::shared_ptr<Function_Prototype_Base>(new Function_Prototype_With_Object<T, ReturnType(Params...)>(f_with_instance));
-	m_functions.unsafe_instance = std::shared_ptr<Function_Prototype_Base>(new Function_Prototype_With_Object<void, ReturnType(Params...)>(f_with_unsafe_instance));
+template<typename... Params>
+bool TypeFunction::ValidateArguments(Params&&... params) const 
+{
+	std::vector<VariantRef> vArgs = { params... };
 
-	m_test = new Function_Prototype_NoStd<T, ReturnType(Params...), sizeof...(Params)>(func.second);
+	if (vArgs.size() != m_vParamTypes.size())
+	{
+		CHECK_ERROR_MSG(ErrorCode::InvalidArgumentCount, false, L("Invalid number of arguments (%d, expected %d) when calling %s::%s"), vArgs.size(), m_vParamTypes.size(), m_ObjectType->m_MetaInfo->m_Name.text, m_Name.text);
+		return false;
+	}
 
-	name = func.first;
+	for (size_t i = 0; i < vArgs.size(); i++)
+	{
+		if ( vArgs[i].GetTypeInfo() != m_vParamTypes[i] )
+		{
+			if (vArgs[i].GetTypeInfo()->m_bIsPointer && m_vParamTypes[i]->m_bIsPointer)
+			{
+				if (m_vParamTypes[i] == TypeInfo::Get<void*>())
+				{	
+				}
+				else if (vArgs[i].GetTypeInfo()->IsDerivedFrom(m_vParamTypes[i]))
+				{	
+				}
+				else
+				{
+					CHECK_ERROR_MSG(ErrorCode::InvalidArgumentPointerType, false, L("Invalid type on argument at index %d (%s, expected %s) when calling %s::%s"), i, vArgs[i].GetTypeInfo()->m_Name.text, m_vParamTypes[i]->m_Name.text, m_ObjectType->m_MetaInfo->m_Name.text, m_Name.text);
+				}
+			}
+			else
+			{
+				CHECK_ERROR_MSG(ErrorCode::InvalidArgumentType, false, L("Invalid type on argument at index %d (%s, expected %s) when calling %s::%s"), i, vArgs[i].GetTypeInfo()->m_Name.text, m_vParamTypes[i]->m_Name.text, m_ObjectType->m_MetaInfo->m_Name.text, m_Name.text);
+				return false;
+			}
+		}
+	}
+
+	return true;
+}
+
+template<typename T>
+bool TypeFunction::ValidateObject(T*) const
+{
+	if(TypeInfo::Get<T>() == m_ObjectType)
+		return true;
+
+	if (TypeInfo::Get<T>()->IsDerivedFrom(m_ObjectType))
+		return true;
+
+	CHECK_ERROR_MSG(ErrorCode::InvalidInstanceForMethod, false, L("Invalid object type (%s, expected %s) when calling %s::%s"), TypeInfo::Get<T>()->m_Name.text, m_ObjectType->m_Name.text, m_ObjectType->m_MetaInfo->m_Name.text, m_Name.text);
+	return false;
 }
 
 
-template<typename ReturnType, typename... Params>
-ReturnType TypeFunction::Invoke_NoObj(Params... params) const
+template<int N> template<typename... Params>
+void TypeFunction::ParamWalk<N>::Execute(std::vector<const TypeInfo*>& vParamTypes)
 {
-	auto f = dynamic_cast<Function_Prototype_Without_Object<ReturnType(Params...)>*>(m_functions.no_instance.get());
-	if (f != nullptr)
-		return (*f)(params...);
-
-	return ReturnType();
+	vParamTypes[N - 1] = TypeInfo::Get< get_argument_type<Params...>::Type<(N - 1)> >();
+	ParamWalk<N - 1>::Execute<Params...>(vParamTypes);
 }
 
-template<typename T, typename ReturnType, typename... Params>
-ReturnType TypeFunction::Invoke_SafeObj(T* obj, Params... params) const
+template<> template<typename... Params>
+void TypeFunction::ParamWalk<1>::Execute(std::vector<const TypeInfo*>& vParamTypes)
 {
-	auto f = dynamic_cast<Function_Prototype_With_Object<T, ReturnType(Params...)>*>(m_functions.safe_instance.get());
-	if (f != nullptr)
-		return (*f)(obj, params...);
-
-	return ReturnType();
+	vParamTypes[0] = TypeInfo::Get< get_argument_type<Params...>::Type<0> >();
 }
 
-template<typename ReturnType, typename... Params>
-ReturnType TypeFunction::Invoke_UnsafeObj(void* obj, Params... params) const
+template<> template<typename... Params>
+void TypeFunction::ParamWalk<0>::Execute(std::vector<const TypeInfo*>&)
 {
-	auto f = dynamic_cast<Function_Prototype_With_Object<void, ReturnType(Params...)>*>(m_functions.unsafe_instance.get());
-	if (f != nullptr)
-		return (*f)(obj, params...);
-
-	return ReturnType();
 }

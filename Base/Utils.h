@@ -3,6 +3,7 @@
 template <typename T> struct SizeOf { static constexpr size_t val = sizeof(T); };
 template <> struct SizeOf<void> { static constexpr size_t val = 0; };
 
+template <typename T> struct IsVoid { static constexpr bool val = std::is_void<T>::value; };
 template <typename T> struct IsEnum { static constexpr bool val = std::is_enum<T>::value; };
 template <typename T> struct IsPointer { static constexpr bool val = std::is_pointer<T>::value; };
 template <typename T> struct IsClass { static constexpr bool val = std::is_class<T>::value; };
@@ -10,19 +11,12 @@ template <typename T> struct IsAbstract { static constexpr bool val = std::is_ab
 template <typename T> struct IsFundamental { static constexpr bool val = std::is_fundamental<T>::value || IsStdString<T>::val; };
 template <typename T> struct IsContainer { static constexpr bool val = IsStdVector<T>::val || IsArray<T>::val; };
 
-//Pointer Stuff
+//Pointer Information
 template <typename T> struct IndirectionCount { static constexpr size_t val = 0; };
 template <typename T> struct IndirectionCount<T*> { static constexpr size_t val = 1; };
 template <typename T> struct IndirectionCount<T**> { static constexpr size_t val = 2; };
 template <typename T> struct IndirectionCount<T***> { static constexpr size_t val = 3; };
 template <typename T> struct IndirectionCount<T****> { static constexpr size_t val = 4; };
-
-template <typename T>
-size_t GetIndirectionCount(T)
-{
-	static_assert(IndirectionCount<T>::val < 4, "T**** (or more?) WTF are you doing son?");
-	return IndirectionCount<T>::val;
-}
 
 //Ctor / Dtor Stuff
 template <typename T> struct IsDefaultConstructible { static constexpr bool val = std::is_default_constructible<T>::value; };
@@ -30,11 +24,12 @@ template <typename T> struct IsDestructible { static constexpr bool val = std::i
 template <typename T> struct HasCtorAndDtor { static constexpr bool val = IsDestructible<T>::val && IsDefaultConstructible<T>::val; };
 
 //Serializer stuff
-template <typename T> struct SerializeAsPointer { static constexpr bool val = IsPointer<T>::val; };
-template <typename T> struct SerializeAsEnum { static constexpr bool val = IsEnum<T>::val && !IsPointer<T>::val; };
-template <typename T> struct SerializeAsContainer { static constexpr bool val = IsContainer<T>::val && !IsPointer<T>::val && !IsEnum<T>::val; };
-template <typename T> struct SerializeAsFundamental { static constexpr bool val = IsFundamental<T>::val && !IsPointer<T>::val && !IsEnum<T>::val && !IsContainer<T>::val; };
-template <typename T> struct SerializeAsObject { static constexpr bool val = IsClass<T>::val && !IsPointer<T>::val && !IsEnum<T>::val && !IsContainer<T>::val && !IsFundamental<T>::val; };
+template <typename T> struct SerializeAsVoid { static constexpr bool val = IsVoid<T>::val; };
+template <typename T> struct SerializeAsPointer { static constexpr bool val = IsPointer<T>::val && !IsVoid<T>::val; };
+template <typename T> struct SerializeAsEnum { static constexpr bool val = IsEnum<T>::val && !IsVoid<T>::val && !IsPointer<T>::val; };
+template <typename T> struct SerializeAsContainer { static constexpr bool val = IsContainer<T>::val && !IsVoid<T>::val && !IsPointer<T>::val && !IsEnum<T>::val; };
+template <typename T> struct SerializeAsFundamental { static constexpr bool val = IsFundamental<T>::val && !IsVoid<T>::val && !IsPointer<T>::val && !IsEnum<T>::val && !IsContainer<T>::val; };
+template <typename T> struct SerializeAsObject { static constexpr bool val = IsClass<T>::val && !IsVoid<T>::val && !IsPointer<T>::val && !IsEnum<T>::val && !IsContainer<T>::val && !IsFundamental<T>::val; };
 
 //Container stuff
 template <typename T> struct IsStdVector { static constexpr bool val = false; };
@@ -52,84 +47,49 @@ template <typename T> struct IsStdString { static constexpr bool val = false; };
 template <> struct IsStdString<std_string> { static constexpr bool val = true; };
 
 //Type stripping
-template <typename T> struct StripPointer { typedef T Type; };
-template <typename T> struct StripPointer<const T> { typedef typename StripPointer<T>::Type Type; };
-template <typename T> struct StripPointer<T&> { typedef typename StripPointer<T>::Type Type; };
-template <typename T> struct StripPointer<const T&> { typedef typename StripPointer<T>::Type Type; };
-template <typename T> struct StripPointer<T&&> { typedef typename StripPointer<T>::Type Type; };
-template <typename T> struct StripPointer<T*> { typedef typename StripPointer<T>::Type Type; };
-template <typename T> struct StripPointer<const T*> { typedef typename StripPointer<T>::Type Type; };
+template <typename T> struct Strip { typedef T Type; };
+template <typename T> struct Strip<const T> { typedef typename Strip<T>::Type Type; };
+template <typename T> struct Strip<T&> { typedef typename Strip<T>::Type Type; };
+template <typename T> struct Strip<const T&> { typedef typename Strip<T>::Type Type; };
+template <typename T> struct Strip<T&&> { typedef typename Strip<T>::Type Type; };
+template <typename T> struct Strip<T*> { typedef typename Strip<T>::Type Type; };
+template <typename T> struct Strip<const T*> { typedef typename Strip<T>::Type Type; };
 
 //Container stripping
-template <typename T> struct StripPointer<std::vector<T>> { typedef typename StripPointer<T>::Type Type; };
-template <typename T, int U> struct StripPointer<T[U]> { typedef typename StripPointer<T>::Type Type; };
+template <typename T> struct Strip<std::vector<T>> { typedef typename Strip<T>::Type Type; };
+template <typename T, int U> struct Strip<T[U]> { typedef typename Strip<T>::Type Type; };
+
+//Strip Reference
+template <typename T> struct StripReference { typedef T Type; };
+template <typename T> struct StripReference<T&> { typedef typename StripReference<T>::Type Type; };
+template <typename T> struct StripReference<const T&> { typedef typename StripReference<T>::Type Type; };
+template <typename T> struct StripReference<T&&> { typedef typename StripReference<T>::Type Type; };
+
+//-----------------------------------------
+//Utility	
+//-----------------------------------------
 
 
-//Destruction
-
-using DestructObjectFunc = void(*)(void*);
-
-template <typename T>
-void DestructObject(void* object) { ((T*)object)->T::~T(); }
-
-template <typename T>
-typename std::enable_if<std::is_destructible<T>::value, DestructObjectFunc>::type
-GetDestructor()
+//Variadic Template Argument type accessor
+template <class... Args>
+struct get_argument_type
 {
-	return DestructObject<T>;
-}
-
-template <typename T>
-typename std::enable_if<!std::is_destructible<T>::value, DestructObjectFunc>::type
-GetDestructor()
-{
-	return nullptr;
-}
-
-//Construction
-
-using ConstructObjectFunc = void(*)(void*);
-using DefaultObjectFunc = void*(*)();
-
-template <typename T>
-struct DefaultConstructor
-{
-	static void ConstructObject(void* object) { new (object) T; }
-	static void* DefaultObject() { static T obj{ T() };  obj = T();  return &obj; }
+	template <std::size_t N>
+	using Type = typename std::tuple_element<N, std::tuple<Args...>>::type;
 };
 
-//Specialize for array types
-template <typename T, int U>
-struct DefaultConstructor<T[U]>
-{
-	static void ConstructObject(void* object) { new (object) T[U]; }
-	static void* DefaultObject() { static T obj[U];  std::fill_n(obj, U, T());  return &obj; }
-};
-
+//Indirection count for pointer types
 template <typename T>
-typename std::enable_if<std::is_default_constructible<T>::value, ConstructObjectFunc>::type
-GetDefaultConstructor()
+size_t GetIndirectionCount(T)
 {
-	return DefaultConstructor<T>::ConstructObject;
+	static_assert(IndirectionCount<T>::val < 4, "T**** (or more?) WTF are you doing son?");
+	return IndirectionCount<T>::val;
 }
 
-template <typename T>
-typename std::enable_if<!std::is_default_constructible<T>::value, ConstructObjectFunc>::type
-GetDefaultConstructor()
-{
-	return nullptr;
-}
+std_string GenerateTypeName(const char* in_typeName);
 
-template <typename T>
-typename std::enable_if<HasCtorAndDtor<T>::val, DefaultObjectFunc>::type
-GetDefaultObject()
+template <typename T> const string_char* GetTypeName()
 {
-	return DefaultConstructor<T>::DefaultObject;
-}
-
-template <typename T>
-typename std::enable_if<!HasCtorAndDtor<T>::val, DefaultObjectFunc>::type
-GetDefaultObject()
-{
-	return nullptr;
+	static std_string type_name = GenerateTypeName(typeid(T).name());
+	return type_name.c_str();
 }

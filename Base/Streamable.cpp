@@ -8,7 +8,7 @@ bool StreamableObjectFactory::StreamableObject::HasChildNamed(const std_string& 
 {
 	for (auto it : vChildren)
 	{
-		if (it->m_Name == in_ChildName)
+		if (it->name == in_ChildName)
 			return true;
 
 		if (it->HasChildNamed(in_ChildName))
@@ -56,7 +56,7 @@ void StreamableObjectFactory::RegisterStreamableObject(const std_string& in_objN
 	if (objIt == m_mStreamableObjects.end())
 	{
 		pNewObject = new StreamableObject;
-		pNewObject->m_Name = in_objName;
+		pNewObject->name = in_objName;
 		m_mStreamableObjects.insert(std::make_pair(in_objName, pNewObject));
 	}
 	else
@@ -74,7 +74,7 @@ void StreamableObjectFactory::RegisterStreamableObject(const std_string& in_objN
 		if(parentIt == m_mStreamableObjects.end())
 		{ 
 			StreamableObject* pNewParent = new StreamableObject;
-			pNewObject->m_Name = in_parentName;
+			pNewObject->name = in_parentName;
 			pNewParent->vChildren.push_back(pNewObject);
 			m_mStreamableObjects.insert(std::make_pair(in_parentName, pNewParent));
 		}

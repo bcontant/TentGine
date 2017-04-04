@@ -1,81 +1,95 @@
 #pragma once
 
-//#include "Type.h"
 #include "Serializer.h"
 #include "IContainer.h"
+#include "TypeOperators.h"
 #include "Name.h"
 
 struct Type;
 
-struct InstanceTypeInfo
+struct TypeInfo
 {
+private:
 	template <typename T>
-	static const InstanceTypeInfo* Get();
+	static const TypeInfo* Get_Internal();
+
+public:
+	template <typename T>
+	static typename std::enable_if<!std::is_reference<T>::value, const TypeInfo*>::type
+	Get();
+
+	template <typename T>
+	static typename std::enable_if<std::is_reference<T>::value, const TypeInfo*>::type
+	Get();
 
 	template <typename T> 
-	static const InstanceTypeInfo* Get(T);
+	static const TypeInfo* Get(T);
 
-	InstanceTypeInfo(Name in_name, Type* in_type, bool in_is_pointer, int in_size, IContainer* in_container, ConstructObjectFunc in_ctor, DestructObjectFunc in_dtor, DefaultObjectFunc in_default_obj, SerializeObjectFunc in_serialize_func);
-	~InstanceTypeInfo();
+	bool IsDerivedFrom(const TypeInfo* in_pInfo) const;
 
-	bool operator == (const InstanceTypeInfo& rhs) const;
-	bool operator != (const InstanceTypeInfo& rhs) const;
+private:
+	TypeInfo(Name in_name, Type* in_type, bool in_is_pointer, int in_size, IContainer* in_container, TypeOperators in_functions);
+	~TypeInfo();
 
-	//TODO : These could be better, safer, and elsewhere.  Investigate.
-	template<typename T>
-	void* AssignmentOperator(const void* src) const;
+	TypeInfo(const TypeInfo&) = delete;
+	TypeInfo& operator=(const TypeInfo&) = delete;
 
-	void  Copy(void* dst, const void* src) const;
-	void* NewCopy(const void* src) const;
-	
+public:
+	//Interface to access private operators
 	void* New() const;
-	void* DefaultObject() const;
-	void  Delete(void* data) const;
+	void Constructor(void* data) const;
+	void* CopyConstructor(const void* src) const;
+	void AssignmentOperator(void* dst, const void* src) const;
 
-	Type* type;
-	Name name;
+	void Delete(void* data) const;
+	void Destructor(void* data) const;
 
-	bool is_pointer;
-	int size;
+	void Serialize(Serializer* serializer, void* obj, const string_char* in_name) const;
 
-	IContainer* container;
+	Name m_Name;
 
-	//TODO : Add Assignment Operator and Copy Constructor
-	//TODO : Group the "virtual" methods
-	ConstructObjectFunc constructor;
-	DestructObjectFunc destructor;
-	DefaultObjectFunc default_obj;
-	SerializeObjectFunc serialize_func;
+	Type* m_MetaInfo;
+	bool m_bIsPointer;
+	int m_Size;
+
+	IContainer* m_pContainer;
+
+private:
+	TypeOperators m_Operators;
 };
 
+#include "TypeDB.h"
+
 template <typename T>
-const InstanceTypeInfo* InstanceTypeInfo::Get()
+const TypeInfo* TypeInfo::Get_Internal()
 {
-	static const InstanceTypeInfo type_info(
+	static const TypeInfo type_info(
 		Name(GetTypeName<T>()),
-		TypeDB::GetInstance()->GetType<StripPointer<T>::Type>(),
+		TypeDB::GetInstance()->GetType<Strip<T>::Type>(),
 		IsPointer<T>::val,
 		SizeOf<T>::val,
 		GetContainer<T>(),
-		GetDefaultConstructor<T>(),
-		GetDestructor<T>(),
-		GetDefaultObject<T>(),
-		GetSerializeFunc<T>()
+		TypeOperators::Get<T>()
 	);
 	return &type_info;
 }
 
-template <typename T> 
-const InstanceTypeInfo* InstanceTypeInfo::Get(T)
-{ 
-	return Get<T>(); 
+template <typename T>
+typename std::enable_if<!std::is_reference<T>::value, const TypeInfo*>::type
+TypeInfo::Get()
+{
+	return Get_Internal<T>();
 }
 
-template<typename T>
-void* InstanceTypeInfo::AssignmentOperator(const void* src) const
+template <typename T>
+typename std::enable_if<std::is_reference<T>::value, const TypeInfo*>::type
+TypeInfo::Get()
 {
-	void* data = New();
+	return Get_Internal<StripReference<T>::Type>();
+}
 
-	*((T*)data) = *((T*)src);
-	return data;
+template <typename T> 
+const TypeInfo* TypeInfo::Get(T)
+{ 
+	return Get<T>(); 
 }

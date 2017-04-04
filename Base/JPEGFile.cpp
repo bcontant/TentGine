@@ -109,7 +109,7 @@ BitmapData* LoadJPEG(const Path& in_file)
 								  
 	if (infile == nullptr)
 	{
-		Assert(false)
+		Assert(false);
 		return nullptr;
 	}
 

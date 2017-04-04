@@ -19,7 +19,7 @@ class StreamableObjectFactory : public StaticSingleton<StreamableObjectFactory>
 
 	struct StreamableObject
 	{
-		std_string m_Name;
+		std_string name;
 		ObjCreationFunction pCreationFunc;
 		std::vector<StreamableObject*> vChildren;
 
