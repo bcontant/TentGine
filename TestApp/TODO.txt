@@ -39,8 +39,6 @@ TODO
 
 - Fix annoying line endings shennanigans with MSCV + GitHub
 
-- Reflection : Formatting, variable names, private/protected and useful assert / error reporting
-
 - Reflection : Handle Method overload
 - Reflection : Handle Static Members
 - Reflection : Make Custom Ctor's better (support passing params to New + Default Arguments, use a list of args instead of shitting function redefinition)
@@ -117,3 +115,7 @@ DONE
 - Reflection : Try to add a int* member to MyType, see what happens. (+Serialize)
 - Reflection : Make polymorphism worked when serializing, for example, a std::vector<BaseObject*> (save the actual derived instances)
 - Reflection : Handle Static Functions
+- Reflection : Merged Type and TypeInfo (finally)
+- Reflection : Remove VTable comparison with typeid(*obj) on base object
+- Variant : Automatic dynamic casting
+- Reflection : Formatting, variable names, private/protected and useful assert / error reporting

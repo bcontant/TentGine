@@ -68,9 +68,9 @@ struct MyType : MyTypeBase
 	int				TestPassPointer(void* in_p) { *((unsigned int*)in_p) = 123; return 12; }
 	int				TestPassBaseClass(MyType* in_p) { in_p->x = 0x100; return 356; }
 
-	int x;
-	float y;
-	char z;
+	int x = 0;
+	float y = 100.f;
+	char z = 121;
 	int* k = nullptr;
 	std_string name = L("PoopFace");
 	OtherType other;
@@ -248,13 +248,6 @@ DECLARE_TYPE(TestEnumType)
 	ADD_ENUM_VALUE(VAL_C)
 END_DECLARE(TestEnumType)
 
-DECLARE_TYPE(Type)
-	ADD_PROP(base_type)
-	ADD_PROP(m_Name)
-	ADD_PROP(vProperties)
-	ADD_PROP(vFunctions)
-END_DECLARE(Type)
-
 void UnregisterClasses();
 void TestVariants();
 void TestOperators();
@@ -264,7 +257,7 @@ void TestEnums();
 
 void TestReflection()
 {
-	ErrorManager::GetInstance()->SetErrorHandler(ErrorHandler::SilentHandler);
+	ErrorManager::GetInstance()->SetErrorHandler(ErrorHandler::DebugOutHandler);
 
 	TestVariants();
 	TestOperators();
@@ -288,15 +281,10 @@ void TestReflection()
 	Variant nodtor_v(nodtor);
 	nodtor_v.Serialize(&s);
 
-	vContainer = TypeDB::GetInstance()->GetType<Type>();
+	vContainer = TypeDB::GetInstance()->GetType<TypeInfo>();
 	vContainer.Serialize(&s);
 
 	MyType obj(564, 992.132f, 127);
-
-/*
-	TypeInfo::Get<DerivedFoo>();
-	TypeInfo::Get<DerivedFoo*>();
-*/
 
 	vContainer = obj;
 	vContainer.Serialize(&s);
@@ -411,7 +399,7 @@ void TestVariants()
 
 	{
 		//Test pointers casting
-		MyType* myTypePtr = (MyType*) nullptr + 0xcdcdcdcd;
+		MyType* myTypePtr = new MyType;
 		Variant v = myTypePtr;
 		MyTypeBase* pBase = v;
 		MyType* p = v;
@@ -422,14 +410,25 @@ void TestVariants()
 		Assert(ErrorManager::GetInstance()->m_vErrorCodes.size() == 0);
 		ErrorManager::GetInstance()->m_vErrorCodes.clear();
 
-		MyTypeBase* myBasePtr = (MyTypeBase*) nullptr + 0xdddddddd;
+		MyTypeBase* myBasePtr = (MyTypeBase*) new MyType;
 		v = myBasePtr;
 		pBase = v;
-		p = v;	//Assert
+		p = v;
 		pVoid = v;
 		Assert(pBase == myBasePtr);
 		Assert(p == myBasePtr);
 		Assert(pVoid == myBasePtr);
+		Assert(ErrorManager::GetInstance()->m_vErrorCodes.size() == 0);
+		ErrorManager::GetInstance()->m_vErrorCodes.clear();
+
+		MyTypeBase* myBase = new MyTypeBase;
+		v = myBase;
+		pBase = v;
+		p = v;	//Assert
+		pVoid = v;
+		Assert(pBase == myBase);
+		Assert(p == myBase);
+		Assert(pVoid == myBase);
 		Assert(ErrorManager::GetInstance()->m_vErrorCodes.size() == 1);
 		Assert(ErrorManager::GetInstance()->m_vErrorCodes[0] == ErrorCode::FailedCast);
 		ErrorManager::GetInstance()->m_vErrorCodes.clear();
@@ -639,7 +638,7 @@ void TestProperties()
 
 void TestMethods()
 {
-	Type* t = TypeDB::GetInstance()->GetType(L("TestType"));
+	const TypeInfo* t = TypeDB::GetInstance()->GetType(L("TestType"));
 
 	//Testing calling static function 
 	{

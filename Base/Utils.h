@@ -16,7 +16,6 @@ template <typename T> struct IsUserType { static constexpr bool val = !IsFundame
 template <typename T> struct IsDefaultConstructible { static constexpr bool val = std::is_default_constructible<T>::value; };
 template <typename T> struct IsDestructible { static constexpr bool val = std::is_destructible<T>::value; };
 template <typename T> struct HasCtorAndDtor { static constexpr bool val = IsDestructible<T>::val && IsDefaultConstructible<T>::val; };
-template <typename T> struct HasVTable { static constexpr bool val = std::is_polymorphic<T>::value && HasCtorAndDtor<T>::val; };
 
 //Serializer stuff
 template <typename T> struct SerializeAsVoid { static constexpr bool val = IsVoid<T>::val; };

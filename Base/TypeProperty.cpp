@@ -2,7 +2,7 @@
 
 #include "TypeProperty.h"
 
-void* TypeProperty::GetPtr(void* object) const
+void* TypeProperty::GetPtr(void* obj) const
 { 
-	return (u8*)object + offset; 
+	return (u8*)obj + m_Offset; 
 }

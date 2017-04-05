@@ -45,7 +45,7 @@ private:
 };
 
 #include "Function_Prototype.h"
-#include "InstanceTypeInfo.h"
+#include "TypeInfo.h"
 #include "Variant.h"
 
 //TOOD : Move to own code file

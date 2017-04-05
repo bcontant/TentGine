@@ -121,7 +121,7 @@ private:
 	VariantBase* m_impl = nullptr;
 };
 
-#include "InstanceTypeInfo.h"
+#include "TypeInfo.h"
 #include "ErrorHandler.h"
 
 //---------------------------------
@@ -130,25 +130,9 @@ private:
 template <typename T>
 T& VariantBase::As()
 {
-	//T to T
-	if (typeInfo == TypeInfo::Get<T>())
-	{
-		if (data != nullptr)
-			return *reinterpret_cast<StripReference<T>::Type*>(data);
-	}
+	if(typeInfo->IsCastableAs(data, TypeInfo::Get<T>()))
+		return *reinterpret_cast<StripReference<T>::Type*>(data);
 
-	//T* to any*
-	if (typeInfo != nullptr && typeInfo->IsPointer() && TypeInfo::Get<T>()->IsPointer())
-	{
-		//Allow down casting to a parent class
-		if (data != nullptr && typeInfo->IsDerivedFrom(TypeInfo::Get<T>()))
-			return *reinterpret_cast<StripReference<T>::Type*>(data);
-
-		//Allow casting to void*
-		if (data != nullptr && TypeInfo::Get<T>() == TypeInfo::Get<void*>())
-			return *reinterpret_cast<StripReference<T>::Type*>(data);
-	}
-	
 	return FailedCast<T>();
 }
 

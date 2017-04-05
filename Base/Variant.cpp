@@ -1,7 +1,7 @@
 #include "precompiled.h"
 
 #include "Variant.h"
-#include "InstanceTypeInfo.h"
+#include "TypeInfo.h"
 
 //---------------------------------
 // VariantBase

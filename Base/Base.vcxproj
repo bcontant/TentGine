@@ -302,7 +302,7 @@
     <ClInclude Include="Function_Prototype.h" />
     <ClInclude Include="GraphicUtils.h" />
     <ClInclude Include="IContainer.h" />
-    <ClInclude Include="InstanceTypeInfo.h" />
+    <ClInclude Include="TypeInfo.h" />
     <ClInclude Include="JPEGFile.h" />
     <ClInclude Include="Logger.h" />
     <ClInclude Include="MathUtils.h" />
@@ -321,7 +321,6 @@
     <ClInclude Include="Streamable.h" />
     <ClInclude Include="StringUtils.h" />
     <ClInclude Include="TGAFile.h" />
-    <ClInclude Include="Type.h" />
     <ClInclude Include="TypeDB.h" />
     <ClInclude Include="TypeFunction.h" />
     <ClInclude Include="TypeOperators.h" />
@@ -356,7 +355,7 @@
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</ExcludedFromBuild>
     </ClCompile>
     <ClCompile Include="IContainer.cpp" />
-    <ClCompile Include="InstanceTypeInfo.cpp" />
+    <ClCompile Include="TypeInfo.cpp" />
     <ClCompile Include="JPEGFile.cpp" />
     <ClCompile Include="Logger.cpp" />
     <ClCompile Include="MathUtils.cpp" />
@@ -387,7 +386,6 @@
     <ClCompile Include="Streamable.cpp" />
     <ClCompile Include="StringUtils.cpp" />
     <ClCompile Include="TGAFile.cpp" />
-    <ClCompile Include="Type.cpp" />
     <ClCompile Include="TypeDB.cpp" />
     <ClCompile Include="TypeFunction.cpp" />
     <ClCompile Include="TypeProperty.cpp" />

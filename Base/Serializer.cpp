@@ -3,8 +3,7 @@
 #include "Serializer.h"
 
 #include "TypeDB.h"
-#include "InstanceTypeInfo.h"
-#include "Type.h"
+#include "TypeInfo.h"
 
 #include "Logger.h"
 
@@ -22,7 +21,7 @@ void DumpSerializer::SerializeContainer(void* in_obj, const string_char* name, c
 
 	indent += 2;
 
-	in_pContainer->Serialize(this, in_obj, L(""));
+	in_pContainer->SerializeContents(this, in_obj, L(""));
 
 	indent -= 2;
 }
@@ -35,12 +34,7 @@ void DumpSerializer::SerializeObject(void* in_obj, const string_char* name, cons
 	{
 		indent += 2;
 
-		typeInfo->m_MetaInfo->Serialize(this, in_obj);
-
-		/*for (auto prop : typeInfo->m_MetaInfo->vProperties)
-		{
-			prop.type_info->Serialize(this, prop.GetPtr(in_obj), prop.m_Name.text);
-		}*/
+		typeInfo->SerializeProperties(this, in_obj);
 
 		indent -= 2;
 	}
@@ -78,7 +72,7 @@ void DumpSerializer::SerializeValue(std_string& in_obj, const string_char* name,
 
 void DumpSerializer::SerializeEnum(u64 in_obj, const string_char* name, const TypeInfo* typeInfo)
 {
-	const EnumConstant* enumVal = typeInfo->m_MetaInfo->GetEnumConstant(in_obj);
+	const EnumConstant* enumVal = typeInfo->GetEnumConstant(in_obj);
 	DEBUG_LOG(L("%sSerializeEnum() serializing an enum (name = %s) (type = %s) (value : %llu : %s)"), GetIndent().c_str(), name, typeInfo->m_Name.text, in_obj, enumVal ? enumVal->m_Name.text : L("INVALID"));
 }
 
@@ -89,7 +83,7 @@ void XMLSerializer::SerializeContainer(void* in_obj, const string_char* name, co
 
 	indent += 2;
 
-	in_pContainer->Serialize(this, in_obj, L(""));
+	in_pContainer->SerializeContents(this, in_obj, L(""));
 
 	indent -= 2;
 
@@ -100,11 +94,11 @@ void XMLSerializer::SerializeObject(void* in_obj, const string_char* name, const
 {
 	if (in_obj != nullptr)
 	{
-		DEBUG_LOG(L("%s<Object name=\"%s\" type=\"%s\">"), GetIndent().c_str(), name, typeInfo->m_MetaInfo->m_Name.text);
+		DEBUG_LOG(L("%s<Object name=\"%s\" type=\"%s\">"), GetIndent().c_str(), name, typeInfo->m_Name.text);
 
 		indent += 2;
 
-		typeInfo->m_MetaInfo->Serialize(this, in_obj);
+		typeInfo->SerializeProperties(this, in_obj);
 
 		indent -= 2;
 
@@ -144,6 +138,6 @@ void XMLSerializer::SerializeValue(std_string& in_obj, const string_char* name, 
 
 void XMLSerializer::SerializeEnum(u64 in_obj, const string_char* name, const TypeInfo* typeInfo)
 {
-	const EnumConstant* enumVal = typeInfo->m_MetaInfo->GetEnumConstant(in_obj);
+	const EnumConstant* enumVal = typeInfo->GetEnumConstant(in_obj);
 	DEBUG_LOG(L("%s<EnumValue name=\"%s\" type=\"%s\">%s</EnumValue>"), GetIndent().c_str(), name, typeInfo->m_Name.text, enumVal ? enumVal->m_Name.text : L("INVALID"));
 }

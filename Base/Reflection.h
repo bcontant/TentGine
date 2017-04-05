@@ -1,7 +1,7 @@
 #pragma once
 
 #include "TypeDB.h"
-#include "InstanceTypeInfo.h"
+#include "TypeInfo.h"
 #include "Variant.h"
 
 template <class T>
@@ -18,8 +18,7 @@ public:
 	ReflectionRegisterer<TYPE>::ReflectionRegisterer() \
 	{ \
 		using T = TYPE; \
-		TypeInfo::Get<T>(); \
-		Type* pType = &TypeDB::GetInstance()->RegisterType<T>();  pType ? (void)0 : (void)0;
+		TypeInfo* pType = (TypeInfo*) TypeInfo::Get<T>(); pType ? (void)0 : (void)0;
 
 #define ADD_PROP(VAR) \
 		pType->AddProperty( TypeProperty(L(#VAR), &T::VAR) );
@@ -31,7 +30,7 @@ public:
 		pType->AddEnumConstant( EnumConstant(L(#ENUM), static_cast<int>(T::ENUM) ) );
 
 #define BASE_CLASS(BASE) \
-		pType->Base<BASE>();
+		pType->SetBaseClass<BASE>();
 
 #define SET_DEFAULT_CTOR_ARGS(...) \
 		struct DefaultConstructor \

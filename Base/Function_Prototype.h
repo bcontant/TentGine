@@ -106,6 +106,7 @@ CallImpl_Static(Func in_pFunction, Params&&... in_Params)
 	return AutoVariant(0);
 }
 
+//TODO Can I instead make this a specialization where T=void?
 template <typename ReturnType, typename... Params, int K>
 class Function_Pointer_Static<ReturnType(Params...), K> : public Function_Pointer_Base
 {

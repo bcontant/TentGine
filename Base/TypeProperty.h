@@ -17,13 +17,13 @@ struct TypeProperty
 	Name m_Name = L("");
 
 	//Type of the property
-	const TypeInfo* type_info;
+	const TypeInfo* m_pTypeInfo;
 
 	// Offset of this property within the type
-	size_t offset = 0;
+	size_t m_Offset = 0;
 };
 
-#include "InstanceTypeInfo.h"
+#include "TypeInfo.h"
 
 //-----------------------------------------
 // TypeProperty
@@ -32,7 +32,7 @@ struct TypeProperty
 template <typename T, typename OBJECT_TYPE>
 TypeProperty::TypeProperty(Name name, T OBJECT_TYPE::*property)
 	: m_Name(name)
-	, type_info(TypeInfo::Get<T>())
-	, offset(offsetof(OBJECT_TYPE, *property))
+	, m_pTypeInfo(TypeInfo::Get<T>())
+	, m_Offset(offsetof(OBJECT_TYPE, *property))
 {
 }

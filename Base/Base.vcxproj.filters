@@ -144,9 +144,6 @@
     <ClInclude Include="Reflection.h">
       <Filter>Header Files\Reflection</Filter>
     </ClInclude>
-    <ClInclude Include="Type.h">
-      <Filter>Header Files\Reflection</Filter>
-    </ClInclude>
     <ClInclude Include="TypeProperty.h">
       <Filter>Header Files\Reflection</Filter>
     </ClInclude>
@@ -171,9 +168,6 @@
     <ClInclude Include="Variant.h">
       <Filter>Header Files\Reflection</Filter>
     </ClInclude>
-    <ClInclude Include="InstanceTypeInfo.h">
-      <Filter>Header Files\Reflection</Filter>
-    </ClInclude>
     <ClInclude Include="Serializer.h">
       <Filter>Header Files\Reflection</Filter>
     </ClInclude>
@@ -184,6 +178,9 @@
       <Filter>Header Files\Reflection</Filter>
     </ClInclude>
     <ClInclude Include="ErrorHandler.h">
+      <Filter>Header Files\Reflection</Filter>
+    </ClInclude>
+    <ClInclude Include="TypeInfo.h">
       <Filter>Header Files\Reflection</Filter>
     </ClInclude>
   </ItemGroup>
@@ -269,12 +266,6 @@
     <ClCompile Include="TypeDB.cpp">
       <Filter>Source Files\Reflection</Filter>
     </ClCompile>
-    <ClCompile Include="Type.cpp">
-      <Filter>Source Files\Reflection</Filter>
-    </ClCompile>
-    <ClCompile Include="InstanceTypeInfo.cpp">
-      <Filter>Source Files\Reflection</Filter>
-    </ClCompile>
     <ClCompile Include="Serializer.cpp">
       <Filter>Source Files\Reflection</Filter>
     </ClCompile>
@@ -285,6 +276,9 @@
       <Filter>Source Files\Reflection</Filter>
     </ClCompile>
     <ClCompile Include="TypeFunction.cpp">
+      <Filter>Source Files\Reflection</Filter>
+    </ClCompile>
+    <ClCompile Include="TypeInfo.cpp">
       <Filter>Source Files\Reflection</Filter>
     </ClCompile>
   </ItemGroup>

@@ -45,7 +45,7 @@ struct IContainer
 
 	virtual const string_char* GetContainerName() = 0;
 
-	void Serialize(Serializer* in_pSerializer, void* in_pData, const string_char* in_Name);
+	void SerializeContents(Serializer* in_pSerializer, void* in_pData, const string_char* in_Name);
 private:
 	const TypeInfo* m_pTypeInfo;
 };
