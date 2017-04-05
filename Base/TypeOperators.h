@@ -131,28 +131,34 @@ struct SerializeVisitor
 		// + Flags on typeinfo?  I'd need to remove the nice staticeness of the InstanceTypeInfos
 		// Flags : eArray w/ size on another member?
 		//         eNullTerminated (for c strings)
-		//TODO : Pointers of fundamentals dont work at all.
 
 		static_assert(IsPointer<T>::val == true, "Something is wrong.");
 		static_assert(IsFundamental<T>::val == false, "Something is wrong.");
 
-		CHECK_ERROR(ErrorCode::NullMetaInfo, typeInfo->m_MetaInfo != nullptr);
+		Assert(false); // This is disabled right now.  Pointers are Containers.
+		CHECK_ERROR(ErrorCode::NullDereferencedTypeInfo, typeInfo->m_pDereferencedTypeInfo != nullptr);
 
-		s->Serialize(*((void**)in_obj), name, typeInfo);
+		//Serialize as an object
+		if (typeInfo->m_pDereferencedTypeInfo)
+		{
+			typeInfo->m_pDereferencedTypeInfo->Serialize(s, *((void**)in_obj), name);
+			//s->Serialize(*((void**)in_obj), name, typeInfo->m_pDereferencedTypeInfo);
+		}
 	}
 
 	static void SerializeObject(Serializer* s, const TypeInfo* typeInfo, void* in_obj, const string_char* name)
 	{
 		static_assert(IsPointer<T>::val == false, "Something is wrong.");
 
-		s->Serialize(in_obj, name, typeInfo);
+		s->SerializeObject(in_obj, name, typeInfo);
 	}
 
 	static void SerializeFundamental(Serializer* s, const TypeInfo* typeInfo, void* in_obj, const string_char* name)
 	{
 		static_assert(IsPointer<T>::val == false, "Something is wrong.");
+		AssertMsg(in_obj != nullptr, L("Something is wrong."));
 
-		s->Serialize(*((T*)in_obj), name, typeInfo);
+		s->SerializeValue(*((T*)in_obj), name, typeInfo);
 	}
 
 	static void SerializeEnum(Serializer* s, const TypeInfo* typeInfo, void* in_obj, const string_char* name)
@@ -167,7 +173,6 @@ struct SerializeVisitor
 
 	static void SerializeContainer(Serializer* s, const TypeInfo* typeInfo, void* in_obj, const string_char* name)
 	{
-		static_assert(IsPointer<T>::val == false, "Something is wrong.");
 		AssertMsg(typeInfo->m_pContainer != nullptr, L("Something is wrong."));
 
 		s->SerializeContainer(in_obj, name, typeInfo, typeInfo->m_pContainer);
@@ -221,6 +226,22 @@ GetSerializeFunc()
 	return SerializeVisitor<T>::SerializeContainer;
 }
 
+template <typename T>
+typename std::enable_if<HasVTable<T>::val, void*>::type
+GetVTableAddress()
+{
+	T obj;
+	void* pVtable = *((void**)&obj);
+	return pVtable;
+}
+
+template <typename T>
+typename std::enable_if<!HasVTable<T>::val, void*>::type
+GetVTableAddress()
+{
+	return nullptr;
+}
+
 struct TypeOperators
 {
 	template <typename T>
@@ -232,6 +253,7 @@ struct TypeOperators
 		op.destructor = GetDestructor<T>();
 		op.serialize_func = GetSerializeFunc<T>();
 		op.assignment_operator = GetDefaultAssignmentOperator<T>();
+		op.vtable_address = GetVTableAddress<T>();
 		return op;
 	};
 
@@ -240,4 +262,5 @@ struct TypeOperators
 	DestructObjectFunc destructor;
 	SerializeObjectFunc serialize_func;
 	AssignmentOperatorFunc assignment_operator;
+	void* vtable_address;
 };

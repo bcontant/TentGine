@@ -13,12 +13,12 @@ public:
 
 #define REFLECTABLE(TYPE) friend class ReflectionRegisterer<TYPE>;
 
- //TODO : Warning when declaring empty class
 #define DECLARE_TYPE(TYPE) \
 	template <> \
 	ReflectionRegisterer<TYPE>::ReflectionRegisterer() \
 	{ \
 		using T = TYPE; \
+		TypeInfo::Get<T>(); \
 		Type* pType = &TypeDB::GetInstance()->RegisterType<T>();  pType ? (void)0 : (void)0;
 
 #define ADD_PROP(VAR) \
@@ -38,7 +38,7 @@ public:
 		{ \
 			static void ConstructObject(void* object) { new (object) T(##__VA_ARGS__); } \
 		}; \
-		pType->SetCtor(DefaultConstructor::ConstructObject); \
+		pType->SetDefaultConstructor(DefaultConstructor::ConstructObject); \
 
 #define END_DECLARE(TYPE) \
 	} \

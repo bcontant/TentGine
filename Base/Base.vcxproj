@@ -389,6 +389,7 @@
     <ClCompile Include="TGAFile.cpp" />
     <ClCompile Include="Type.cpp" />
     <ClCompile Include="TypeDB.cpp" />
+    <ClCompile Include="TypeFunction.cpp" />
     <ClCompile Include="TypeProperty.cpp" />
     <ClCompile Include="Utils.cpp" />
     <ClCompile Include="Variant.cpp" />

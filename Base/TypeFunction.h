@@ -1,29 +1,30 @@
 #pragma once
 
 #include "Name.h"
-#include "InstanceTypeInfo.h"
-#include "Variant.h"
 
 class Function_Pointer_Base;
+class AutoVariant;
 struct TypeInfo;
 
 struct TypeFunction
 {
+	template <typename T, typename... Params>
+	friend AutoVariant invoke(const TypeFunction* f, T* object, Params&&... params);
+
 public:
 	template <typename T, typename ReturnType, typename... Params>
 	TypeFunction(Name name, ReturnType(T::*func)(Params...) );
 
-	template<typename T, typename... Params>
-	AutoVariant invoke(T& object, Params&&... params) const;
-
-	template<typename T, typename... Params>
-	AutoVariant invoke(T* object, Params&&... params) const;
+	template <typename ReturnType, typename... Params>
+	TypeFunction(Name name, ReturnType(*func)(Params...));
 
 private:
 	template<typename... Params>
 	bool ValidateArguments(Params&&... params) const;
 	template<typename T>
 	bool ValidateObject(T* object) const;
+
+	std_string GetFullFunctionName() const;
 
 	template<int N>
 	struct ParamWalk
@@ -35,6 +36,7 @@ private:
 public:
 	Name m_Name = L("");
 
+private:
 	const TypeInfo* m_ReturnType = nullptr;
 	const TypeInfo* m_ObjectType = nullptr;
 	std::vector<const TypeInfo*> m_vParamTypes;
@@ -44,6 +46,23 @@ public:
 
 #include "Function_Prototype.h"
 #include "InstanceTypeInfo.h"
+#include "Variant.h"
+
+//TOOD : Move to own code file
+template<typename T, typename... Params>
+AutoVariant invoke(const TypeFunction* f, T& object, Params&&... params)
+{
+	return invoke(f, &object, params...);
+}
+
+template<typename T, typename... Params>
+AutoVariant invoke(const TypeFunction* f, T* object, Params&&... params)
+{
+	f->ValidateArguments(params...);
+	f->ValidateObject(object);
+
+	return f->m_FunctionPointer->Call(object, params...);
+}
 
 template <typename T, typename ReturnType, typename... Params>
 TypeFunction::TypeFunction(Name in_name, ReturnType(T::*func)(Params...) )
@@ -59,19 +78,18 @@ TypeFunction::TypeFunction(Name in_name, ReturnType(T::*func)(Params...) )
 	m_FunctionPointer = new Function_Pointer<T, ReturnType(Params...), sizeof...(Params)>(func);
 }
 
-template<typename T, typename... Params>
-AutoVariant TypeFunction::invoke(T& object, Params&&... params) const
+template <typename ReturnType, typename... Params>
+TypeFunction::TypeFunction(Name in_name, ReturnType(*func)(Params...))
+	: m_Name(in_name)
 {
-	return invoke(&object, params...);
-}
+	m_ReturnType = TypeInfo::Get<ReturnType>();
+	m_ObjectType = nullptr;
 
-template<typename T, typename... Params>
-AutoVariant TypeFunction::invoke(T* object, Params&&... params) const
-{
-	ValidateArguments(params...);
-	ValidateObject(object);
+	m_vParamTypes.resize(sizeof...(Params));
+	ParamWalk<sizeof...(Params)>::Execute<Params...>(m_vParamTypes);
 
-	return m_FunctionPointer->Call(object, params...);
+	static_assert(sizeof...(Params) <= 6, "You tried to register a function with more than 6 parameters   Unsupported.");
+	m_FunctionPointer = new Function_Pointer_Static<ReturnType(Params...), sizeof...(Params)>(func);
 }
 
 template<typename... Params>
@@ -81,7 +99,7 @@ bool TypeFunction::ValidateArguments(Params&&... params) const
 
 	if (vArgs.size() != m_vParamTypes.size())
 	{
-		CHECK_ERROR_MSG(ErrorCode::InvalidArgumentCount, false, L("Invalid number of arguments (%d, expected %d) when calling %s::%s"), vArgs.size(), m_vParamTypes.size(), m_ObjectType->m_MetaInfo->m_Name.text, m_Name.text);
+		CHECK_ERROR_MSG(ErrorCode::InvalidArgumentCount, false, L("Invalid number of arguments (%d, expected %d) when calling %s"), vArgs.size(), m_vParamTypes.size(), GetFullFunctionName().c_str());
 		return false;
 	}
 
@@ -89,22 +107,17 @@ bool TypeFunction::ValidateArguments(Params&&... params) const
 	{
 		if ( vArgs[i].GetTypeInfo() != m_vParamTypes[i] )
 		{
-			if (vArgs[i].GetTypeInfo()->m_bIsPointer && m_vParamTypes[i]->m_bIsPointer)
+			if (vArgs[i].GetTypeInfo()->IsPointer() && m_vParamTypes[i]->IsPointer())
 			{
-				if (m_vParamTypes[i] == TypeInfo::Get<void*>())
-				{	
-				}
-				else if (vArgs[i].GetTypeInfo()->IsDerivedFrom(m_vParamTypes[i]))
-				{	
-				}
-				else
+				if (m_vParamTypes[i] != TypeInfo::Get<void*>() && !vArgs[i].GetTypeInfo()->IsDerivedFrom(m_vParamTypes[i]))
 				{
-					CHECK_ERROR_MSG(ErrorCode::InvalidArgumentPointerType, false, L("Invalid type on argument at index %d (%s, expected %s) when calling %s::%s"), i, vArgs[i].GetTypeInfo()->m_Name.text, m_vParamTypes[i]->m_Name.text, m_ObjectType->m_MetaInfo->m_Name.text, m_Name.text);
+					CHECK_ERROR_MSG(ErrorCode::InvalidArgumentPointerType, false, L("Invalid type on argument at index %d (%s, expected %s) when calling %s"), i, vArgs[i].GetTypeInfo()->m_Name.text, m_vParamTypes[i]->m_Name.text, GetFullFunctionName().c_str());
+					return false;
 				}
 			}
 			else
 			{
-				CHECK_ERROR_MSG(ErrorCode::InvalidArgumentType, false, L("Invalid type on argument at index %d (%s, expected %s) when calling %s::%s"), i, vArgs[i].GetTypeInfo()->m_Name.text, m_vParamTypes[i]->m_Name.text, m_ObjectType->m_MetaInfo->m_Name.text, m_Name.text);
+				CHECK_ERROR_MSG(ErrorCode::InvalidArgumentType, false, L("Invalid type on argument at index %d (%s, expected %s) when calling %s"), i, vArgs[i].GetTypeInfo()->m_Name.text, m_vParamTypes[i]->m_Name.text, GetFullFunctionName().c_str());
 				return false;
 			}
 		}
@@ -116,13 +129,16 @@ bool TypeFunction::ValidateArguments(Params&&... params) const
 template<typename T>
 bool TypeFunction::ValidateObject(T*) const
 {
+	if(m_ObjectType == nullptr)
+		return true;
+
 	if(TypeInfo::Get<T>() == m_ObjectType)
 		return true;
 
 	if (TypeInfo::Get<T>()->IsDerivedFrom(m_ObjectType))
 		return true;
 
-	CHECK_ERROR_MSG(ErrorCode::InvalidInstanceForMethod, false, L("Invalid object type (%s, expected %s) when calling %s::%s"), TypeInfo::Get<T>()->m_Name.text, m_ObjectType->m_Name.text, m_ObjectType->m_MetaInfo->m_Name.text, m_Name.text);
+	CHECK_ERROR_MSG(ErrorCode::InvalidInstanceForMethod, false, L("Invalid object type (%s, expected %s) when calling %s"), TypeInfo::Get<T>()->m_Name.text, m_ObjectType->m_Name.text, GetFullFunctionName().c_str());
 	return false;
 }
 

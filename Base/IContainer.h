@@ -13,11 +13,19 @@ GetContainer()
 }
 
 template <typename T>
-typename std::enable_if<IsArray<T>::val, IContainer*>::type
+typename std::enable_if<IsStaticArray<T>::val, IContainer*>::type
 GetContainer()
 {
-	return new ArrayContainer<ArrayElement<T>::Type>(ArraySize<T>::size);
+	return new StaticArrayContainer<ArrayElement<T>::Type>(ArraySize<T>::size);
 }
+
+template <typename T>
+typename std::enable_if<IsDynamicArray<T>::val, IContainer*>::type
+GetContainer()
+{
+	return new DynamicArrayContainer<StripPointer_Once<T>::Type>();
+}
+
 
 template <typename T>
 typename std::enable_if<!IsContainer<T>::val, IContainer*>::type
@@ -63,9 +71,9 @@ struct VectorContainer : public IContainer
 };
 
 template <typename T>
-struct ArrayContainer : public IContainer
+struct StaticArrayContainer : public IContainer
 {
-	ArrayContainer(size_t in_ArraySize) : IContainer(TypeInfo::Get<T>()), m_ArraySize(in_ArraySize) {}
+	StaticArrayContainer(size_t in_ArraySize) : IContainer(TypeInfo::Get<T>()), m_ArraySize(in_ArraySize) {}
 
 	size_t GetCount(void*) { return m_ArraySize; }
 	void* GetValue(void* in_pContainer, size_t in_Index)
@@ -78,8 +86,29 @@ struct ArrayContainer : public IContainer
 		return nullptr;
 	}
 
-	virtual const string_char* GetContainerName() { return L("Array"); }
+	virtual const string_char* GetContainerName() { return L("StaticArray"); }
 
 	size_t m_ArraySize;
+};
+
+template <typename T>
+struct DynamicArrayContainer : public IContainer
+{
+	DynamicArrayContainer() : IContainer(TypeInfo::Get<T>()) {}
+
+	//TODO : Implement for real, with flags and all
+	size_t GetCount(void*) { return 1; }
+	void* GetValue(void* in_pContainer, size_t in_Index)
+	{
+		CHECK_ERROR(ErrorCode::InvalidContainerIndex, in_Index >= 0 && in_Index < 1);
+		
+		T* pDynamicArray = *((T**)in_pContainer);
+		if (in_Index >= 0 && in_Index < 1 && pDynamicArray)
+			return (void*)&(pDynamicArray[in_Index]);
+
+		return nullptr;
+	}
+
+	virtual const string_char* GetContainerName() { return L("DynamicArray"); }
 };
 

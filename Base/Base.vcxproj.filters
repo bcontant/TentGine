@@ -284,5 +284,8 @@
     <ClCompile Include="IContainer.cpp">
       <Filter>Source Files\Reflection</Filter>
     </ClCompile>
+    <ClCompile Include="TypeFunction.cpp">
+      <Filter>Source Files\Reflection</Filter>
+    </ClCompile>
   </ItemGroup>
 </Project>

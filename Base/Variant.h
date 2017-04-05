@@ -138,7 +138,7 @@ T& VariantBase::As()
 	}
 
 	//T* to any*
-	if (typeInfo != nullptr && typeInfo->m_bIsPointer && TypeInfo::Get<T>()->m_bIsPointer)
+	if (typeInfo != nullptr && typeInfo->IsPointer() && TypeInfo::Get<T>()->IsPointer())
 	{
 		//Allow down casting to a parent class
 		if (data != nullptr && typeInfo->IsDerivedFrom(TypeInfo::Get<T>()))

@@ -17,6 +17,18 @@ private:
 	virtual ~NotDestructibleClass() {}
 };
 
+struct Foo
+{
+	int a = 0;
+	virtual void foo() {}
+};
+
+struct DerivedFoo : public Foo
+{
+	int b = 100;
+	virtual void foo() {}
+};
+
 struct MyTypeBase
 {
 	MyTypeBase() { cache = 0xFAFBFCFD; }
@@ -31,7 +43,25 @@ struct MyType : MyTypeBase
 {
 	REFLECTABLE(MyType)
 
-	MyType(int i, float f, char c) { x = i; y = f; z = c; private_enum = TestEnumType::VAL_C; vInts.push_back(314); vInts.push_back(159); k = new int[10]; k[0] = 999; }
+	MyType()
+	{
+
+	}
+	MyType(int i, float f, char c) 
+	{
+		x = i; y = f; z = c; private_enum = TestEnumType::VAL_C; 
+		vInts.push_back(314); vInts.push_back(159); 
+		k = new int[10]; k[0] = 999;
+		other_ptr = new OtherType;
+		other_ptr4 = new OtherType***;
+		other_ptr4[0] = new OtherType**;
+		other_ptr4[0][0] = new OtherType*;
+		other_ptr4[0][0][0] = new OtherType;
+		other_ptr4[0][0][0][0].w = 9999;
+		vFoos.push_back(new Foo[10]);    //TODO : See?  It might be 10 objects!  Not just one!
+		vFoos.push_back(new DerivedFoo);
+	}
+
 	~MyType() { x = 9999999; }
 	float			TestModifyMember() { x = 100; return 1.f; }
 	void			TestPassReference(int& i) { x = 200; i = 314159; }
@@ -45,7 +75,10 @@ struct MyType : MyTypeBase
 	std_string name = L("PoopFace");
 	OtherType other;
 	OtherType* other_ptr = nullptr;
+	OtherType**** other_ptr4 = nullptr;
 	std::vector<int> vInts;
+	std::vector<Foo*> vFoos;
+
 	int numbers[10] = { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10 };
 private:
 	TestEnumType private_enum;
@@ -104,7 +137,8 @@ struct BaseTestType
 };
 
 struct TestType : public BaseTestType
-{
+{	
+	static int TestStatic(int& value) { int tmp = value; value = 775; return tmp; }
 	virtual void TestVirtual() { value = 500; }
 
 	int& TestReturnRef() { return value; }
@@ -142,6 +176,15 @@ DECLARE_TYPE(CustomCtor)
 	SET_DEFAULT_CTOR_ARGS(150)
 END_DECLARE(CustomCtor)
 
+DECLARE_TYPE(Foo)
+	ADD_PROP(a)
+END_DECLARE(Foo)
+
+DECLARE_TYPE(DerivedFoo)
+	BASE_CLASS(Foo)
+	ADD_PROP(b)
+END_DECLARE(DerivedFoo)
+
 DECLARE_TYPE(BaseTestType)
 	ADD_FUNC(TestBaseMethod)
 	ADD_FUNC(TestVirtual)	
@@ -149,8 +192,7 @@ END_DECLARE(BaseTestType)
 
 DECLARE_TYPE(TestType)
 	BASE_CLASS(BaseTestType)
-	//ADD_FUNC(TestPureVirtual)
-	//ADD_FUNC(TestVirtual)	
+	ADD_FUNC(TestStatic)
 	ADD_FUNC(TestReturnRef)
 	ADD_FUNC(TestReturnPtr)
 	ADD_FUNC(TestReturnVariant)
@@ -181,6 +223,7 @@ END_DECLARE(MyTypeBase)
 DECLARE_TYPE(MyType)
 	BASE_CLASS(MyTypeBase)
 	SET_DEFAULT_CTOR_ARGS(100, 100.f, 100)
+		ADD_PROP(vFoos)
 	ADD_PROP(x)
 	ADD_PROP(y)
 	ADD_PROP(z)
@@ -188,7 +231,9 @@ DECLARE_TYPE(MyType)
 	ADD_PROP(name)
 	ADD_PROP(other)
 	ADD_PROP(other_ptr)
+	ADD_PROP(other_ptr4)
 	ADD_PROP(vInts)
+	
 	ADD_PROP(numbers)
 	ADD_PROP(private_enum)
 	ADD_FUNC(TestModifyMember)
@@ -219,7 +264,7 @@ void TestEnums();
 
 void TestReflection()
 {
-	ReflectionError::GetInstance()->SetErrorHandler(ErrorHandler::DebugOutHandler);
+	ErrorManager::GetInstance()->SetErrorHandler(ErrorHandler::SilentHandler);
 
 	TestVariants();
 	TestOperators();
@@ -247,13 +292,21 @@ void TestReflection()
 	vContainer.Serialize(&s);
 
 	MyType obj(564, 992.132f, 127);
+
+/*
+	TypeInfo::Get<DerivedFoo>();
+	TypeInfo::Get<DerivedFoo*>();
+*/
+
 	vContainer = obj;
 	vContainer.Serialize(&s);
 
-
 	UnregisterClasses();
 
-	ReflectionError::GetInstance()->SetErrorHandler(ErrorHandler::AssertHandler);
+	Assert(ErrorManager::GetInstance()->m_vErrorCodes.size() == 0);
+	ErrorManager::GetInstance()->m_vErrorCodes.clear();
+
+	ErrorManager::GetInstance()->SetErrorHandler(ErrorHandler::AssertHandler);
 }
 
 void TestVariants()
@@ -297,7 +350,7 @@ void TestVariants()
 		refVal4 = 500;									refValInt4 = 500;
 		Assert(val == 500);								Assert(valInt == 500);
 		Assert(refVal == 500);							Assert(refInt == 500);
-		Assert(500 == VariantTests.As<int>());			Assert(500 == VariantTestsInt);
+		Assert(500 == VariantTests.As<int&>());			Assert(500 == VariantTestsInt);
 	}
 
 	{
@@ -319,22 +372,41 @@ void TestVariants()
 		refVal4 = 500;									refValInt4 = 500;
 		Assert(val == 500);								Assert(valInt == 500);
 		Assert(refVal == 500);							Assert(refInt == 500);
-		Assert(500 == VariantTests.As<int>());			Assert(500 == VariantTestsInt);
+		Assert(500 == VariantTests.As<int&>());			Assert(500 == VariantTestsInt);
 	}
 
 	{
 		//Assignation from an uninitialized Variant (null)
 		//Will assert (FailedCast), won't crash.
+		Assert(ErrorManager::GetInstance()->m_vErrorCodes.size() == 0);
 		Variant nullVar;
 		int val = nullVar;
 		Assert(val == 0);
+		Assert(ErrorManager::GetInstance()->m_vErrorCodes.size() == 1);
+		Assert(ErrorManager::GetInstance()->m_vErrorCodes[0] == ErrorCode::FailedCast);
+		ErrorManager::GetInstance()->m_vErrorCodes.clear();
+
+		Assert(ErrorManager::GetInstance()->m_vErrorCodes.size() == 0);
 		int* pVal = nullVar;
 		Assert(pVal == nullptr);
+		Assert(ErrorManager::GetInstance()->m_vErrorCodes.size() == 1);
+		Assert(ErrorManager::GetInstance()->m_vErrorCodes[0] == ErrorCode::FailedCast);
+		ErrorManager::GetInstance()->m_vErrorCodes.clear();
+
+		Assert(ErrorManager::GetInstance()->m_vErrorCodes.size() == 0);
 		int& refVal = nullVar;
 		Assert(refVal == 0);
+		Assert(ErrorManager::GetInstance()->m_vErrorCodes.size() == 1);
+		Assert(ErrorManager::GetInstance()->m_vErrorCodes[0] == ErrorCode::FailedCast);
+		ErrorManager::GetInstance()->m_vErrorCodes.clear();
+
+		Assert(ErrorManager::GetInstance()->m_vErrorCodes.size() == 0);
 		refVal = 1000;
 		refVal = nullVar;
 		Assert(refVal == 0);
+		Assert(ErrorManager::GetInstance()->m_vErrorCodes.size() == 1);
+		Assert(ErrorManager::GetInstance()->m_vErrorCodes[0] == ErrorCode::FailedCast);
+		ErrorManager::GetInstance()->m_vErrorCodes.clear();
 	}
 
 	{
@@ -347,6 +419,8 @@ void TestVariants()
 		Assert(pBase == myTypePtr);
 		Assert(p == myTypePtr);
 		Assert(pVoid == myTypePtr);
+		Assert(ErrorManager::GetInstance()->m_vErrorCodes.size() == 0);
+		ErrorManager::GetInstance()->m_vErrorCodes.clear();
 
 		MyTypeBase* myBasePtr = (MyTypeBase*) nullptr + 0xdddddddd;
 		v = myBasePtr;
@@ -356,6 +430,9 @@ void TestVariants()
 		Assert(pBase == myBasePtr);
 		Assert(p == myBasePtr);
 		Assert(pVoid == myBasePtr);
+		Assert(ErrorManager::GetInstance()->m_vErrorCodes.size() == 1);
+		Assert(ErrorManager::GetInstance()->m_vErrorCodes[0] == ErrorCode::FailedCast);
+		ErrorManager::GetInstance()->m_vErrorCodes.clear();
 	}
 
 	{
@@ -416,22 +493,41 @@ void TestOperators()
 		//Assert : No constructor.  Still returns allocated memory. TODO : Return null?
 		p = (NoOperatorsTest*)pInfo->New();
 		Assert(p != nullptr);
+		Assert(ErrorManager::GetInstance()->m_vErrorCodes.size() == 1);
+		Assert(ErrorManager::GetInstance()->m_vErrorCodes[0] == ErrorCode::FailedConstructor);
+		ErrorManager::GetInstance()->m_vErrorCodes.clear();
 
 		//2x Assert : No copy constructor and New + Assignment operator fails. Variant v got the correct size allocated but nothing else happened. TODO : Remain null?
 		Variant v = *p;
 		Assert(v.GetData() != nullptr);
+		Assert(ErrorManager::GetInstance()->m_vErrorCodes.size() == 2);
+		Assert(ErrorManager::GetInstance()->m_vErrorCodes[0] == ErrorCode::FailedConstructor);
+		Assert(ErrorManager::GetInstance()->m_vErrorCodes[1] == ErrorCode::FailedAssignmentOperator);
+		ErrorManager::GetInstance()->m_vErrorCodes.clear();
 
 		//2x Assert : New + Assignment operator fails. Variant v got the correct size allocated but nothing else happened. TODO : Remain null?
 		Variant v2;
 		v2 = v;
 		Assert(v2.GetData() != nullptr);
+		Assert(ErrorManager::GetInstance()->m_vErrorCodes.size() == 2);
+		Assert(ErrorManager::GetInstance()->m_vErrorCodes[0] == ErrorCode::FailedConstructor);
+		Assert(ErrorManager::GetInstance()->m_vErrorCodes[1] == ErrorCode::FailedAssignmentOperator);
+		ErrorManager::GetInstance()->m_vErrorCodes.clear();
 
 		v.Serialize(&s);
 
 		//Assert : No destructor.  Still frees allocated memory.
 		pInfo->Delete(p);
+		Assert(ErrorManager::GetInstance()->m_vErrorCodes.size() == 1);
+		Assert(ErrorManager::GetInstance()->m_vErrorCodes[0] == ErrorCode::FailedDestructor);
+		ErrorManager::GetInstance()->m_vErrorCodes.clear();
 	}
+
 	//2x Assert : Variant destructor : no destructor for allocated type. Still frees allocated memory
+	Assert(ErrorManager::GetInstance()->m_vErrorCodes.size() == 2);
+	Assert(ErrorManager::GetInstance()->m_vErrorCodes[0] == ErrorCode::FailedDestructor);
+	Assert(ErrorManager::GetInstance()->m_vErrorCodes[1] == ErrorCode::FailedDestructor);
+	ErrorManager::GetInstance()->m_vErrorCodes.clear();
 
 	//No Destructor
 	{
@@ -448,8 +544,14 @@ void TestOperators()
 
 		//Assert : No destructor.  Still frees allocated memory.
 		pInfo->Delete(p);
+		Assert(ErrorManager::GetInstance()->m_vErrorCodes.size() == 1);
+		Assert(ErrorManager::GetInstance()->m_vErrorCodes[0] == ErrorCode::FailedDestructor);
+		ErrorManager::GetInstance()->m_vErrorCodes.clear();
 	}
 	//1x Assert : Variant destructor : no destructor for allocated type. Still frees allocated memory
+	Assert(ErrorManager::GetInstance()->m_vErrorCodes.size() == 1);
+	Assert(ErrorManager::GetInstance()->m_vErrorCodes[0] == ErrorCode::FailedDestructor);
+	ErrorManager::GetInstance()->m_vErrorCodes.clear();
 
 	//No Copy Ctor
 	{
@@ -463,7 +565,7 @@ void TestOperators()
 		Variant v = *p;
 		Assert(v.As<NoCopyCtor>().value == 100);
 
-		//Calls assignment operator (unimplemented so defaults to copy)
+		//Calls assignment operator (unimplemented so default basic to memcpy)
 		v = *p;
 		Assert(v.As<NoCopyCtor>().value == 100);
 
@@ -509,6 +611,9 @@ void TestOperators()
 		p->value = 200;
 		v = *p;
 		Assert(v.As<NoAssignmentOperator>().value == 100);
+		Assert(ErrorManager::GetInstance()->m_vErrorCodes.size() == 1);
+		Assert(ErrorManager::GetInstance()->m_vErrorCodes[0] == ErrorCode::FailedAssignmentOperator);
+		ErrorManager::GetInstance()->m_vErrorCodes.clear();
 
 		v.Serialize(&s);
 
@@ -536,12 +641,34 @@ void TestMethods()
 {
 	Type* t = TypeDB::GetInstance()->GetType(L("TestType"));
 
+	//Testing calling static function 
+	{
+		TestType obj;
+		const TypeFunction* f = t->GetFunction(L("TestStatic"));
+		Assert(f != nullptr);
+		int param = 7760;
+		int ret = invoke(f, &obj, param);
+		Assert(ret == 7760);
+		Assert(param == 775);
+	}
+
+	//Testing calling static function 
+	{
+		TestType obj;
+		const TypeFunction* f = t->GetFunction(L("TestStatic"));
+		Assert(f != nullptr);
+		int param = 7760;
+		int ret = invoke(f, obj, param);
+		Assert(ret == 7760);
+		Assert(param == 775);
+	}
+
 	//Testing calling virtual function on a derived class object
 	{
 		TestType obj;
 		const TypeFunction* f = t->GetFunction(L("TestVirtual"));
 		Assert(f != nullptr);
-		f->invoke(&obj);
+		invoke(f, &obj);
 		Assert(obj.value == 500);
 	}
 
@@ -551,7 +678,7 @@ void TestMethods()
 		const TypeFunction* f = t->GetFunction(L("TestVirtual"));
 		Assert(f != nullptr);
 		BaseTestType* pObj = &obj;
-		f->invoke(pObj);
+		invoke(f, pObj);
 		Assert(obj.value == 500);
 	}
 
@@ -560,7 +687,7 @@ void TestMethods()
 		BaseTestType obj;
 		const TypeFunction* f = t->GetFunction(L("TestVirtual"));
 		Assert(f != nullptr);
-		f->invoke(&obj);
+		invoke(f, &obj);
 		Assert(obj.value == 700);
 	}
 
@@ -568,7 +695,7 @@ void TestMethods()
 		TestType obj;
 		const TypeFunction* f = t->GetFunction(L("TestReturnRef"));
 		Assert(f != nullptr);
-		int& i = f->invoke(&obj);
+		int& i = invoke(f, &obj);
 		i = 400;
 		Assert(obj.value == 400);
 	}
@@ -577,7 +704,7 @@ void TestMethods()
 		TestType obj;
 		const TypeFunction* f = t->GetFunction(L("TestReturnPtr"));
 		Assert(f != nullptr);
-		int* i = f->invoke(&obj);
+		int* i = invoke(f, &obj);
 		*i = 800;
 		Assert(obj.value == 800);
 	}
@@ -586,7 +713,7 @@ void TestMethods()
 		TestType obj;
 		const TypeFunction* f = t->GetFunction(L("TestReturnVariant"));
 		Assert(f != nullptr);
-		Variant v = f->invoke(&obj);
+		Variant v = invoke(f, &obj);
 		v.As<int>() = 400;
 		Assert(obj.value == 50);
 	}
@@ -595,7 +722,7 @@ void TestMethods()
 		TestType obj;
 		const TypeFunction* f = t->GetFunction(L("TestReturnVariantRef"));
 		Assert(f != nullptr);
-		VariantRef v = f->invoke(&obj);
+		VariantRef v = invoke(f, &obj);
 		v.As<int>() = 400;
 		Assert(obj.value == 400);
 	}
@@ -604,7 +731,7 @@ void TestMethods()
 		TestType obj;
 		const TypeFunction* f = t->GetFunction(L("TestPassRef"));
 		Assert(f != nullptr);
-		f->invoke(&obj, obj.value);
+		invoke(f, &obj, obj.value);
 		Assert(obj.value == 100);
 	}
 
@@ -612,7 +739,7 @@ void TestMethods()
 		TestType obj;
 		const TypeFunction* f = t->GetFunction(L("TestPassPtr"));
 		Assert(f != nullptr);
-		f->invoke(&obj, &obj.value);
+		invoke(f, &obj, &obj.value);
 		Assert(obj.value == 1000);
 	}
 
@@ -621,7 +748,7 @@ void TestMethods()
 		int i[2] = {};
 		const TypeFunction* f = t->GetFunction(L("Test2Params"));
 		Assert(f != nullptr);
-		f->invoke(&obj, i[0], i[1]);
+		invoke(f, &obj, i[0], i[1]);
 		Assert(i[0] == 10 && i[1] == 100);
 	}
 
@@ -630,7 +757,7 @@ void TestMethods()
 		int i[3] = {};
 		const TypeFunction* f = t->GetFunction(L("Test3Params"));
 		Assert(f != nullptr);
-		f->invoke(&obj, i[0], i[1], i[2]);
+		invoke(f, &obj, i[0], i[1], i[2]);
 		Assert(i[0] == 10 && i[1] == 100 && i[2] == 1000);
 	}
 
@@ -639,7 +766,7 @@ void TestMethods()
 		int i[4] = {};
 		const TypeFunction* f = t->GetFunction(L("Test4Params"));
 		Assert(f != nullptr);
-		f->invoke(&obj, i[0], i[1], i[2], i[3]);
+		invoke(f, &obj, i[0], i[1], i[2], i[3]);
 		Assert(i[0] == 10 && i[1] == 100 && i[2] == 1000 && i[3] == 10000);
 	}
 
@@ -648,7 +775,7 @@ void TestMethods()
 		int i[5] = {};
 		const TypeFunction* f = t->GetFunction(L("Test5Params"));
 		Assert(f != nullptr);
-		f->invoke(&obj, i[0], i[1], i[2], i[3], i[4]);
+		invoke(f, &obj, i[0], i[1], i[2], i[3], i[4]);
 		Assert(i[0] == 10 && i[1] == 100 && i[2] == 1000 && i[3] == 10000 && i[4] == 100000);
 	}
 
@@ -657,7 +784,7 @@ void TestMethods()
 		int i[6] = {};
 		const TypeFunction* f = t->GetFunction(L("Test6Params"));
 		Assert(f != nullptr);
-		f->invoke(&obj, i[0], i[1], i[2], i[3], i[4], i[5]);
+		invoke(f, &obj, i[0], i[1], i[2], i[3], i[4], i[5]);
 		Assert(i[0] == 10 && i[1] == 100 && i[2] == 1000 && i[3] == 10000 && i[4] == 100000 && i[5] == 1000000);
 	}
 
@@ -667,8 +794,11 @@ void TestMethods()
 		const TypeFunction* f = t->GetFunction(L("TestPassRef"));
 		Assert(f != nullptr);
 		int value = 5;
-		f->invoke(obj, value);
+		invoke(f, obj, value);
 		Assert(value == 100);
+		Assert(ErrorManager::GetInstance()->m_vErrorCodes.size() == 1);
+		Assert(ErrorManager::GetInstance()->m_vErrorCodes[0] == ErrorCode::NullInstanceForMethod);
+		ErrorManager::GetInstance()->m_vErrorCodes.clear();
 	}
 	
 	//TODO : Invoke with object

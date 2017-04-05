@@ -6,6 +6,7 @@
 #include "Name.h"
 
 struct Type;
+struct TypeInfo;
 
 //-----------------------------------------
 //TypeDB
@@ -22,9 +23,6 @@ public:
 	template <typename T>
 	Type& RegisterType();
 
-	/*template <typename T>
-	Type& SoftRegisterType();*/
-
 	template <typename T>
 	Type* GetType();
 
@@ -32,8 +30,12 @@ public:
 
 	void Clear();
 
+	void RegisterTypeInfo(const TypeInfo* in_pInfo);
+	const TypeInfo* FindFromVTable(void* in_pVTable) const;
+
 private:
 	std::map<Name, Type*> mTypes;
+	std::map<Name, const TypeInfo*> mTypeInfos;
 };
 
 #include "Type.h"
@@ -60,29 +62,13 @@ Type& TypeDB::RegisterType()
 	}
 
 	// Apply type properties
-	//type->typeInfo = TypeInfo::Get<T>();
 	type->m_Name = name;
+	//type->m_Operators = TypeOperators::Get<T>();
 	type->m_Operators = { 0 };
-
-	//Assert(type->typeInfo->m_Name == type->m_Name);
+	type->m_Operators.vtable_address = TypeOperators::Get<T>().vtable_address;
 
 	return *type;
 }
-
-/*template <typename T>
-Type& TypeDB::SoftRegisterType()
-{
-	Name name = GetTypeName<T>();
-
-	CHECK_ERROR(ErrorCode::Undefined, mTypes.find(GetTypeName<T>()) == mTypes.end());
-
-	Type* type = new Type;
-	mTypes[name] = type;
-	type->m_Name = name;
-	type->m_Operators = TypeOperators::Get<T>();
-
-	return *type;
-}*/
 
 template <typename T>
 Type* TypeDB::GetType()
@@ -91,7 +77,10 @@ Type* TypeDB::GetType()
 	auto type_i = mTypes.find(name);
 	if (type_i == mTypes.end())
 	{
-		return &RegisterType<T>();
+		if(IsUserType<T>::val)
+			return &RegisterType<T>();
+		else
+			return nullptr;
 	}
 	return type_i->second;
 }

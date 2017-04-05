@@ -4,14 +4,15 @@
 #include "InstanceTypeInfo.h"
 #include "Type.h"
 
-TypeInfo::TypeInfo(Name in_name, Type* in_type, bool in_is_pointer, int in_size, IContainer* in_pContainer, TypeOperators in_operators)
+TypeInfo::TypeInfo(Name in_name, Type* in_type, const TypeInfo* in_pDereferencedType, int in_size, IContainer* in_pContainer, TypeOperators in_operators)
 	: m_Name(in_name)
 	, m_MetaInfo(in_type)
-	, m_bIsPointer(in_is_pointer)
+	, m_pDereferencedTypeInfo(in_pDereferencedType)
 	, m_Size(in_size)
 	, m_pContainer(in_pContainer)
 	, m_Operators(in_operators)
 {
+	TypeDB::GetInstance()->RegisterTypeInfo(this);
 }
 
 TypeInfo::~TypeInfo()
@@ -19,17 +20,13 @@ TypeInfo::~TypeInfo()
 	delete m_pContainer;
 }
 
+bool TypeInfo::IsPointer() const
+{
+	return m_pDereferencedTypeInfo != nullptr;
+}
+
 bool TypeInfo::IsDerivedFrom(const TypeInfo* in_pInfo) const
 {
-	/*if(m_MetaInfo == nullptr || in_pInfo == nullptr || in_pInfo->m_MetaInfo == nullptr)
-		return false;
-
-	if(m_MetaInfo->typeInfo == in_pInfo->m_MetaInfo->typeInfo)
-		return true;
-
-	if(m_MetaInfo && m_MetaInfo->base_type && m_MetaInfo->base_type->typeInfo)
-		return m_MetaInfo->base_type->typeInfo->IsDerivedFrom(in_pInfo);*/
-
 	if(in_pInfo == this)
 		return true;
 
@@ -37,6 +34,36 @@ bool TypeInfo::IsDerivedFrom(const TypeInfo* in_pInfo) const
 		return false;
 
 	return m_MetaInfo->IsDerivedFrom(in_pInfo);
+}
+
+void* TypeInfo::GetVTableAddress() const
+{
+	return m_Operators.vtable_address;
+}
+
+const TypeInfo* TypeInfo::GetActualObjectTypeInfo(void* obj) const
+{
+	//If this type represents an object, it's polymorphic and our object data is non-null, we
+	//might have a winner.
+	if (m_Operators.vtable_address != nullptr && obj != nullptr)
+	{
+		//Get the object instance's vtable address
+		//TODO : This breaks way the fuck down with multiple inheritance
+		void* currentVTable = *((void**)(obj));
+
+		//Compare it with the current typeInfo's vtable.  If it's different, we're dealing with a derived object.
+		if (currentVTable != nullptr && currentVTable != m_Operators.vtable_address)
+		{
+			//Find the proper derived object class
+			const TypeInfo* pInfo = TypeDB::GetInstance()->FindFromVTable(currentVTable);
+
+			//Sanity check, should never happen
+			Assert(pInfo != nullptr && pInfo->IsDerivedFrom(this));
+
+			return pInfo;
+		}
+	}
+	return this;
 }
 
 void TypeInfo::Constructor(void* data) const
@@ -89,7 +116,10 @@ void TypeInfo::AssignmentOperator(void* dst, const void* src) const
 
 void TypeInfo::Serialize(Serializer* serializer, void* obj, const string_char* in_name) const
 {
-	if (m_MetaInfo && m_MetaInfo->m_Operators.serialize_func && m_MetaInfo->m_Name == m_Name)
+	const TypeInfo* pInfo = GetActualObjectTypeInfo(obj);
+	if (pInfo != this)
+		pInfo->Serialize(serializer, obj, in_name);
+	else if (m_MetaInfo && m_MetaInfo->m_Operators.serialize_func && m_MetaInfo->m_Name == m_Name)
 		m_MetaInfo->m_Operators.serialize_func(serializer, this, obj, in_name);
 	else if(m_Operators.serialize_func)
 		m_Operators.serialize_func(serializer, this, obj, in_name);

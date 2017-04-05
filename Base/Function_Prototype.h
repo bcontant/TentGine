@@ -78,3 +78,60 @@ DECLARE_PROTO(3, (in_pInstance, m_pFunctionPointer, p0, p1, p2), VariantRef p0, 
 DECLARE_PROTO(4, (in_pInstance, m_pFunctionPointer, p0, p1, p2, p3), VariantRef p0, VariantRef p1, VariantRef p2, VariantRef p3);
 DECLARE_PROTO(5, (in_pInstance, m_pFunctionPointer, p0, p1, p2, p3, p4), VariantRef p0, VariantRef p1, VariantRef p2, VariantRef p3, VariantRef p4);
 DECLARE_PROTO(6, (in_pInstance, m_pFunctionPointer, p0, p1, p2, p3, p4, p5), VariantRef p0, VariantRef p1, VariantRef p2, VariantRef p3, VariantRef p4, VariantRef p5);
+
+template <typename U, int K>
+class Function_Pointer_Static;
+
+template <typename ReturnType, typename Func, typename... Params>
+typename std::enable_if<std::is_same<ReturnType, void>::value, AutoVariant>::type
+CallImpl_Static(Func in_pFunction, Params&&... in_Params)
+{
+	CHECK_ERROR(ErrorCode::NullFunctionPointer, in_pFunction != nullptr);
+
+	if (in_pFunction != nullptr)
+		(in_pFunction)(std::forward<Params>(in_Params)...);
+
+	return AutoVariant(0);
+}
+
+template <typename ReturnType, typename Func, typename... Params>
+typename std::enable_if<!std::is_same<ReturnType, void>::value, AutoVariant>::type
+CallImpl_Static(Func in_pFunction, Params&&... in_Params)
+{
+	CHECK_ERROR(ErrorCode::NullFunctionPointer, in_pFunction != nullptr);
+
+	if (in_pFunction != nullptr)
+		return (in_pFunction)(std::forward<Params>(in_Params)...);
+
+	return AutoVariant(0);
+}
+
+template <typename ReturnType, typename... Params, int K>
+class Function_Pointer_Static<ReturnType(Params...), K> : public Function_Pointer_Base
+{
+public:
+	Function_Pointer_Static(ReturnType(*)(Params...)) : Function_Pointer_Base(0) {}
+};
+
+#define DECLARE_PROTO_STATIC(paramCount, callArguments, ...) \
+	template <typename ReturnType, typename... Params> \
+	class Function_Pointer_Static<ReturnType(Params...), paramCount> : public Function_Pointer_Base \
+	{ \
+	public:\
+		Function_Pointer_Static( ReturnType(*in_pFunctionPointer)(Params...) ) : Function_Pointer_Base(paramCount), m_pFunctionPointer(in_pFunctionPointer) {} \
+		\
+		virtual AutoVariant Call(void*, ##__VA_ARGS__) \
+		{ \
+			return CallImpl_Static<ReturnType> callArguments; \
+		} \
+	private: \
+		ReturnType(*m_pFunctionPointer)(Params...) = nullptr; \
+	}
+
+DECLARE_PROTO_STATIC(0, (m_pFunctionPointer));
+DECLARE_PROTO_STATIC(1, (m_pFunctionPointer, p0), VariantRef p0);
+DECLARE_PROTO_STATIC(2, (m_pFunctionPointer, p0, p1), VariantRef p0, VariantRef p1);
+DECLARE_PROTO_STATIC(3, (m_pFunctionPointer, p0, p1, p2), VariantRef p0, VariantRef p1, VariantRef p2);
+DECLARE_PROTO_STATIC(4, (m_pFunctionPointer, p0, p1, p2, p3), VariantRef p0, VariantRef p1, VariantRef p2, VariantRef p3);
+DECLARE_PROTO_STATIC(5, (m_pFunctionPointer, p0, p1, p2, p3, p4), VariantRef p0, VariantRef p1, VariantRef p2, VariantRef p3, VariantRef p4);
+DECLARE_PROTO_STATIC(6, (m_pFunctionPointer, p0, p1, p2, p3, p4, p5), VariantRef p0, VariantRef p1, VariantRef p2, VariantRef p3, VariantRef p4, VariantRef p5);

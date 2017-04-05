@@ -7,6 +7,8 @@
 #include "TypeOperators.h"
 #include "Utils.h"
 
+struct Serializer;
+
 // The basic type representation
 struct Type
 {
@@ -21,17 +23,16 @@ struct Type
 	Type& Base();
 	bool IsDerivedFrom(const TypeInfo* in_TypeInfo);
 
-	void SetCtor(ConstructObjectFunc f) { m_Operators.constructor = f; }
+	void SetDefaultConstructor(ConstructObjectFunc f);
 
 	const TypeProperty* GetProperty(const string_char* in_name) const;
 	const TypeFunction* GetFunction(const string_char* in_name) const;
 	const EnumConstant* GetEnumConstant(u64 in_value) const;
 
+	void Serialize(Serializer* s, void* in_obj) const;
+
 	// Scoped C++ name of the type
 	Name m_Name = L("");
-
-	//InstanceTypeInfo for this type
-	//const TypeInfo* typeInfo = nullptr;
 
 	//Base type
 	Type* base_type = nullptr;

@@ -25,10 +25,12 @@ public:
 	template <typename T> 
 	static const TypeInfo* Get(T);
 
+	bool IsPointer() const;
 	bool IsDerivedFrom(const TypeInfo* in_pInfo) const;
+	void* GetVTableAddress() const;
 
 private:
-	TypeInfo(Name in_name, Type* in_type, bool in_is_pointer, int in_size, IContainer* in_container, TypeOperators in_functions);
+	TypeInfo(Name in_name, Type* in_type, const TypeInfo* in_pDereferencedType, int in_size, IContainer* in_container, TypeOperators in_functions);
 	~TypeInfo();
 
 	TypeInfo(const TypeInfo&) = delete;
@@ -49,12 +51,16 @@ public:
 	Name m_Name;
 
 	Type* m_MetaInfo;
-	bool m_bIsPointer;
+
+	const TypeInfo* m_pDereferencedTypeInfo;
+
 	int m_Size;
 
 	IContainer* m_pContainer;
 
 private:
+	const TypeInfo* TypeInfo::GetActualObjectTypeInfo(void* obj) const;
+
 	TypeOperators m_Operators;
 };
 
@@ -66,7 +72,7 @@ const TypeInfo* TypeInfo::Get_Internal()
 	static const TypeInfo type_info(
 		Name(GetTypeName<T>()),
 		TypeDB::GetInstance()->GetType<Strip<T>::Type>(),
-		IsPointer<T>::val,
+		::IsPointer<T>::val ? TypeInfo::Get<StripPointer_Once<T>::Type>() : nullptr,
 		SizeOf<T>::val,
 		GetContainer<T>(),
 		TypeOperators::Get<T>()
@@ -74,6 +80,7 @@ const TypeInfo* TypeInfo::Get_Internal()
 	return &type_info;
 }
 
+//TODO : Can't I just StripReference all this fucking time?
 template <typename T>
 typename std::enable_if<!std::is_reference<T>::value, const TypeInfo*>::type
 TypeInfo::Get()

@@ -48,6 +48,11 @@ bool Type::IsDerivedFrom(const TypeInfo* in_TypeInfo)
 	return this->base_type->IsDerivedFrom(in_TypeInfo);
 }
 
+void Type::SetDefaultConstructor(ConstructObjectFunc f) 
+{ 
+	m_Operators.constructor = f; 
+}
+
 const TypeProperty* Type::GetProperty(const string_char* in_name) const
 {
 	for (size_t i = 0; i < vProperties.size(); i++)
@@ -88,4 +93,15 @@ const EnumConstant* Type::GetEnumConstant(u64 in_value) const
 			return &(vEnumConstants[i]);
 	}
 	return nullptr;
+}
+
+void Type::Serialize(Serializer* s, void* in_obj) const
+{
+	for (auto prop : vProperties)
+	{
+		prop.type_info->Serialize(s, prop.GetPtr(in_obj), prop.m_Name.text);
+	}
+
+	if (base_type)
+		return base_type->Serialize(s, in_obj);
 }
