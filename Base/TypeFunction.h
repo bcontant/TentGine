@@ -8,8 +8,8 @@ struct TypeInfo;
 
 struct TypeFunction
 {
-	template <typename T, typename... Params>
-	friend AutoVariant invoke(const TypeFunction* f, T* object, Params&&... params);
+	template<typename T, typename... Params>
+	friend AutoVariant invoke(T* object, const TypeFunction* f, Params&&... params);
 
 public:
 	template <typename T, typename ReturnType, typename... Params>
@@ -46,23 +46,6 @@ private:
 
 #include "Function_Prototype.h"
 #include "TypeInfo.h"
-#include "Variant.h"
-
-//TOOD : Move to own code file
-template<typename T, typename... Params>
-AutoVariant invoke(const TypeFunction* f, T& object, Params&&... params)
-{
-	return invoke(f, &object, params...);
-}
-
-template<typename T, typename... Params>
-AutoVariant invoke(const TypeFunction* f, T* object, Params&&... params)
-{
-	f->ValidateArguments(params...);
-	f->ValidateObject(object);
-
-	return f->m_FunctionPointer->Call(object, params...);
-}
 
 template <typename T, typename ReturnType, typename... Params>
 TypeFunction::TypeFunction(Name in_name, ReturnType(T::*func)(Params...) )
@@ -74,7 +57,7 @@ TypeFunction::TypeFunction(Name in_name, ReturnType(T::*func)(Params...) )
 	m_vParamTypes.resize(sizeof...(Params));
 	ParamWalk<sizeof...(Params)>::Execute<Params...>(m_vParamTypes);
 
-	static_assert(sizeof...(Params) <= 6, "You tried to register a method with more than 6 parameters   Unsupported.");
+	static_assert(sizeof...(Params) <= 6, "You tried to register a method with more than 6 parameters. Unsupported.");
 	m_FunctionPointer = new Function_Pointer<T, ReturnType(Params...), sizeof...(Params)>(func);
 }
 
@@ -88,7 +71,7 @@ TypeFunction::TypeFunction(Name in_name, ReturnType(*func)(Params...))
 	m_vParamTypes.resize(sizeof...(Params));
 	ParamWalk<sizeof...(Params)>::Execute<Params...>(m_vParamTypes);
 
-	static_assert(sizeof...(Params) <= 6, "You tried to register a function with more than 6 parameters   Unsupported.");
+	static_assert(sizeof...(Params) <= 6, "You tried to register a function with more than 6 parameters. Unsupported.");
 	m_FunctionPointer = new Function_Pointer_Static<ReturnType(Params...), sizeof...(Params)>(func);
 }
 

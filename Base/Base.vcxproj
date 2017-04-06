@@ -302,6 +302,7 @@
     <ClInclude Include="Function_Prototype.h" />
     <ClInclude Include="GraphicUtils.h" />
     <ClInclude Include="IContainer.h" />
+    <ClInclude Include="Invoker.h" />
     <ClInclude Include="TypeInfo.h" />
     <ClInclude Include="JPEGFile.h" />
     <ClInclude Include="Logger.h" />

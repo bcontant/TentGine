@@ -31,7 +31,7 @@ void TypeDB::RegisterTypeInfo(const TypeInfo* in_pInfo)
 	}
 	else
 	{
-		CHECK_ERROR(ErrorCode::HashCollision, STRCMP(type_i->first.text, in_pInfo->m_Name.text) == 0);
+		CHECK_ERROR_MSG(ErrorCode::HashCollision, STRCMP(type_i->first.text, in_pInfo->m_Name.text) == 0, L("Hash Collision occured inside mTypesInfos map"));
 	}
 }
 
@@ -43,4 +43,10 @@ const TypeInfo* TypeDB::GetType(Name name) const
 		return nullptr;
 	}
 	return type_i->second;
+}
+
+
+void TypeDB::AddFunction( TypeFunction&& in_function )
+{
+	mGlobalFunctions.push_back(in_function);
 }

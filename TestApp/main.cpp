@@ -26,8 +26,6 @@
 
 #include "../Base/XMLFile.h"
 
-#include "../Base/Reflection.h"
-
 #include "Reflection_Tests.h"
 
 int CALLBACK WinMain(HINSTANCE hInstance, HINSTANCE, LPSTR, s32)

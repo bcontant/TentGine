@@ -1,7 +1,5 @@
 #pragma once
 
-#include "Types.h"
-
 u32 GenerateStringHash(const string_char*);
 
 struct Name

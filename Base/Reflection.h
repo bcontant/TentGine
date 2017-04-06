@@ -2,7 +2,7 @@
 
 #include "TypeDB.h"
 #include "TypeInfo.h"
-#include "Variant.h"
+#include "Invoker.h"
 
 template <class T>
 class ReflectionRegisterer
@@ -13,6 +13,16 @@ public:
 
 #define REFLECTABLE(TYPE) friend class ReflectionRegisterer<TYPE>;
 
+#define DECLARE_GLOBALS() DECLARE_TYPE(void)
+
+#define ADD_GLOBAL_FUNC(FUNC) \
+		pType->AddFunction( TypeFunction( Name(L(#FUNC)), &FUNC) );
+
+#define ADD_GLOBAL_PROP(VAR) \
+		pType->AddProperty( TypeProperty(L(#VAR), &VAR) ); 
+	
+#define END_DECLARE_GLOBALS() END_DECLARE(void)
+
 #define DECLARE_TYPE(TYPE) \
 	template <> \
 	ReflectionRegisterer<TYPE>::ReflectionRegisterer() \
@@ -21,10 +31,13 @@ public:
 		TypeInfo* pType = (TypeInfo*) TypeInfo::Get<T>(); pType ? (void)0 : (void)0;
 
 #define ADD_PROP(VAR) \
-		pType->AddProperty( TypeProperty(L(#VAR), &T::VAR) );
+		pType->AddProperty( TypeProperty(L(#VAR), &T::VAR) ); 
 
 #define ADD_FUNC(FUNC) \
 		pType->AddFunction( TypeFunction( Name(L(#FUNC)), &T::FUNC) );
+
+#define ADD_OVERLOADED_FUNC(FUNC, PROTO) \
+		pType->AddFunction( TypeFunction( Name(L(#FUNC)), static_cast<PROTO>(&T::FUNC)) );
 
 #define ADD_ENUM_VALUE(ENUM) \
 		pType->AddEnumConstant( EnumConstant(L(#ENUM), static_cast<int>(T::ENUM) ) );

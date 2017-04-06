@@ -35,6 +35,7 @@ GetContainer()
 }
 
 struct TypeInfo;
+struct Serializer;
 
 struct IContainer
 {
@@ -62,7 +63,7 @@ struct VectorContainer : public IContainer
 
 	void* GetValue(void* in_pContainer, size_t in_Index)
 	{
-		CHECK_ERROR(ErrorCode::InvalidContainerIndex, in_Index >= 0 && in_Index < GetCount(in_pContainer));
+		CHECK_ERROR_MSG(ErrorCode::InvalidContainerIndex, in_Index >= 0 && in_Index < GetCount(in_pContainer), L("Index out of bounds on VectorContainer"));
 
 		return &((std::vector<T>*)in_pContainer)->at(in_Index);
 	}
@@ -78,7 +79,7 @@ struct StaticArrayContainer : public IContainer
 	size_t GetCount(void*) { return m_ArraySize; }
 	void* GetValue(void* in_pContainer, size_t in_Index)
 	{
-		CHECK_ERROR(ErrorCode::InvalidContainerIndex, in_Index >= 0 && in_Index < m_ArraySize);
+		CHECK_ERROR_MSG(ErrorCode::InvalidContainerIndex, in_Index >= 0 && in_Index < m_ArraySize, L("Index out of bounds on StaticArrayContainer"));
 
 		if(in_Index >= 0 && in_Index < m_ArraySize)
 			return (void*)&((T*)in_pContainer)[in_Index];
@@ -100,7 +101,7 @@ struct DynamicArrayContainer : public IContainer
 	size_t GetCount(void*) { return 1; }
 	void* GetValue(void* in_pContainer, size_t in_Index)
 	{
-		CHECK_ERROR(ErrorCode::InvalidContainerIndex, in_Index >= 0 && in_Index < 1);
+		CHECK_ERROR_MSG(ErrorCode::InvalidContainerIndex, in_Index >= 0 && in_Index < 1, L("Index out of bounds on DynamicArrayContainer"));
 		
 		T* pDynamicArray = *((T**)in_pContainer);
 		if (in_Index >= 0 && in_Index < 1 && pDynamicArray)

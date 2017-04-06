@@ -141,6 +141,9 @@ struct TestType : public BaseTestType
 	static int TestStatic(int& value) { int tmp = value; value = 775; return tmp; }
 	virtual void TestVirtual() { value = 500; }
 
+	int TestOverload(int) { return 10; }
+	int TestOverload(float) { return 20; }
+
 	int& TestReturnRef() { return value; }
 	int* TestReturnPtr() { return &value; }
 	Variant TestReturnVariant() { return value; }
@@ -156,6 +159,22 @@ struct TestType : public BaseTestType
 	void Test6Params(int& in1, int& in2, int& in3, int& in4, int& in5, int& in6) { in1 = 10; in2 = 100; in3 = 1000; in4 = 10000; in5 = 100000; in6 = 1000000; }
 	void Test7Params(int& in1, int& in2, int& in3, int& in4, int& in5, int& in6, int& in7) { in1 = 10; in2 = 100; in3 = 1000; in4 = 10000; in5 = 100000; in6 = 1000000; in7 = 10000000; }
 };
+
+namespace TentGine_Test
+{
+	void TestNamespaceFunc() {}
+
+	class NamespaceClass
+	{
+	public:
+		static void TestNestedFunc() {}
+	};
+}
+
+DECLARE_GLOBALS()
+	ADD_GLOBAL_FUNC(TentGine_Test::TestNamespaceFunc)
+	ADD_GLOBAL_FUNC(TentGine_Test::NamespaceClass::TestNestedFunc)
+END_DECLARE_GLOBALS()
 
 DECLARE_TYPE(NoOperatorsTest)
 END_DECLARE(NoOperatorsTest)
@@ -193,6 +212,8 @@ END_DECLARE(BaseTestType)
 DECLARE_TYPE(TestType)
 	BASE_CLASS(BaseTestType)
 	ADD_FUNC(TestStatic)
+	ADD_OVERLOADED_FUNC(TestOverload, int(TestType::*)(float))
+	ADD_OVERLOADED_FUNC(TestOverload, int(TestType::*)(int))
 	ADD_FUNC(TestReturnRef)
 	ADD_FUNC(TestReturnPtr)
 	ADD_FUNC(TestReturnVariant)
@@ -257,6 +278,9 @@ void TestEnums();
 
 void TestReflection()
 {
+
+
+
 	ErrorManager::GetInstance()->SetErrorHandler(ErrorHandler::DebugOutHandler);
 
 	TestVariants();
@@ -636,9 +660,13 @@ void TestProperties()
 
 }
 
+
 void TestMethods()
 {
 	const TypeInfo* t = TypeDB::GetInstance()->GetType(L("TestType"));
+
+	invoke_global(L("TentGine_Test::TestNamespaceFunc"));
+	invoke_global(L("TentGine_Test::NamespaceClass::TestNestedFunc"));
 
 	//Testing calling static function 
 	{
@@ -646,7 +674,7 @@ void TestMethods()
 		const TypeFunction* f = t->GetFunction(L("TestStatic"));
 		Assert(f != nullptr);
 		int param = 7760;
-		int ret = invoke(f, &obj, param);
+		int ret = invoke(&obj, f, param);
 		Assert(ret == 7760);
 		Assert(param == 775);
 	}
@@ -657,7 +685,7 @@ void TestMethods()
 		const TypeFunction* f = t->GetFunction(L("TestStatic"));
 		Assert(f != nullptr);
 		int param = 7760;
-		int ret = invoke(f, obj, param);
+		int ret = invoke(obj, L("TestStatic"), param);
 		Assert(ret == 7760);
 		Assert(param == 775);
 	}
@@ -667,7 +695,7 @@ void TestMethods()
 		TestType obj;
 		const TypeFunction* f = t->GetFunction(L("TestVirtual"));
 		Assert(f != nullptr);
-		invoke(f, &obj);
+		invoke(&obj, f);
 		Assert(obj.value == 500);
 	}
 
@@ -677,7 +705,7 @@ void TestMethods()
 		const TypeFunction* f = t->GetFunction(L("TestVirtual"));
 		Assert(f != nullptr);
 		BaseTestType* pObj = &obj;
-		invoke(f, pObj);
+		invoke(pObj, f);
 		Assert(obj.value == 500);
 	}
 
@@ -686,7 +714,7 @@ void TestMethods()
 		BaseTestType obj;
 		const TypeFunction* f = t->GetFunction(L("TestVirtual"));
 		Assert(f != nullptr);
-		invoke(f, &obj);
+		invoke(&obj, f);
 		Assert(obj.value == 700);
 	}
 
@@ -694,7 +722,7 @@ void TestMethods()
 		TestType obj;
 		const TypeFunction* f = t->GetFunction(L("TestReturnRef"));
 		Assert(f != nullptr);
-		int& i = invoke(f, &obj);
+		int& i = invoke(&obj, f);
 		i = 400;
 		Assert(obj.value == 400);
 	}
@@ -703,7 +731,7 @@ void TestMethods()
 		TestType obj;
 		const TypeFunction* f = t->GetFunction(L("TestReturnPtr"));
 		Assert(f != nullptr);
-		int* i = invoke(f, &obj);
+		int* i = invoke(&obj, f);
 		*i = 800;
 		Assert(obj.value == 800);
 	}
@@ -712,7 +740,7 @@ void TestMethods()
 		TestType obj;
 		const TypeFunction* f = t->GetFunction(L("TestReturnVariant"));
 		Assert(f != nullptr);
-		Variant v = invoke(f, &obj);
+		Variant v = invoke(&obj, f);
 		v.As<int>() = 400;
 		Assert(obj.value == 50);
 	}
@@ -721,7 +749,7 @@ void TestMethods()
 		TestType obj;
 		const TypeFunction* f = t->GetFunction(L("TestReturnVariantRef"));
 		Assert(f != nullptr);
-		VariantRef v = invoke(f, &obj);
+		VariantRef v = invoke(&obj, f);
 		v.As<int>() = 400;
 		Assert(obj.value == 400);
 	}
@@ -730,7 +758,7 @@ void TestMethods()
 		TestType obj;
 		const TypeFunction* f = t->GetFunction(L("TestPassRef"));
 		Assert(f != nullptr);
-		invoke(f, &obj, obj.value);
+		invoke(&obj, f, obj.value);
 		Assert(obj.value == 100);
 	}
 
@@ -738,7 +766,7 @@ void TestMethods()
 		TestType obj;
 		const TypeFunction* f = t->GetFunction(L("TestPassPtr"));
 		Assert(f != nullptr);
-		invoke(f, &obj, &obj.value);
+		invoke(&obj, f, &obj.value);
 		Assert(obj.value == 1000);
 	}
 
@@ -747,7 +775,7 @@ void TestMethods()
 		int i[2] = {};
 		const TypeFunction* f = t->GetFunction(L("Test2Params"));
 		Assert(f != nullptr);
-		invoke(f, &obj, i[0], i[1]);
+		invoke(&obj, f, i[0], i[1]);
 		Assert(i[0] == 10 && i[1] == 100);
 	}
 
@@ -756,7 +784,7 @@ void TestMethods()
 		int i[3] = {};
 		const TypeFunction* f = t->GetFunction(L("Test3Params"));
 		Assert(f != nullptr);
-		invoke(f, &obj, i[0], i[1], i[2]);
+		invoke(&obj, f, i[0], i[1], i[2]);
 		Assert(i[0] == 10 && i[1] == 100 && i[2] == 1000);
 	}
 
@@ -765,7 +793,7 @@ void TestMethods()
 		int i[4] = {};
 		const TypeFunction* f = t->GetFunction(L("Test4Params"));
 		Assert(f != nullptr);
-		invoke(f, &obj, i[0], i[1], i[2], i[3]);
+		invoke(&obj, f, i[0], i[1], i[2], i[3]);
 		Assert(i[0] == 10 && i[1] == 100 && i[2] == 1000 && i[3] == 10000);
 	}
 
@@ -774,7 +802,7 @@ void TestMethods()
 		int i[5] = {};
 		const TypeFunction* f = t->GetFunction(L("Test5Params"));
 		Assert(f != nullptr);
-		invoke(f, &obj, i[0], i[1], i[2], i[3], i[4]);
+		invoke(&obj, f, i[0], i[1], i[2], i[3], i[4]);
 		Assert(i[0] == 10 && i[1] == 100 && i[2] == 1000 && i[3] == 10000 && i[4] == 100000);
 	}
 
@@ -783,7 +811,7 @@ void TestMethods()
 		int i[6] = {};
 		const TypeFunction* f = t->GetFunction(L("Test6Params"));
 		Assert(f != nullptr);
-		invoke(f, &obj, i[0], i[1], i[2], i[3], i[4], i[5]);
+		invoke(&obj, f, i[0], i[1], i[2], i[3], i[4], i[5]);
 		Assert(i[0] == 10 && i[1] == 100 && i[2] == 1000 && i[3] == 10000 && i[4] == 100000 && i[5] == 1000000);
 	}
 
@@ -793,7 +821,7 @@ void TestMethods()
 		const TypeFunction* f = t->GetFunction(L("TestPassRef"));
 		Assert(f != nullptr);
 		int value = 5;
-		invoke(f, obj, value);
+		invoke(obj, f, value);
 		Assert(value == 100);
 		Assert(ErrorManager::GetInstance()->m_vErrorCodes.size() == 1);
 		Assert(ErrorManager::GetInstance()->m_vErrorCodes[0] == ErrorCode::NullInstanceForMethod);

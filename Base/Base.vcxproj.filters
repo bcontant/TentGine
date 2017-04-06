@@ -183,6 +183,9 @@
     <ClInclude Include="TypeInfo.h">
       <Filter>Header Files\Reflection</Filter>
     </ClInclude>
+    <ClInclude Include="Invoker.h">
+      <Filter>Header Files\Reflection</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="precompiled.cpp">

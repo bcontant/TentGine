@@ -1,5 +1,8 @@
 #pragma once
 
+#include "Utils.h"
+#include "TypeDB.h"
+
 //Destruction
 using DestructObjectFunc = void(*)(void*);
 
@@ -116,7 +119,6 @@ GetDefaultCopyConstructor()
 }
 
 //Serialization
-struct TypeInfo;
 struct Serializer;
 struct IContainer;
 

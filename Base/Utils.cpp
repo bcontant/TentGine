@@ -27,7 +27,8 @@ std_string GenerateTypeName(const char* in_typeName)
 	else
 		typeName = FROM_STRING(in_typeName);
 
-	CHECK_ERROR(ErrorCode::InvalidTypeName, typeName != L("") && typeName[0] != ' ');
+	CHECK_ERROR_MSG(ErrorCode::InvalidTypeName, typeName != L("") && typeName[0] != ' ', L("GenerateTypeName is returning a messed up type name."));
 
 	return typeName;
 }
+

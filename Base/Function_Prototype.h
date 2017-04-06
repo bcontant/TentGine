@@ -8,6 +8,8 @@ public:
 	Function_Pointer_Base(size_t in_ParamCount) : m_ParamCount(in_ParamCount) {}
 	virtual ~Function_Pointer_Base(void) {};
 
+	virtual bool IsStatic() = 0;
+
 	virtual AutoVariant Call(void*) { AssertMsg(false, L("Failed to find a suitable prototype for function call")); return Variant(); }
 	virtual AutoVariant Call(void* p, VariantRef) { Assert(m_ParamCount < 1); return Call(p); }
 	virtual AutoVariant Call(void* p, VariantRef v0, VariantRef) { Assert(m_ParamCount < 2); return Call(p, v0); }
@@ -27,8 +29,8 @@ template <typename T, typename ReturnType, typename Func, typename... Params>
 typename std::enable_if<std::is_same<ReturnType, void>::value, AutoVariant>::type
 CallImpl(void* in_pInstance, Func in_pFunction, Params&&... in_Params)
 {
-	CHECK_ERROR(ErrorCode::NullFunctionPointer, in_pFunction != nullptr);
-	CHECK_ERROR(ErrorCode::NullInstanceForMethod, in_pInstance != nullptr);
+	CHECK_ERROR_MSG(ErrorCode::NullFunctionPointer, in_pFunction != nullptr, L("Passed a null function pointer when invoking a function call."));
+	CHECK_ERROR_MSG(ErrorCode::NullInstanceForMethod, in_pInstance != nullptr, L("Passed a null object pointer when invoking a member function call."));
 
 	if (/*in_pInstance != nullptr &&*/ in_pFunction != nullptr)
 		(((T*)in_pInstance)->*in_pFunction)(std::forward<Params>(in_Params)...);
@@ -40,8 +42,8 @@ template <typename T, typename ReturnType, typename Func, typename... Params>
 typename std::enable_if<!std::is_same<ReturnType, void>::value, AutoVariant>::type
 CallImpl(void* in_pInstance, Func in_pFunction, Params&&... in_Params)
 {
-	CHECK_ERROR(ErrorCode::NullFunctionPointer, in_pFunction != nullptr);
-	CHECK_ERROR(ErrorCode::NullInstanceForMethod, in_pInstance != nullptr);
+	CHECK_ERROR_MSG(ErrorCode::NullFunctionPointer, in_pFunction != nullptr, L("Passed a null function pointer when invoking a function call."));
+	CHECK_ERROR_MSG(ErrorCode::NullInstanceForMethod, in_pInstance != nullptr, L("Passed a null object pointer when invoking a member function call."));
 
 	if (/*in_pInstance != nullptr && */in_pFunction != nullptr)
 		return (((T*)in_pInstance)->*in_pFunction)(std::forward<Params>(in_Params)...);
@@ -63,6 +65,7 @@ public:
 	public:\
 		Function_Pointer( ReturnType(T::*in_pFunctionPointer)(Params...) ) : Function_Pointer_Base(paramCount), m_pFunctionPointer(in_pFunctionPointer) {} \
 		\
+		virtual bool IsStatic() { return false; } \
 		virtual AutoVariant Call(void* in_pInstance, ##__VA_ARGS__) \
 		{ \
 			return CallImpl<T, ReturnType> callArguments; \
@@ -86,7 +89,7 @@ template <typename ReturnType, typename Func, typename... Params>
 typename std::enable_if<std::is_same<ReturnType, void>::value, AutoVariant>::type
 CallImpl_Static(Func in_pFunction, Params&&... in_Params)
 {
-	CHECK_ERROR(ErrorCode::NullFunctionPointer, in_pFunction != nullptr);
+	CHECK_ERROR_MSG(ErrorCode::NullFunctionPointer, in_pFunction != nullptr, L("Passed a null function pointer when invoking a function call."));
 
 	if (in_pFunction != nullptr)
 		(in_pFunction)(std::forward<Params>(in_Params)...);
@@ -98,7 +101,7 @@ template <typename ReturnType, typename Func, typename... Params>
 typename std::enable_if<!std::is_same<ReturnType, void>::value, AutoVariant>::type
 CallImpl_Static(Func in_pFunction, Params&&... in_Params)
 {
-	CHECK_ERROR(ErrorCode::NullFunctionPointer, in_pFunction != nullptr);
+	CHECK_ERROR_MSG(ErrorCode::NullFunctionPointer, in_pFunction != nullptr, L("Passed a null function pointer when invoking a function call."));
 
 	if (in_pFunction != nullptr)
 		return (in_pFunction)(std::forward<Params>(in_Params)...);
@@ -106,7 +109,6 @@ CallImpl_Static(Func in_pFunction, Params&&... in_Params)
 	return AutoVariant(0);
 }
 
-//TODO Can I instead make this a specialization where T=void?
 template <typename ReturnType, typename... Params, int K>
 class Function_Pointer_Static<ReturnType(Params...), K> : public Function_Pointer_Base
 {
@@ -121,6 +123,7 @@ public:
 	public:\
 		Function_Pointer_Static( ReturnType(*in_pFunctionPointer)(Params...) ) : Function_Pointer_Base(paramCount), m_pFunctionPointer(in_pFunctionPointer) {} \
 		\
+		virtual bool IsStatic() { return true; } \
 		virtual AutoVariant Call(void*, ##__VA_ARGS__) \
 		{ \
 			return CallImpl_Static<ReturnType> callArguments; \
