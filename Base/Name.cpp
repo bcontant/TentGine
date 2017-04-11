@@ -26,7 +26,7 @@ u32 GenerateStringHash(const string_char* in_string)
 
 Name::Name()
 	:hash(0)
-	,text(nullptr)
+	,text(L(""))
 {
 }
 
@@ -34,6 +34,25 @@ Name::Name(const string_char* name)
 	:hash(GenerateStringHash(name))
 	,text(name)
 {
+}
+
+Name::Name(const std_string& name)
+	: hash(GenerateStringHash(name.c_str()))
+	, text(name)
+{
+}
+
+Name::Name(const Name& name)
+	: hash(name.hash)
+	, text(name.text)
+{
+}
+
+Name& Name::operator= (const Name& in_other)
+{
+	hash = in_other.hash;
+	text = in_other.text;
+	return *this;
 }
 
 bool Name::operator< (const Name& in_other) const 

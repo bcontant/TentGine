@@ -124,6 +124,7 @@ void XMLParser::Reset()
     m_CurrentToken.Reset();
     m_CurrentStringToken.Reset();
 
+	//TODO Leak!
     m_TagList.clear();
 }
 

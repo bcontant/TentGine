@@ -16,10 +16,10 @@ public:
 #define DECLARE_GLOBALS() DECLARE_TYPE(void)
 
 #define ADD_GLOBAL_FUNC(FUNC) \
-		pType->AddFunction( TypeFunction( Name(L(#FUNC)), &FUNC) );
+		((TypeInfo*)TypeInfo::Get<void>())->AddFunction( TypeFunction( Name(L(#FUNC)), &FUNC) );
 
 #define ADD_GLOBAL_PROP(VAR) \
-		pType->AddProperty( TypeProperty(L(#VAR), &VAR) ); 
+		((TypeInfo*)TypeInfo::Get<void>())->AddProperty( TypeProperty(L(#VAR), &VAR) ); 
 	
 #define END_DECLARE_GLOBALS() END_DECLARE(void)
 
@@ -28,7 +28,7 @@ public:
 	ReflectionRegisterer<TYPE>::ReflectionRegisterer() \
 	{ \
 		using T = TYPE; \
-		TypeInfo* pType = (TypeInfo*) TypeInfo::Get<T>(); pType ? (void)0 : (void)0;
+		TypeInfo* pType = (TypeInfo*) TypeInfo::Get<T>(); pType ? (void)0 : (void)0;  // Just to avoid warnings on empty declarations
 
 #define ADD_PROP(VAR) \
 		pType->AddProperty( TypeProperty(L(#VAR), &T::VAR) ); 
@@ -40,7 +40,7 @@ public:
 		pType->AddFunction( TypeFunction( Name(L(#FUNC)), static_cast<PROTO>(&T::FUNC)) );
 
 #define ADD_ENUM_VALUE(ENUM) \
-		pType->AddEnumConstant( EnumConstant(L(#ENUM), static_cast<int>(T::ENUM) ) );
+		pType->AddEnumConstant( EnumConstant(L(#ENUM), static_cast<u64>(T::ENUM) ) );
 
 #define BASE_CLASS(BASE) \
 		pType->SetBaseClass<BASE>();

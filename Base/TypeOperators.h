@@ -93,14 +93,9 @@ struct DefaultCopyConstructor
 		Assert(src != nullptr);
 
 		if(src != nullptr)
-			return new T( (const T&) (*((T*)src)) );
+			return (void*) new T( (const T&) (*((T*)src)) );
 			
 		return nullptr;
-	}
-
-	static void* CopyConstructor_Reference(const void* src)
-	{
-		return (void*)src;
 	}
 };
 
@@ -123,6 +118,7 @@ struct Serializer;
 struct IContainer;
 
 using SerializeObjectFunc = void(*)(Serializer*, const TypeInfo*, void*, const string_char* name);
+using DeserializeObjectFunc = void(*)(Serializer*, const TypeInfo*, void*, const string_char* name);
 
 template <typename T>
 struct SerializeVisitor
@@ -140,7 +136,7 @@ struct SerializeVisitor
 		static_assert(IsPointer<T>::val == true, "Something is wrong.");
 		static_assert(IsFundamental<T>::val == false, "Something is wrong.");
 
-		Assert(false); // This is disabled right now.  Pointers are Containers.
+		Assert(false); // This is disabled right now.  Pointers are Containers (Dynamic Array of 1, for now).
 		/*CHECK_ERROR(ErrorCode::NullDereferencedTypeInfo, typeInfo->m_pDereferencedTypeInfo != nullptr);
 
 		//Serialize as an object
@@ -151,11 +147,22 @@ struct SerializeVisitor
 		}*/
 	}
 
+		static void DeserializePointer(Serializer* /*s*/, const TypeInfo* /*typeInfo*/, void* /*in_obj*/, const string_char* /*name*/)
+	{
+	}
+
 	static void SerializeObject(Serializer* s, const TypeInfo* typeInfo, void* in_obj, const string_char* name)
 	{
 		static_assert(IsPointer<T>::val == false, "Something is wrong.");
 
 		s->SerializeObject(in_obj, name, typeInfo);
+	}
+
+	static void DeserializeObject(Serializer* s, const TypeInfo* typeInfo, void* in_obj, const string_char* name)
+	{
+		static_assert(IsPointer<T>::val == false, "Something is wrong.");
+
+		s->DeserializeObject(in_obj, name, typeInfo);
 	}
 
 	static void SerializeFundamental(Serializer* s, const TypeInfo* typeInfo, void* in_obj, const string_char* name)
@@ -164,6 +171,14 @@ struct SerializeVisitor
 		AssertMsg(in_obj != nullptr, L("Something is wrong."));
 
 		s->SerializeValue(*((T*)in_obj), name, typeInfo);
+	}
+
+	static void DeserializeFundamental(Serializer* s, const TypeInfo* typeInfo, void* in_obj, const string_char* name)
+	{
+		static_assert(IsPointer<T>::val == false, "Something is wrong.");
+		AssertMsg(in_obj != nullptr, L("Something is wrong."));
+
+		s->DeserializeValue((T&)*((T*)in_obj), name, typeInfo);
 	}
 
 	static void SerializeEnum(Serializer* s, const TypeInfo* typeInfo, void* in_obj, const string_char* name)
@@ -176,6 +191,16 @@ struct SerializeVisitor
 		s->SerializeEnum(enumVal, name, typeInfo);
 	}
 
+	static void DeserializeEnum(Serializer* s, const TypeInfo* typeInfo, void* in_obj, const string_char* name)
+	{
+		static_assert(IsPointer<T>::val == false, "Something is wrong.");
+		static_assert(sizeof(T) <= 8, "Something is wrong.");
+
+		u64 enumVal = 0;
+		s->DeserializeEnum(enumVal, name, typeInfo);
+		memcpy(in_obj, &enumVal, typeInfo->GetSize());
+	}
+
 	static void SerializeContainer(Serializer* s, const TypeInfo* typeInfo, void* in_obj, const string_char* name)
 	{
 		AssertMsg(typeInfo->GetContainer() != nullptr, L("Something is wrong."));
@@ -183,7 +208,19 @@ struct SerializeVisitor
 		s->SerializeContainer(in_obj, name, typeInfo, typeInfo->GetContainer());
 	}
 
+	static void DeserializeContainer(Serializer* s, const TypeInfo* typeInfo, void* in_obj, const string_char* name)
+	{
+		AssertMsg(typeInfo->GetContainer() != nullptr, L("Something is wrong."));
+
+		s->DeserializeContainer(in_obj, name, typeInfo, typeInfo->GetContainer());
+	}
+
 	static void SerializeVoid(Serializer*, const TypeInfo*, void*, const string_char*)
+	{
+		CHECK_ERROR_MSG(ErrorCode::SerializingVoid, false, L("If you're serializing void something weird happened."));
+	}
+
+	static void DeserializeVoid(Serializer*, const TypeInfo*, void*, const string_char*)
 	{
 		CHECK_ERROR_MSG(ErrorCode::SerializingVoid, false, L("If you're serializing void something weird happened."));
 	}
@@ -232,6 +269,49 @@ GetSerializeFunc()
 }
 
 
+template <typename T>
+typename std::enable_if<SerializeAsVoid<T>::val, SerializeObjectFunc>::type
+GetDeserializeFunc()
+{
+	return SerializeVisitor<T>::DeserializeVoid;
+}
+
+template <typename T>
+typename std::enable_if<SerializeAsPointer<T>::val, SerializeObjectFunc>::type
+GetDeserializeFunc()
+{
+	return SerializeVisitor<T>::DeserializePointer;
+}
+
+template <typename T>
+typename std::enable_if<SerializeAsObject<T>::val, SerializeObjectFunc>::type
+GetDeserializeFunc()
+{
+	return SerializeVisitor<T>::DeserializeObject;
+}
+
+template <typename T>
+typename std::enable_if<SerializeAsFundamental<T>::val, SerializeObjectFunc>::type
+GetDeserializeFunc()
+{
+	return SerializeVisitor<T>::DeserializeFundamental;
+}
+
+template <typename T>
+typename std::enable_if<SerializeAsEnum<T>::val, SerializeObjectFunc>::type
+GetDeserializeFunc()
+{
+	return SerializeVisitor<T>::DeserializeEnum;
+}
+
+template <typename T>
+typename std::enable_if<SerializeAsContainer<T>::val, SerializeObjectFunc>::type
+GetDeserializeFunc()
+{
+	return SerializeVisitor<T>::DeserializeContainer;
+}
+
+
 //GetObjectType
 using GetObjectTypeFunc = const TypeInfo*(*)(void*);
 
@@ -264,6 +344,7 @@ struct TypeOperators
 		op.assignment_operator = GetDefaultAssignmentOperator<T>();
 		op.destructor = GetDestructor<T>();
 		op.serialize_func = GetSerializeFunc<T>();
+		op.deserialize_func = GetDeserializeFunc<T>();
 		op.object_type_func = GetObjectType<T>;
 		return op;
 	};
@@ -273,5 +354,6 @@ struct TypeOperators
 	AssignmentOperatorFunc assignment_operator;
 	DestructObjectFunc destructor;
 	SerializeObjectFunc serialize_func;
+	DeserializeObjectFunc deserialize_func;
 	GetObjectTypeFunc object_type_func;
 };

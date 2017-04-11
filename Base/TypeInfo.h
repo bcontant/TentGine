@@ -25,6 +25,8 @@ public:
 	void AddFunction(TypeFunction&& function);
 
 public:
+	const string_char* GetName() const { return m_Name;	}
+
 	bool IsPointer() const;
 	bool IsDerivedFrom(const TypeInfo* in_pInfo) const;
 	bool IsCastableAs(void* in_pObj, const TypeInfo* in_pInfo) const;
@@ -34,6 +36,7 @@ public:
 	const TypeProperty* GetProperty(const string_char* in_name) const;
 	const TypeFunction* GetFunction(const string_char* in_name) const;
 	const EnumConstant* GetEnumConstant(u64 in_value) const;
+	const EnumConstant* GetEnumConstant(const string_char* in_name) const;
 
 public:
 	void* New() const;
@@ -44,7 +47,9 @@ public:
 	void Destructor(void* data) const;
 
 	void SerializeProperties(Serializer* serializer, void* obj) const;
+	void DeserializeProperties(Serializer* serializer, void* obj) const;
 	void Serialize(Serializer* serializer, void* obj, const string_char* in_name) const;
+	void Deserialize(Serializer* serializer, void* obj, const string_char* in_name) const;
 
 	//TypeInfo Name
 	Name m_Name;
@@ -62,6 +67,7 @@ private:
 	const TypeInfo* TypeInfo::GetActualObjectTypeInfo(void* obj) const;
 
 private:
+
 	//Base type
 	const TypeInfo* base_type = nullptr;
 

@@ -138,9 +138,6 @@
     <ClInclude Include="XMLParser.h">
       <Filter>Header Files\XML</Filter>
     </ClInclude>
-    <ClInclude Include="Streamable.h">
-      <Filter>Header Files\DevTools</Filter>
-    </ClInclude>
     <ClInclude Include="Reflection.h">
       <Filter>Header Files\Reflection</Filter>
     </ClInclude>
@@ -253,9 +250,6 @@
     </ClCompile>
     <ClCompile Include="XMLParser.cpp">
       <Filter>Source Files\XML</Filter>
-    </ClCompile>
-    <ClCompile Include="Streamable.cpp">
-      <Filter>Source Files\DevTools</Filter>
     </ClCompile>
     <ClCompile Include="Variant.cpp">
       <Filter>Source Files\Reflection</Filter>

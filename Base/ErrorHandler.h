@@ -7,7 +7,8 @@
 enum class ErrorCode
 {
 	NullFunctionPointer,
-	NullInstanceForMethod,
+	NullInstanceForMemberFunction,
+	NullInstanceForProperty,
 	NullContainer,
 	NullMetaInfo,
 	NullDereferencedTypeInfo,

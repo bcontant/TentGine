@@ -15,10 +15,12 @@ AutoVariant invoke(T* object, const TypeFunction* f, Params&&... params)
 	if (f == nullptr)
 		return AutoVariant(0);
 
-	f->ValidateArguments(params...);
-	f->ValidateObject(object);
+	Function_Pointer_Base* pFunc = f->GetFunctionPointer(object, params...);
 
-	return f->m_FunctionPointer->Call(object, params...);
+	if(pFunc)
+		return pFunc->Call(object, params...);
+
+	return AutoVariant(0);
 }
 
 template<typename T, typename... Params>
@@ -32,7 +34,7 @@ AutoVariant invoke(T* object, const string_char* in_FunctionName, Params&&... pa
 {
 	const TypeInfo* pTypeInfo = TypeInfo::Get<T>();
 
-	//TODO : Find the proper overload, if applicable.  Find first, validate, if fails, find next, etc.
+	//TODO : Find best fit for params
 	const TypeFunction* f = pTypeInfo->GetFunction(in_FunctionName);
 
 	return invoke(object, f, params...);

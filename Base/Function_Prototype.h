@@ -30,7 +30,7 @@ typename std::enable_if<std::is_same<ReturnType, void>::value, AutoVariant>::typ
 CallImpl(void* in_pInstance, Func in_pFunction, Params&&... in_Params)
 {
 	CHECK_ERROR_MSG(ErrorCode::NullFunctionPointer, in_pFunction != nullptr, L("Passed a null function pointer when invoking a function call."));
-	CHECK_ERROR_MSG(ErrorCode::NullInstanceForMethod, in_pInstance != nullptr, L("Passed a null object pointer when invoking a member function call."));
+	CHECK_ERROR_MSG(ErrorCode::NullInstanceForMemberFunction, in_pInstance != nullptr, L("Passed a null object pointer when invoking a member function call."));
 
 	if (/*in_pInstance != nullptr &&*/ in_pFunction != nullptr)
 		(((T*)in_pInstance)->*in_pFunction)(std::forward<Params>(in_Params)...);
@@ -43,7 +43,7 @@ typename std::enable_if<!std::is_same<ReturnType, void>::value, AutoVariant>::ty
 CallImpl(void* in_pInstance, Func in_pFunction, Params&&... in_Params)
 {
 	CHECK_ERROR_MSG(ErrorCode::NullFunctionPointer, in_pFunction != nullptr, L("Passed a null function pointer when invoking a function call."));
-	CHECK_ERROR_MSG(ErrorCode::NullInstanceForMethod, in_pInstance != nullptr, L("Passed a null object pointer when invoking a member function call."));
+	CHECK_ERROR_MSG(ErrorCode::NullInstanceForMemberFunction, in_pInstance != nullptr, L("Passed a null object pointer when invoking a member function call."));
 
 	if (/*in_pInstance != nullptr && */in_pFunction != nullptr)
 		return (((T*)in_pInstance)->*in_pFunction)(std::forward<Params>(in_Params)...);

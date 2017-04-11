@@ -8,8 +8,12 @@ struct TypeInfo;
 
 struct TypeFunction
 {
-	template<typename T, typename... Params>
-	friend AutoVariant invoke(T* object, const TypeFunction* f, Params&&... params);
+private:
+	struct Function_Definition
+	{
+		std::vector<const TypeInfo*> m_vParamTypes;
+		Function_Pointer_Base* m_FunctionPointer = nullptr;
+	};
 
 public:
 	template <typename T, typename ReturnType, typename... Params>
@@ -18,9 +22,18 @@ public:
 	template <typename ReturnType, typename... Params>
 	TypeFunction(Name name, ReturnType(*func)(Params...));
 
+public:
+	void AddDefinition(TypeFunction& in_pDefinition);
+
+	bool IsMemberFunction() const;
+
+	template<typename T, typename... Params>
+	Function_Pointer_Base* GetFunctionPointer(T* object, Params&&... params) const;
+
 private:
 	template<typename... Params>
-	bool ValidateArguments(Params&&... params) const;
+	bool ValidateArguments(const Function_Definition& functionDefinition, Params&&... params) const;
+
 	template<typename T>
 	bool ValidateObject(T* object) const;
 
@@ -39,9 +52,8 @@ public:
 private:
 	const TypeInfo* m_ReturnType = nullptr;
 	const TypeInfo* m_ObjectType = nullptr;
-	std::vector<const TypeInfo*> m_vParamTypes;
 
-	Function_Pointer_Base* m_FunctionPointer = nullptr;
+	std::vector<Function_Definition> m_vFunctionDefinitions;
 };
 
 #include "Function_Prototype.h"
@@ -51,63 +63,93 @@ template <typename T, typename ReturnType, typename... Params>
 TypeFunction::TypeFunction(Name in_name, ReturnType(T::*func)(Params...) )
 	: m_Name(in_name)
 {
+	static_assert(sizeof...(Params) <= 6, "You tried to register a method with more than 6 parameters. Unsupported.");
+
 	m_ReturnType = TypeInfo::Get<ReturnType>();
 	m_ObjectType = TypeInfo::Get<T>();
-	
-	m_vParamTypes.resize(sizeof...(Params));
-	ParamWalk<sizeof...(Params)>::Execute<Params...>(m_vParamTypes);
 
-	static_assert(sizeof...(Params) <= 6, "You tried to register a method with more than 6 parameters. Unsupported.");
-	m_FunctionPointer = new Function_Pointer<T, ReturnType(Params...), sizeof...(Params)>(func);
+	Function_Definition newDefinition;
+	newDefinition.m_vParamTypes.resize(sizeof...(Params));
+
+	ParamWalk<sizeof...(Params)>::Execute<Params...>(newDefinition.m_vParamTypes);
+
+	newDefinition.m_FunctionPointer = new Function_Pointer<T, ReturnType(Params...), sizeof...(Params)>(func);
+
+	m_vFunctionDefinitions.push_back(newDefinition);
 }
 
 template <typename ReturnType, typename... Params>
 TypeFunction::TypeFunction(Name in_name, ReturnType(*func)(Params...))
 	: m_Name(in_name)
 {
+	static_assert(sizeof...(Params) <= 6, "You tried to register a method with more than 6 parameters. Unsupported.");
+
 	m_ReturnType = TypeInfo::Get<ReturnType>();
 	m_ObjectType = nullptr;
 
-	m_vParamTypes.resize(sizeof...(Params));
-	ParamWalk<sizeof...(Params)>::Execute<Params...>(m_vParamTypes);
+	Function_Definition newDefinition;
 
-	static_assert(sizeof...(Params) <= 6, "You tried to register a function with more than 6 parameters. Unsupported.");
-	m_FunctionPointer = new Function_Pointer_Static<ReturnType(Params...), sizeof...(Params)>(func);
+	newDefinition.m_vParamTypes.resize(sizeof...(Params));
+	ParamWalk<sizeof...(Params)>::Execute<Params...>(newDefinition.m_vParamTypes);
+
+	newDefinition.m_FunctionPointer = new Function_Pointer_Static<ReturnType(Params...), sizeof...(Params)>(func);
+
+	m_vFunctionDefinitions.push_back(newDefinition);
 }
 
+template<typename T, typename... Params> 
+Function_Pointer_Base* TypeFunction::GetFunctionPointer(T* in_object, Params&&... params) const
+{
+	if(!ValidateObject(in_object))
+		return nullptr;
+
+	for (size_t i = 0; i < m_vFunctionDefinitions.size(); i++)
+	{
+		if(ValidateArguments(m_vFunctionDefinitions[i], params...))
+			return m_vFunctionDefinitions[i].m_FunctionPointer;
+	}
+
+	return nullptr;
+}
+
+
 template<typename... Params>
-bool TypeFunction::ValidateArguments(Params&&... params) const 
+bool TypeFunction::ValidateArguments(const Function_Definition& functionDefinition, Params&&... params) const
 {
 	std::vector<VariantRef> vArgs = { params... };
 
-	if (vArgs.size() != m_vParamTypes.size())
+	auto vParamTypes = functionDefinition.m_vParamTypes;
+
+	if (vArgs.size() != vParamTypes.size())
 	{
-		CHECK_ERROR_MSG(ErrorCode::InvalidArgumentCount, false, L("Invalid number of arguments (%d, expected %d) when calling %s"), vArgs.size(), m_vParamTypes.size(), GetFullFunctionName().c_str());
+		//CHECK_ERROR_MSG(ErrorCode::InvalidArgumentCount, false, L("Invalid number of arguments (%d, expected %d) when calling %s"), vArgs.size(), vParamTypes.size(), GetFullFunctionName().c_str());
 		return false;
 	}
 
 	for (size_t i = 0; i < vArgs.size(); i++)
 	{
-		if ( vArgs[i].GetTypeInfo() != m_vParamTypes[i] )
+		if (vArgs[i].GetTypeInfo() != vParamTypes[i])
 		{
-			if (vArgs[i].GetTypeInfo()->IsPointer() && m_vParamTypes[i]->IsPointer())
+			if (vArgs[i].GetTypeInfo()->IsPointer() && vParamTypes[i]->IsPointer())
 			{
-				if (m_vParamTypes[i] != TypeInfo::Get<void*>() && !vArgs[i].GetTypeInfo()->IsDerivedFrom(m_vParamTypes[i]))
+				if (vParamTypes[i] != TypeInfo::Get<void*>() && !vArgs[i].GetTypeInfo()->IsDerivedFrom(vParamTypes[i]))
 				{
-					CHECK_ERROR_MSG(ErrorCode::InvalidArgumentPointerType, false, L("Invalid type on argument at index %d (%s, expected %s) when calling %s"), i, vArgs[i].GetTypeInfo()->m_Name.text, m_vParamTypes[i]->m_Name.text, GetFullFunctionName().c_str());
+					//CHECK_ERROR_MSG(ErrorCode::InvalidArgumentPointerType, false, L("Invalid type on argument at index %d (%s, expected %s) when calling %s"), i, vArgs[i].GetTypeInfo()->m_Name.text.c_str(), vParamTypes[i]->m_Name.text.c_str(), GetFullFunctionName().c_str());
 					return false;
 				}
 			}
 			else
 			{
-				CHECK_ERROR_MSG(ErrorCode::InvalidArgumentType, false, L("Invalid type on argument at index %d (%s, expected %s) when calling %s"), i, vArgs[i].GetTypeInfo()->m_Name.text, m_vParamTypes[i]->m_Name.text, GetFullFunctionName().c_str());
+				//CHECK_ERROR_MSG(ErrorCode::InvalidArgumentType, false, L("Invalid type on argument at index %d (%s, expected %s) when calling %s"), i, vArgs[i].GetTypeInfo()->m_Name.text.c_str(), vParamTypes[i]->m_Name.text.c_str(), GetFullFunctionName().c_str());
 				return false;
 			}
 		}
 	}
 
+	//CHECK_ERROR_MSG(ErrorCode::InvalidArgumentCount, false, L("Found no suitable definition when calling %s"), GetFullFunctionName().c_str());
 	return true;
 }
+
 
 template<typename T>
 bool TypeFunction::ValidateObject(T*) const
@@ -121,7 +163,7 @@ bool TypeFunction::ValidateObject(T*) const
 	if (TypeInfo::Get<T>()->IsDerivedFrom(m_ObjectType))
 		return true;
 
-	CHECK_ERROR_MSG(ErrorCode::InvalidInstanceForMethod, false, L("Invalid object type (%s, expected %s) when calling %s"), TypeInfo::Get<T>()->m_Name.text, m_ObjectType->m_Name.text, GetFullFunctionName().c_str());
+	CHECK_ERROR_MSG(ErrorCode::InvalidInstanceForMethod, false, L("Invalid object type (%s, expected %s) when calling %s"), TypeInfo::Get<T>()->GetName(), m_ObjectType->GetName(), GetFullFunctionName().c_str());
 	return false;
 }
 

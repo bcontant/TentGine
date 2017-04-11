@@ -32,6 +32,7 @@ public:
     //attribute with the specified name is found.
     const XMLAttribute* GetAttribute(const std_string& in_strName, Path& out_strValue) const;
     const XMLAttribute* GetAttribute(const std_string& in_strName, std_string& out_strValue) const;
+	const XMLAttribute* GetAttribute(const std_string& in_strName, s8& out_u8Value) const;
     const XMLAttribute* GetAttribute(const std_string& in_strName, u8& out_u8Value) const;
     const XMLAttribute* GetAttribute(const std_string& in_strName, u32& out_u32Value) const;
     const XMLAttribute* GetAttribute(const std_string& in_strName, s64& out_i64Value) const;
@@ -46,6 +47,7 @@ public:
     //name is already present.
     bool AddAttribute(const std_string& in_strName, const Path& in_strValue);
     bool AddAttribute(const std_string& in_strName, const std_string& in_strValue);
+	bool AddAttribute(const std_string& in_strName, const s8 in_u8Value);
     bool AddAttribute(const std_string& in_strName, const u8 in_u8Value);
     bool AddAttribute(const std_string& in_strName, const u32 in_u32Value);
     bool AddAttribute(const std_string& in_strName, s64 in_i64Value);
@@ -83,7 +85,7 @@ public:
 
     //Tag name search
     XMLTag* FirstChildNamed(const std_string& tagName, bool in_bRecurse) const;
-    XMLTag* FirstSiblingNamed(const std_string& tagName, bool in_bRecurse) const;
+    XMLTag* FirstSiblingNamed(const std_string& tagName) const;
 
 private:
     //Find an attribute within the tag and returns it.  Returns nullptr if no

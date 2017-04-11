@@ -19,6 +19,14 @@ void VariantBase::Serialize(Serializer* in_serializer) const
 		typeInfo->Serialize(in_serializer, data, L(""));
 }
 
+void VariantBase::Deserialize(Serializer* in_serializer)
+{
+	PROFILE_BLOCK;
+
+	if (typeInfo)
+		typeInfo->Deserialize(in_serializer, data, L(""));
+}
+
 //---------------------------------
 // Variant
 //---------------------------------

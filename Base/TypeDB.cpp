@@ -31,7 +31,7 @@ void TypeDB::RegisterTypeInfo(const TypeInfo* in_pInfo)
 	}
 	else
 	{
-		CHECK_ERROR_MSG(ErrorCode::HashCollision, STRCMP(type_i->first.text, in_pInfo->m_Name.text) == 0, L("Hash Collision occured inside mTypesInfos map"));
+		CHECK_ERROR_MSG(ErrorCode::HashCollision, STRCMP(type_i->first, in_pInfo->m_Name) == 0, L("Hash Collision occured inside mTypesInfos map"));
 	}
 }
 

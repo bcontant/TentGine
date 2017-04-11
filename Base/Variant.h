@@ -29,6 +29,7 @@ public:
 	void* GetData() const { return data; }
 
 	void Serialize(Serializer* in_serializer) const;
+	void Deserialize(Serializer* in_serializer);
 
 protected:
 	VariantBase() = delete;
@@ -130,6 +131,8 @@ private:
 template <typename T>
 T& VariantBase::As()
 {
+	//TODO : When upcasting, this should be a dynamic cast.  Multiple inheritance
+	//could cause issues here, I think.
 	if(typeInfo->IsCastableAs(data, TypeInfo::Get<T>()))
 		return *reinterpret_cast<StripReference<T>::Type*>(data);
 
@@ -157,7 +160,7 @@ VariantBase::operator const T&() const
 template <typename T>
 T& VariantBase::FailedCast() const
 {
-	CHECK_ERROR_MSG(ErrorCode::FailedCast, false, L("Variant of type (%s) could not be returned as type (%s). Incoming garbage."), typeInfo ? typeInfo->m_Name.text : L("null"), TypeInfo::Get<T>()->m_Name.text);
+	CHECK_ERROR_MSG(ErrorCode::FailedCast, false, L("Variant of type (%s) could not be returned as type (%s). Incoming garbage."), typeInfo ? typeInfo->GetName() : L("null"), TypeInfo::Get<T>()->GetName());
 
 	if(data)
 		return *reinterpret_cast<StripReference<T>::Type*>(data);

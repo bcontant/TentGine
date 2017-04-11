@@ -165,6 +165,7 @@
       <AdditionalIncludeDirectories>$(SolutionDir)sdks\libpng-1.6.28\include;$(SolutionDir)sdks\libjpeg-turbo-1.5.1\include</AdditionalIncludeDirectories>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
       <ShowIncludes>false</ShowIncludes>
+      <RuntimeTypeInfo>true</RuntimeTypeInfo>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -180,6 +181,7 @@
       <AdditionalIncludeDirectories>$(SolutionDir)sdks\libpng-1.6.28\include;$(SolutionDir)sdks\libjpeg-turbo-1.5.1\include</AdditionalIncludeDirectories>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
       <ShowIncludes>false</ShowIncludes>
+      <RuntimeTypeInfo>true</RuntimeTypeInfo>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -196,6 +198,7 @@
       <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
       <ShowIncludes>false</ShowIncludes>
+      <RuntimeTypeInfo>true</RuntimeTypeInfo>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -211,6 +214,7 @@
       <AdditionalIncludeDirectories>$(SolutionDir)sdks\libpng-1.6.28\include;$(SolutionDir)sdks\libjpeg-turbo-1.5.1\include</AdditionalIncludeDirectories>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
       <ShowIncludes>false</ShowIncludes>
+      <RuntimeTypeInfo>true</RuntimeTypeInfo>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -227,6 +231,7 @@
       <PrecompiledHeaderFile>precompiled.h</PrecompiledHeaderFile>
       <AdditionalIncludeDirectories>$(SolutionDir)sdks\libpng-1.6.28\include;$(SolutionDir)sdks\libjpeg-turbo-1.5.1\include</AdditionalIncludeDirectories>
       <ShowIncludes>false</ShowIncludes>
+      <RuntimeTypeInfo>true</RuntimeTypeInfo>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -245,6 +250,7 @@
       <PrecompiledHeaderFile>precompiled.h</PrecompiledHeaderFile>
       <AdditionalIncludeDirectories>$(SolutionDir)sdks\libpng-1.6.28\include;$(SolutionDir)sdks\libjpeg-turbo-1.5.1\include</AdditionalIncludeDirectories>
       <ShowIncludes>false</ShowIncludes>
+      <RuntimeTypeInfo>true</RuntimeTypeInfo>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -264,6 +270,7 @@
       <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
       <AdditionalIncludeDirectories>$(SolutionDir)sdks\libpng-1.6.28\include;$(SolutionDir)sdks\libjpeg-turbo-1.5.1\include</AdditionalIncludeDirectories>
       <ShowIncludes>false</ShowIncludes>
+      <RuntimeTypeInfo>true</RuntimeTypeInfo>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -282,6 +289,7 @@
       <PrecompiledHeaderFile>precompiled.h</PrecompiledHeaderFile>
       <AdditionalIncludeDirectories>$(SolutionDir)sdks\libpng-1.6.28\include;$(SolutionDir)sdks\libjpeg-turbo-1.5.1\include</AdditionalIncludeDirectories>
       <ShowIncludes>false</ShowIncludes>
+      <RuntimeTypeInfo>true</RuntimeTypeInfo>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -319,7 +327,6 @@
     <ClInclude Include="Reflection.h" />
     <ClInclude Include="Serializer.h" />
     <ClInclude Include="Singleton.h" />
-    <ClInclude Include="Streamable.h" />
     <ClInclude Include="StringUtils.h" />
     <ClInclude Include="TGAFile.h" />
     <ClInclude Include="TypeDB.h" />
@@ -384,7 +391,6 @@
     </ClCompile>
     <ClCompile Include="Profiler.cpp" />
     <ClCompile Include="Serializer.cpp" />
-    <ClCompile Include="Streamable.cpp" />
     <ClCompile Include="StringUtils.cpp" />
     <ClCompile Include="TGAFile.cpp" />
     <ClCompile Include="TypeDB.cpp" />

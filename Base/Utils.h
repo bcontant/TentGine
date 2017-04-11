@@ -87,3 +87,5 @@ template <typename T> const string_char* GetTypeName()
 	static std_string type_name = GenerateTypeName(typeid(T).name());
 	return type_name.c_str();
 }
+
+std_string GetGlobalFunctionName(const std_string& in_scope, const std_string& object_name);

@@ -138,7 +138,10 @@ struct BaseTestType
 
 struct TestType : public BaseTestType
 {	
+	static int s_StaticVariable;
+
 	static int TestStatic(int& value) { int tmp = value; value = 775; return tmp; }
+
 	virtual void TestVirtual() { value = 500; }
 
 	int TestOverload(int) { return 10; }
@@ -167,13 +170,17 @@ namespace TentGine_Test
 	class NamespaceClass
 	{
 	public:
-		static void TestNestedFunc() {}
+		static void TestNestedFunc() 
+		{
+		}
 	};
 }
 
 DECLARE_GLOBALS()
 	ADD_GLOBAL_FUNC(TentGine_Test::TestNamespaceFunc)
 	ADD_GLOBAL_FUNC(TentGine_Test::NamespaceClass::TestNestedFunc)
+	//ADD_FUNC(TentGine_Test::TestNamespaceFunc)
+	//ADD_FUNC(TentGine_Test::NamespaceClass::TestNestedFunc)
 END_DECLARE_GLOBALS()
 
 DECLARE_TYPE(NoOperatorsTest)
@@ -211,7 +218,8 @@ END_DECLARE(BaseTestType)
 
 DECLARE_TYPE(TestType)
 	BASE_CLASS(BaseTestType)
-	ADD_FUNC(TestStatic)
+	//ADD_PROP(s_StaticVariable)
+	ADD_FUNC(TestType::TestType::TestType::TestStatic)
 	ADD_OVERLOADED_FUNC(TestOverload, int(TestType::*)(float))
 	ADD_OVERLOADED_FUNC(TestOverload, int(TestType::*)(int))
 	ADD_FUNC(TestReturnRef)
@@ -244,7 +252,7 @@ END_DECLARE(MyTypeBase)
 DECLARE_TYPE(MyType)
 	BASE_CLASS(MyTypeBase)
 	SET_DEFAULT_CTOR_ARGS(100, 100.f, 100)
-		ADD_PROP(vFoos)
+	ADD_PROP(vFoos)
 	ADD_PROP(x)
 	ADD_PROP(y)
 	ADD_PROP(z)
@@ -278,8 +286,7 @@ void TestEnums();
 
 void TestReflection()
 {
-
-
+	auto vTest = { &TestType::TestStatic };
 
 	ErrorManager::GetInstance()->SetErrorHandler(ErrorHandler::DebugOutHandler);
 
@@ -296,10 +303,12 @@ void TestReflection()
 	std::vector<float> vFloat = { 1.f, 2.f, 3.f, 5.f, 7.f, 11.f };
 	vContainer = vFloat;
 	vContainer.Serialize(&s);
+	s.m_XMLFile.Output(L("e:\\testxml.xml"), eOF_NewLineFor2PlusParams | eOF_SpaceIndents_2);
 
 	std::vector< std::vector<float> > vvFloat = { { 10.f, 20.f, 30.f },{ 100.f, 200.f, 300.f },{ 0.1f, 0.2f, 0.3f } };
 	vContainer = vvFloat;
 	vContainer.Serialize(&s);
+	s.m_XMLFile.Output(L("e:\\testxml.xml"), eOF_NewLineFor2PlusParams | eOF_SpaceIndents_2);
 
 	NotDestructibleClass* nodtor = new NotDestructibleClass;
 	Variant nodtor_v(nodtor);
@@ -312,6 +321,13 @@ void TestReflection()
 
 	vContainer = obj;
 	vContainer.Serialize(&s);
+	s.m_XMLFile.Output(L("e:\\testxml.xml"), eOF_NewLineFor2PlusParams | eOF_SpaceIndents_2);
+
+	MyType objSerialized;
+	VariantRef vRef = objSerialized;
+	vRef.Deserialize(&s);
+
+	
 
 	UnregisterClasses();
 
@@ -671,6 +687,19 @@ void TestMethods()
 	//Testing calling static function 
 	{
 		TestType obj;
+		const TypeFunction* f = t->GetFunction(L("TestOverload"));
+		Assert(f != nullptr);
+		int param = 7760;
+		float fParam = 700.f;
+		int ret = invoke(&obj, f, param);
+		Assert(ret == 10);
+		ret = invoke(&obj, f, fParam);
+		Assert(ret == 20);
+	}
+
+	//Testing calling static function 
+	{
+		TestType obj;
 		const TypeFunction* f = t->GetFunction(L("TestStatic"));
 		Assert(f != nullptr);
 		int param = 7760;
@@ -681,11 +710,8 @@ void TestMethods()
 
 	//Testing calling static function 
 	{
-		TestType obj;
-		const TypeFunction* f = t->GetFunction(L("TestStatic"));
-		Assert(f != nullptr);
 		int param = 7760;
-		int ret = invoke(obj, L("TestStatic"), param);
+		int ret = invoke_global(L("TestType::TestStatic"), param);
 		Assert(ret == 7760);
 		Assert(param == 775);
 	}
@@ -824,7 +850,7 @@ void TestMethods()
 		invoke(obj, f, value);
 		Assert(value == 100);
 		Assert(ErrorManager::GetInstance()->m_vErrorCodes.size() == 1);
-		Assert(ErrorManager::GetInstance()->m_vErrorCodes[0] == ErrorCode::NullInstanceForMethod);
+		Assert(ErrorManager::GetInstance()->m_vErrorCodes[0] == ErrorCode::NullInstanceForMemberFunction);
 		ErrorManager::GetInstance()->m_vErrorCodes.clear();
 	}
 	

@@ -144,6 +144,19 @@ const XMLAttribute* XMLTag::GetAttribute(const std_string& in_strName, std_strin
 }
 
 //--------------------------------------------------------------------------------
+const XMLAttribute* XMLTag::GetAttribute(const std_string& in_strName, s8& out_s8Value) const
+{
+	const XMLAttribute* pAttribute = FindAttribute(in_strName);
+
+	if (pAttribute == nullptr)
+		return nullptr;
+
+	out_s8Value = static_cast<s8>(ATOI32(pAttribute->GetValue().c_str()));
+
+	return pAttribute;
+}
+
+//--------------------------------------------------------------------------------
 const XMLAttribute* XMLTag::GetAttribute(const std_string& in_strName, u8& out_u8Value) const
 {
     const XMLAttribute* pAttribute = FindAttribute(in_strName);
@@ -351,6 +364,15 @@ bool XMLTag::AddAttribute(const std_string& in_strName, const std_string& in_str
     attribute->SetValue(in_strValue);
     m_vAttributes.push_back(attribute);
     return true;
+}
+
+//--------------------------------------------------------------------------------
+bool XMLTag::AddAttribute(const std_string& in_strName, const s8 in_u8Value)
+{
+	string_char value[64];
+	I32TOA(in_u8Value, value, 64);
+
+	return AddAttribute(in_strName, std_string(value));
 }
 
 //--------------------------------------------------------------------------------
@@ -628,26 +650,17 @@ XMLTag* XMLTag::FirstChildNamed(const std_string& tagName, bool in_bRecurse) con
 }
 
 //--------------------------------------------------------------------------------
-XMLTag* XMLTag::FirstSiblingNamed(const std_string& tagName, bool in_bRecurse) const
+XMLTag* XMLTag::FirstSiblingNamed(const std_string& tagName) const
 {
-    XMLTag* tagFound = nullptr;
-
     if(m_pSibling)
     {
         if(m_pSibling->m_strName.compare(tagName) == 0)
             return m_pSibling;
 
-		if (in_bRecurse)
-		{
-			tagFound = m_pSibling->FirstChildNamed(tagName, in_bRecurse);
-			if (tagFound)
-				return tagFound;
-		}
-
-        m_pSibling->FirstSiblingNamed(tagName, in_bRecurse);
+		return m_pSibling->FirstSiblingNamed(tagName);
     }
 
-    return tagFound;
+    return nullptr;
 }
 
 #if DEBUG_XML_PARSER

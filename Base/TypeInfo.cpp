@@ -27,9 +27,9 @@ void TypeInfo::SetDefaultConstructor(ConstructObjectFunc f)
 
 void TypeInfo::AddProperty(TypeProperty&& field)
 {
-	CHECK_ERROR_MSG(ErrorCode::PropertyAlreadyAdded, GetProperty(field.m_Name.text) == nullptr, L("Adding a Property which was already there!"));
+	CHECK_ERROR_MSG(ErrorCode::PropertyAlreadyAdded, GetProperty(field.m_Name) == nullptr, L("Adding a Property which was already there!"));
 
-	if (GetProperty(field.m_Name.text) == nullptr)
+	if (GetProperty(field.m_Name) == nullptr)
 		vProperties.push_back(field);
 }
 
@@ -44,9 +44,21 @@ void TypeInfo::AddEnumConstant(EnumConstant&& enumConst)
 void TypeInfo::AddFunction(TypeFunction&& function)
 {
 	//CHECK_ERROR(ErrorCode::FunctionAlreadyAdded, GetFunction(function.m_Name.text) == nullptr);
+	//AssertMsg(function.IsMemberFunction() || this == TypeInfo::Get<void>(), "Add Static Functions to the global namespace");
 
-	//if (GetFunction(function.m_Name.text) == nullptr)
-		vFunctions.push_back(function);
+	if (function.IsMemberFunction() || this == TypeInfo::Get<void>())
+	{
+		TypeFunction* pFunc = (TypeFunction*)GetFunction(function.m_Name);
+		if (pFunc == nullptr)
+			vFunctions.push_back(function);
+		else
+			pFunc->AddDefinition(function);
+	}
+	else
+	{
+		function.m_Name = GetGlobalFunctionName(function.m_Name, m_Name);
+		((TypeInfo*)TypeInfo::Get<void>())->AddFunction(std::move(function));
+	}
 }
 
 bool TypeInfo::IsPointer() const
@@ -117,16 +129,23 @@ const TypeFunction* TypeInfo::GetFunction(const string_char* in_name) const
 {
 	for (size_t i = 0; i < vFunctions.size(); i++)
 	{
-		// This is just a hash comparison
 		if (Name(in_name) == vFunctions[i].m_Name)
 			return &vFunctions[i];
 	}
 
+	const TypeFunction* f = nullptr;
+
 	// Recurse up through base type
 	if (base_type)
-		return base_type->GetFunction(in_name);
+		 f = base_type->GetFunction(in_name);
 
-	return nullptr;
+	//Look for the function in the global scope
+	if (f == nullptr && this != TypeInfo::Get<void>())
+	{
+		f = TypeInfo::Get<void>()->GetFunction( GetGlobalFunctionName(in_name, m_Name).c_str() );
+	}
+
+	return f;
 }
 
 const EnumConstant* TypeInfo::GetEnumConstant(u64 in_value) const
@@ -134,6 +153,18 @@ const EnumConstant* TypeInfo::GetEnumConstant(u64 in_value) const
 	for (size_t i = 0; i < vEnumConstants.size(); i++)
 	{
 		if (in_value == vEnumConstants[i].value)
+			return &(vEnumConstants[i]);
+	}
+	return nullptr;
+}
+
+const EnumConstant* TypeInfo::GetEnumConstant(const string_char* in_name) const
+{
+	Name name = Name(in_name);
+
+	for (size_t i = 0; i < vEnumConstants.size(); i++)
+	{
+		if (name == vEnumConstants[i].m_Name)
 			return &(vEnumConstants[i]);
 	}
 	return nullptr;
@@ -198,11 +229,22 @@ void TypeInfo::SerializeProperties(Serializer* s, void* in_obj) const
 {
 	for (auto prop : vProperties)
 	{
-		prop.m_pTypeInfo->Serialize(s, prop.GetPtr(in_obj), prop.m_Name.text);
+		prop.m_pTypeInfo->Serialize(s, prop.GetPtr(in_obj), prop.m_Name);
 	}
 
 	if (base_type)
 		return base_type->SerializeProperties(s, in_obj);
+}
+
+void TypeInfo::DeserializeProperties(Serializer* s, void* in_obj) const
+{
+	for (auto prop : vProperties)
+	{
+		prop.m_pTypeInfo->Deserialize(s, prop.GetPtr(in_obj), prop.m_Name);
+	}
+
+	if (base_type)
+		return base_type->DeserializeProperties(s, in_obj);
 }
 
 void TypeInfo::Serialize(Serializer* serializer, void* obj, const string_char* in_name) const
@@ -216,7 +258,16 @@ void TypeInfo::Serialize(Serializer* serializer, void* obj, const string_char* i
 		CHECK_ERROR_MSG(ErrorCode::FailedSerialization, false, L("Failed to call serialize function for object."));
 }
 
-
+void TypeInfo::Deserialize(Serializer* serializer, void* obj, const string_char* in_name) const
+{
+	const TypeInfo* pInfo = GetActualObjectTypeInfo(obj);
+	if (pInfo != this)
+		pInfo->Deserialize(serializer, obj, in_name);
+	else if (m_Operators.serialize_func)
+		m_Operators.deserialize_func(serializer, this, obj, in_name);
+	else
+		CHECK_ERROR_MSG(ErrorCode::FailedSerialization, false, L("Failed to call serialize function for object."));
+}
 
 const TypeInfo* TypeInfo::GetActualObjectTypeInfo(void* obj) const
 {
