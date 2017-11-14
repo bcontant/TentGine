@@ -27,6 +27,18 @@ void VariantBase::Deserialize(Serializer* in_serializer)
 		typeInfo->Deserialize(in_serializer, data, L(""));
 }
 
+Variant VariantBase::getProperty(const string_char* in_PropertyName)
+{
+	const TypeProperty* pProp = typeInfo->GetProperty(in_PropertyName);
+	if (pProp == nullptr)
+		return AutoVariant(0);
+
+	if (typeInfo->IsPointer())
+		return Variant(pProp->m_pTypeInfo, pProp->GetPtr(*(void**)data));
+	else
+		return Variant(pProp->m_pTypeInfo, pProp->GetPtr(data));
+}
+
 //---------------------------------
 // Variant
 //---------------------------------
@@ -57,11 +69,11 @@ Variant::Variant(const AutoVariant& rhs)
 		data = typeInfo->CopyConstructor(rhs.m_impl->GetData());
 }
 
-Variant::Variant(const TypeInfo* in_typeInfo, void* data)
+Variant::Variant(const TypeInfo* in_typeInfo, void* in_data)
 	: VariantBase( in_typeInfo, nullptr )
 {
 	if (typeInfo)
-		data = typeInfo->CopyConstructor(data);
+		data = typeInfo->CopyConstructor(in_data);
 }
 
 Variant::~Variant()

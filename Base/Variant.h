@@ -7,6 +7,7 @@ struct TypeInfo;
 // VariantBase
 //---------------------------------
 class AutoVariant;
+class Variant;
 
 class VariantBase
 {
@@ -30,6 +31,11 @@ public:
 
 	void Serialize(Serializer* in_serializer) const;
 	void Deserialize(Serializer* in_serializer);
+
+	template<typename... Params>
+	AutoVariant invoke(const string_char* in_FunctionName, Params&&... params);
+
+	Variant getProperty(const string_char* in_PropertyName);
 
 protected:
 	VariantBase() = delete;
@@ -155,6 +161,19 @@ template <typename T>
 VariantBase::operator const T&() const
 {
 	return As<T>();
+}
+
+template<typename... Params>
+AutoVariant VariantBase::invoke(const string_char* in_FunctionName, Params&&... params)
+{
+	const TypeFunction* pFunc = typeInfo->GetFunction(in_FunctionName);
+	if(pFunc == nullptr)
+		return AutoVariant(0);
+
+	if(typeInfo->IsPointer())
+		return ::invoke(*(void**)data, pFunc, params...);
+	else
+		return ::invoke(data, pFunc, params...);
 }
 
 template <typename T>

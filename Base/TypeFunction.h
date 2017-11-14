@@ -112,7 +112,6 @@ Function_Pointer_Base* TypeFunction::GetFunctionPointer(T* in_object, Params&&..
 	return nullptr;
 }
 
-
 template<typename... Params>
 bool TypeFunction::ValidateArguments(const Function_Definition& functionDefinition, Params&&... params) const
 {
@@ -161,6 +160,10 @@ bool TypeFunction::ValidateObject(T*) const
 		return true;
 
 	if (TypeInfo::Get<T>()->IsDerivedFrom(m_ObjectType))
+		return true;
+
+	//If you're calling functions on a void*, no typecheck is performed but the code will proceed.  Dangerous.
+	if (TypeInfo::Get<T>() == TypeInfo::Get<void>())
 		return true;
 
 	CHECK_ERROR_MSG(ErrorCode::InvalidInstanceForMethod, false, L("Invalid object type (%s, expected %s) when calling %s"), TypeInfo::Get<T>()->GetName(), m_ObjectType->GetName(), GetFullFunctionName().c_str());

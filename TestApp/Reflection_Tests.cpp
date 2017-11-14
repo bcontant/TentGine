@@ -183,6 +183,14 @@ DECLARE_GLOBALS()
 	//ADD_FUNC(TentGine_Test::NamespaceClass::TestNestedFunc)
 END_DECLARE_GLOBALS()
 
+DECLARE_TYPE(VariantRef)
+	BASE_CLASS(VariantBase)
+END_DECLARE(VariantRef)
+
+DECLARE_TYPE(Variant)
+	BASE_CLASS(VariantBase)
+END_DECLARE(Variant)
+
 DECLARE_TYPE(NoOperatorsTest)
 END_DECLARE(NoOperatorsTest)
 
@@ -214,12 +222,13 @@ END_DECLARE(DerivedFoo)
 DECLARE_TYPE(BaseTestType)
 	ADD_FUNC(TestBaseMethod)
 	ADD_FUNC(TestVirtual)	
+	ADD_PROP(value)
 END_DECLARE(BaseTestType)
 
 DECLARE_TYPE(TestType)
 	BASE_CLASS(BaseTestType)
 	//ADD_PROP(s_StaticVariable)
-	ADD_FUNC(TestType::TestType::TestType::TestStatic)
+	ADD_FUNC(TestType::TestStatic)
 	ADD_OVERLOADED_FUNC(TestOverload, int(TestType::*)(float))
 	ADD_OVERLOADED_FUNC(TestOverload, int(TestType::*)(int))
 	ADD_FUNC(TestReturnRef)
@@ -851,6 +860,21 @@ void TestMethods()
 		Assert(value == 100);
 		Assert(ErrorManager::GetInstance()->m_vErrorCodes.size() == 1);
 		Assert(ErrorManager::GetInstance()->m_vErrorCodes[0] == ErrorCode::NullInstanceForMemberFunction);
+		ErrorManager::GetInstance()->m_vErrorCodes.clear();
+	}
+
+	//Invoke with variant;
+	{
+		//TestType obj;
+		const TypeInfo* pTestType = TypeDB::GetInstance()->GetType(L("TestType"));
+
+		VariantRef varObj(pTestType, pTestType->New());
+		
+		varObj.invoke("TestVirtual");
+		int iValue = varObj.getProperty("value");
+
+		Assert(iValue == 500);
+		Assert(ErrorManager::GetInstance()->m_vErrorCodes.size() == 0);
 		ErrorManager::GetInstance()->m_vErrorCodes.clear();
 	}
 	
